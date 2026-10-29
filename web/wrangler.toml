@@ -22,14 +22,14 @@ crons = ["* * * * *"]
 [[d1_databases]]
 binding = "DB"
 database_name = "bun"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "3d931367-6fc0-4ce6-b4c1-cf12d6c2e883"
 
 [vars]
 # VAPID public key from `npm run vapid` (base64url, starts with "B"). The private key is NOT put here:
 # store it as a secret with `npx wrangler secret put VAPID_PRIVATE_KEY`.
-VAPID_PUBLIC_KEY = ""
+VAPID_PUBLIC_KEY = "BHL2FIUalRHMU2obCyGxCLPFs-dLrmwP8gc4GuTJEcopkfN4cLH5OIe1xhb8-tEhgFV_CS62YG_oTPf0hGaB5NE"
 # Contact for push services (Apple requires https:// or mailto:). You may use "mailto:you@example.com".
-VAPID_SUBJECT = "https://bun-web.workers.dev"
+VAPID_SUBJECT = "mailto:onanimastersora@gmail.com"
 
 # Logs in the Cloudflare dashboard (Workers > bun-web > Logs). Included in the free plan.
 [observability]
