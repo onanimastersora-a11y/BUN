@@ -1,0 +1,36 @@
+# BUN web: landing page + iPhone web app (static files) + Yahoo Finance proxy + Web Push reminders.
+# Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "bun-web"
+main = "worker/index.js"
+compatibility_date = "2026-10-15"
+
+# Static files: web/public/index.html is served at "/", web/public/app/ at "/app/".
+# Cloudflare serves matching files directly (free, unlimited). Only /api/* runs the Worker first;
+# any other path that has no matching file falls through to the Worker (404 / PWA shell).
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+# Send due reminders every minute.
+[triggers]
+crons = ["* * * * *"]
+
+# D1 database for push subscriptions and reminders.
+# Run `npx wrangler d1 create bun` and paste the "database_id" it prints below (replace the zeros).
+[[d1_databases]]
+binding = "DB"
+database_name = "bun"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[vars]
+# VAPID public key from `npm run vapid` (base64url, starts with "B"). The private key is NOT put here:
+# store it as a secret with `npx wrangler secret put VAPID_PRIVATE_KEY`.
+VAPID_PUBLIC_KEY = ""
+# Contact for push services (Apple requires https:// or mailto:). You may use "mailto:you@example.com".
+VAPID_SUBJECT = "https://bun-web.workers.dev"
+
+# Logs in the Cloudflare dashboard (Workers > bun-web > Logs). Included in the free plan.
+[observability]
+enabled = true

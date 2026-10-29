@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+sprite-preview/
+*.log
+web/node_modules/
+web/.wrangler/
+web/.dev.vars
+web/public/app/

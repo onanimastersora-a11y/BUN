@@ -1,0 +1,21 @@
+{
+  "name": "bun-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BUN web: landing page, iPhone web app hosting, Yahoo Finance proxy and Web Push reminders (Cloudflare Worker)",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node worker/push.test.mjs",
+    "vapid": "node tools/gen-vapid.mjs",
+    "db:init": "wrangler d1 execute bun --remote --file schema.sql",
+    "db:init:local": "wrangler d1 execute bun --local --file schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "4.154.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,46 @@
+# Builds the Windows installer and the macOS app on GitHub's free runners and
+# attaches them to a GitHub Release. The landing page links straight to
+#   https://github.com/<you>/<repo>/releases/latest/download/BUN-Setup.exe
+#   https://github.com/<you>/<repo>/releases/latest/download/BUN-mac.dmg
+# Run it by pushing a tag:  git tag v1.0.1 && git push origin v1.0.1
+# (or from the Actions tab with "Run workflow").
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist:win
+            file: release/BUN-Setup.exe
+          - os: macos-latest
+            script: dist:mac
+            file: release/BUN-mac.dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run ${{ matrix.script }}
+        env:
+          # No Apple / Windows signing certificates yet: build unsigned (ad-hoc on macOS).
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.file }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
+          name: BUN ${{ github.ref_type == 'tag' && github.ref_name || format('build {0}', github.run_number) }}
+          make_latest: true

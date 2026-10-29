@@ -1,0 +1,98 @@
+{
+  "name": "bun-app",
+  "productName": "BUN",
+  "version": "1.0.0",
+  "description": "BUN - lịch trình, checklist và thú cưng pixel trên desktop",
+  "author": "BUN",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k -n vite,electron \"vite\" \"wait-on tcp:5173 && cross-env BUN_DEV=1 electron .\"",
+    "web": "vite",
+    "build": "vite build",
+    "build:web": "vite build --mode web && node web/tools/build-site.mjs",
+    "start": "vite build && electron .",
+    "sprites": "node tools/render-sprites.mjs",
+    "icons": "node tools/make-icons.mjs",
+    "sounds": "node tools/make-sounds.mjs",
+    "dist": "vite build && electron-builder --win",
+    "dist:win": "vite build && electron-builder --win",
+    "dist:mac": "vite build && electron-builder --mac"
+  },
+  "build": {
+    "appId": "app.bun.desktop",
+    "productName": "BUN",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "src/core/**/*",
+      "src/sprites/**/*",
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png",
+      "artifactName": "BUN-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "BUN",
+      "artifactName": "BUN-Setup.${ext}"
+    },
+    "protocols": [
+      {
+        "name": "BUN link",
+        "schemes": [
+          "bun"
+        ]
+      }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "artifactName": "BUN-mac.${ext}",
+      "extendInfo": {
+        "NSUserNotificationAlertStyle": "alert"
+      }
+    },
+    "dmg": {
+      "artifactName": "BUN-mac.${ext}",
+      "title": "BUN"
+    },
+    "publish": null
+  },
+  "dependencies": {
+    "@fontsource/nunito": "^5.1.0",
+    "@fontsource/pixelify-sans": "^5.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "vite": "^5.4.11",
+    "wait-on": "^8.0.1"
+  }
+}

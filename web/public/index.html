@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BUN</title>
+<meta name="description" content="BUN: lịch trình tuần, checklist 3 chế độ và một bé mèo hoặc cún pixel sống trên màn hình, nhắc việc và giữ note mỗi ngày. Cho Windows, macOS và iPhone.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f2ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15171c" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BUN">
+<meta property="og:title" content="BUN: lịch trình, checklist và thú cưng pixel">
+<meta property="og:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn. Cho Windows, macOS và iPhone.">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BUN">
+<meta name="twitter:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%2354a0ea%22%20d%3D%22M4%200h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%23539fe9%22%20d%3D%22M3%201h26v1h-26z%22%2F%3E%3Cpath%20fill%3D%22%23529ee8%22%20d%3D%22M2%202h28v1h-28z%22%2F%3E%3Cpath%20fill%3D%22%23519de8%22%20d%3D%22M1%203h5v1h-5zM7%203h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%232e2622%22%20d%3D%22M6%203h1v1h-1zM5%204h1v1h-1zM7%204h1v1h-1zM5%205h1v1h-1zM8%205h1v1h-1zM5%206h1v1h-1zM7%206h1v1h-1zM9%206h1v1h-1zM5%207h2v1h-2zM8%207h1v1h-1zM10%207h2v1h-2zM5%208h2v1h-2zM9%208h1v1h-1zM12%208h1v1h-1zM6%209h1v1h-1zM10%209h10v1h-10zM6%2010h1v1h-1zM10%2010h1v1h-1zM20%2010h4v1h-4zM6%2011h1v1h-1zM8%2011h2v1h-2zM20%2011h1v1h-1zM24%2011h1v1h-1zM6%2012h2v1h-2zM20%2012h1v1h-1zM25%2012h1v1h-1zM7%2013h1v1h-1zM20%2013h1v1h-1zM26%2013h1v1h-1zM6%2014h1v1h-1zM20%2014h1v1h-1zM26%2014h1v1h-1zM5%2015h1v1h-1zM20%2015h1v1h-1zM27%2015h1v1h-1zM5%2016h1v1h-1zM20%2016h1v1h-1zM27%2016h1v1h-1zM5%2017h1v1h-1zM11%2017h2v1h-2zM18%2017h2v1h-2zM21%2017h1v1h-1zM27%2017h1v1h-1zM5%2018h1v1h-1zM11%2018h2v1h-2zM18%2018h2v1h-2zM21%2018h1v1h-1zM28%2018h1v1h-1zM5%2019h1v1h-1zM22%2019h1v1h-1zM28%2019h1v1h-1zM5%2020h1v1h-1zM13%2020h1v1h-1zM15%2020h1v1h-1zM17%2020h1v1h-1zM23%2020h1v1h-1zM28%2020h1v1h-1zM5%2021h1v1h-1zM14%2021h1v1h-1zM16%2021h1v1h-1zM24%2021h1v1h-1zM27%2021h1v1h-1zM6%2022h1v1h-1zM24%2022h3v1h-3zM7%2023h1v1h-1zM23%2023h1v1h-1zM7%2024h1v1h-1zM23%2024h1v1h-1zM8%2025h2v1h-2zM21%2025h2v1h-2zM10%2026h1v1h-1zM20%2026h1v1h-1zM11%2027h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%23519ce7%22%20d%3D%22M0%204h5v1h-5zM8%204h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%23fff7ea%22%20d%3D%22M6%204h1v1h-1zM6%205h2v1h-2zM6%206h1v1h-1zM8%206h1v1h-1zM9%207h1v1h-1zM10%208h2v1h-2zM11%2010h9v1h-9zM10%2011h10v1h-10zM8%2012h12v1h-12zM8%2013h12v1h-12zM7%2014h13v1h-13zM6%2015h14v1h-14zM6%2016h14v1h-14zM6%2017h5v1h-5zM13%2017h5v1h-5zM20%2017h1v1h-1zM6%2018h5v1h-5zM13%2018h5v1h-5zM20%2018h1v1h-1zM6%2019h16v1h-16zM6%2020h3v1h-3zM11%2020h2v1h-2zM14%2020h1v1h-1zM16%2020h1v1h-1zM18%2020h2v1h-2zM22%2020h1v1h-1zM6%2021h8v1h-8zM15%2021h1v1h-1zM17%2021h7v1h-7zM7%2022h17v1h-17zM8%2023h15v1h-15z%22%2F%3E%3Cpath%20fill%3D%22%23509be6%22%20d%3D%22M0%205h5v1h-5zM9%205h23v1h-23z%22%2F%3E%3Cpath%20fill%3D%22%234f9ae5%22%20d%3D%22M0%206h5v1h-5zM10%206h22v1h-22z%22%2F%3E%3Cpath%20fill%3D%22%234e99e5%22%20d%3D%22M0%207h5v1h-5zM12%207h20v1h-20z%22%2F%3E%3Cpath%20fill%3D%22%23f3a5b5%22%20d%3D%22M7%207h1v1h-1zM7%208h2v1h-2zM7%209h3v1h-3zM7%2010h3v1h-3zM7%2011h1v1h-1zM9%2020h2v1h-2zM20%2020h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%234d98e4%22%20d%3D%22M0%208h5v1h-5zM13%208h19v1h-19z%22%2F%3E%3Cpath%20fill%3D%22%234c97e3%22%20d%3D%22M0%209h6v1h-6zM20%209h12v1h-12z%22%2F%3E%3Cpath%20fill%3D%22%234c96e2%22%20d%3D%22M0%2010h6v1h-6zM24%2010h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%234b95e1%22%20d%3D%22M0%2011h6v1h-6zM25%2011h7v1h-7z%22%2F%3E%3Cpath%20fill%3D%22%23e0a062%22%20d%3D%22M21%2011h3v1h-3zM21%2012h4v1h-4zM21%2013h5v1h-5zM21%2014h5v1h-5zM21%2015h6v1h-6zM21%2016h6v1h-6zM22%2017h5v1h-5zM22%2018h6v1h-6zM23%2019h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234a94e1%22%20d%3D%22M0%2012h6v1h-6zM26%2012h6v1h-6z%22%2F%3E%3Cpath%20fill%3D%22%234993e0%22%20d%3D%22M0%2013h7v1h-7zM27%2013h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234892df%22%20d%3D%22M0%2014h6v1h-6zM27%2014h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234791de%22%20d%3D%22M0%2015h5v1h-5zM28%2015h4v1h-4zM0%2016h5v1h-5zM28%2016h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%234690dd%22%20d%3D%22M0%2017h5v1h-5zM28%2017h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%23458fdc%22%20d%3D%22M0%2018h5v1h-5zM29%2018h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23448edb%22%20d%3D%22M0%2019h5v1h-5zM29%2019h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23438ddb%22%20d%3D%22M0%2020h5v1h-5zM29%2020h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23c48046%22%20d%3D%22M24%2020h4v1h-4zM25%2021h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23428cda%22%20d%3D%22M0%2021h5v1h-5zM28%2021h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%23428bd9%22%20d%3D%22M0%2022h6v1h-6zM27%2022h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%23418ad8%22%20d%3D%22M0%2023h7v1h-7zM24%2023h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%234089d7%22%20d%3D%22M0%2024h7v1h-7zM24%2024h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%23f2e4d0%22%20d%3D%22M8%2024h15v1h-15zM10%2025h11v1h-11zM11%2026h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%233f88d7%22%20d%3D%22M0%2025h8v1h-8zM23%2025h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%233e87d6%22%20d%3D%22M0%2026h10v1h-10zM21%2026h11v1h-11z%22%2F%3E%3Cpath%20fill%3D%22%233d86d5%22%20d%3D%22M0%2027h11v1h-11zM20%2027h12v1h-12z%22%2F%3E%3Cpath%20fill%3D%22%233d85d4%22%20d%3D%22M1%2028h30v1h-30z%22%2F%3E%3Cpath%20fill%3D%22%233c84d4%22%20d%3D%22M2%2029h28v1h-28z%22%2F%3E%3Cpath%20fill%3D%22%233b83d3%22%20d%3D%22M3%2030h26v1h-26z%22%2F%3E%3Cpath%20fill%3D%22%233a82d2%22%20d%3D%22M4%2031h24v1h-24z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@600&amp;display=swap&amp;text=BUNz">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* ---------- tokens (same palette as the BUN app) ---------- */
+:root {
+  --bg: #f6f2ec;
+  --surface: #ffffff;
+  --surface-2: #fbf8f4;
+  --surface-3: #f2ece4;
+  --border: #ebe3d8;
+  --border-strong: #ddd2c4;
+  --text: #2f2a26;
+  --text-2: #776d65;
+  --text-3: #a99f96;
+  --primary: #3d8bd9;
+  --primary-hover: #2f7bc8;
+  --primary-soft: #e4effb;
+  --primary-ink: #1f5f9e;
+  --accent: #e3a066;
+  --accent-soft: #fbecdd;
+  --accent-ink: #94582a;
+  --success: #45a876;
+  --success-soft: #e2f4ea;
+  --btn-bg: #2d78c5;
+  --btn-bg-hover: #2869ad;
+  --btn-ink: #ffffff;
+  --btn-glow: rgba(61, 139, 217, 0.28);
+  --soft-btn-bg: #e4effb;
+  --soft-btn-hover: #d5e6f8;
+  --shadow-sm: 0 1px 2px rgba(70, 48, 28, 0.06);
+  --shadow: 0 1px 2px rgba(70, 48, 28, 0.05), 0 6px 20px rgba(70, 48, 28, 0.07);
+  --shadow-hover: 0 2px 4px rgba(70, 48, 28, 0.05), 0 14px 34px rgba(70, 48, 28, 0.11);
+  --focus: rgba(61, 139, 217, 0.55);
+  --sky-1: #e9f2fb;
+  --sky-2: #fbf8f4;
+  --floor: #f3ede5;
+  --floor-line: #e6dccf;
+  --cloud: #ffffff;
+  --pet-shadow: rgba(84, 58, 34, 0.2);
+  --px-ink: #3b2a24;
+  --qr-ink: #2f2a26;
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --font: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-pixel: 'Pixelify Sans', 'Nunito', monospace;
+  --radius-lg: 28px;
+  --radius: 22px;
+  --gutter: 16px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171c;
+    --surface: #1d2027;
+    --surface-2: #22262e;
+    --surface-3: #2a2f38;
+    --border: #2d323b;
+    --border-strong: #3a404b;
+    --text: #ece6df;
+    --text-2: #a39c94;
+    --text-3: #77716b;
+    --primary: #5aa3ec;
+    --primary-hover: #74b3f0;
+    --primary-soft: rgba(90, 163, 236, 0.15);
+    --primary-ink: #9ccaf6;
+    --accent: #e9ae70;
+    --accent-soft: rgba(233, 174, 112, 0.13);
+    --accent-ink: #edbd88;
+    --success: #5cc08e;
+    --success-soft: rgba(92, 192, 142, 0.14);
+    --btn-bg: #5aa3ec;
+    --btn-bg-hover: #74b3f0;
+    --btn-ink: #0d1724;
+    --btn-glow: rgba(90, 163, 236, 0.22);
+    --soft-btn-bg: rgba(90, 163, 236, 0.14);
+    --soft-btn-hover: rgba(90, 163, 236, 0.22);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.25);
+    --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 14px 34px rgba(0, 0, 0, 0.35);
+    --focus: rgba(90, 163, 236, 0.7);
+    --sky-1: #1b2330;
+    --sky-2: #1f232a;
+    --floor: #1a1d23;
+    --floor-line: #2d323b;
+    --cloud: #2a313d;
+    --pet-shadow: rgba(0, 0, 0, 0.45);
+    --px-ink: #0f1115;
+    --qr-ink: #15171c;
+    color-scheme: dark;
+  }
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+img, svg, canvas { display: block; }
+a { color: var(--primary-ink); text-decoration: none; }
+b, strong { font-weight: 800; }
+h1, h2, h3, p, ul, ol { margin: 0; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 10px; }
+.wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 var(--gutter); }
+@media (min-width: 640px) { :root { --gutter: 24px; } }
+@media (min-width: 1024px) { :root { --gutter: 32px; } }
+.ic { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.skip {
+  position: absolute; left: 12px; top: -60px; z-index: 10;
+  padding: 10px 16px; border-radius: 999px; background: var(--surface); box-shadow: var(--shadow);
+  font-weight: 800; transition: top .25s var(--ease);
+}
+.skip:focus { top: 12px; }
+
+/* ---------- top bar ---------- */
+.top { padding: 14px 0 0; }
+.top__in { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-height: 44px; }
+.top__nav { display: none; gap: 4px; margin-right: 8px; }
+.top__nav a {
+  padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; color: var(--text-2);
+  transition: color .25s var(--ease), background-color .25s var(--ease);
+}
+.top__nav a:hover { color: var(--text); background: var(--surface-3); }
+@media (min-width: 560px) { .top__nav { display: flex; } }
+.lang {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 3px;
+  border-radius: 999px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+}
+.lang__thumb {
+  position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
+  border-radius: 999px; background: var(--primary-soft); transition: transform .4s var(--ease);
+}
+.lang[data-lang='en'] .lang__thumb { transform: translateX(100%); }
+.lang button {
+  position: relative; z-index: 1; min-width: 42px; height: 30px; padding: 0 10px; border-radius: 999px;
+  font-size: 13px; font-weight: 800; letter-spacing: .04em; color: var(--text-2); transition: color .3s var(--ease);
+}
+.lang button[aria-pressed='true'] { color: var(--primary-ink); }
+
+/* ---------- hero ---------- */
+.hero { padding: 18px 0 72px; text-align: center; }
+@media (min-width: 900px) { .hero { padding: 26px 0 96px; } }
+.brand { display: inline-flex; align-items: center; gap: 16px; font-weight: 400; }
+.brand__logo { width: 64px; height: 64px; filter: drop-shadow(0 6px 14px rgba(61, 139, 217, .25)); }
+.brand__logo svg { width: 100%; height: 100%; }
+.brand__name {
+  font-family: var(--font-pixel); font-weight: 600; font-size: 52px; line-height: 1;
+  letter-spacing: .14em; margin-right: -.14em; color: var(--primary);
+}
+@media (min-width: 640px) { .brand__name { font-size: 60px; } }
+.hero__tag {
+  max-width: 20em; margin: 22px auto 0; font-weight: 800; color: var(--text);
+  font-size: clamp(23px, 1.6vw + 16px, 36px); line-height: 1.3; letter-spacing: -.01em; text-wrap: balance;
+}
+.hl { background: linear-gradient(transparent 62%, var(--accent-soft) 62%, var(--accent-soft) 92%, transparent 92%); padding: 0 .08em; }
+@media (prefers-color-scheme: dark) { .hl { background: linear-gradient(transparent 62%, rgba(233, 174, 112, .17) 62%, rgba(233, 174, 112, .17) 92%, transparent 92%); } }
+.hero__cta { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 30px; }
+.hero__meta { font-size: 14px; color: var(--text-2); font-weight: 600; }
+.hero__other {
+  margin-top: 6px; padding: 6px 12px; border-radius: 999px; font-size: 15px; font-weight: 700; color: var(--primary-ink);
+  transition: background-color .25s var(--ease);
+}
+.hero__other:hover { background: var(--primary-soft); }
+.hero__other[hidden] { display: none; }
+
+/* entrance */
+.js .rise { animation: rise .7s var(--ease) both; }
+.js .rise--2 { animation-delay: .08s; }
+.js .rise--3 { animation-delay: .16s; }
+.js .rise--4 { animation-delay: .24s; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 22px; border-radius: 999px;
+  font-size: 16px; font-weight: 800; line-height: 1.2; text-align: center;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), background-color .3s var(--ease), color .3s var(--ease);
+}
+.btn--primary { background: var(--btn-bg); color: var(--btn-ink); box-shadow: 0 1px 2px rgba(20, 60, 110, .18), 0 6px 18px var(--btn-glow); }
+.btn--primary:hover { background: var(--btn-bg-hover); transform: translateY(-2px); box-shadow: 0 2px 4px rgba(20, 60, 110, .18), 0 12px 26px var(--btn-glow); }
+.btn--soft { background: var(--soft-btn-bg); color: var(--primary-ink); }
+.btn--soft:hover { background: var(--soft-btn-hover); transform: translateY(-2px); }
+.btn:active { transform: translateY(0); transition-duration: .1s; }
+.btn--lg { min-height: 56px; padding: 0 30px; font-size: 17px; }
+.btn .ic { width: 21px; height: 21px; stroke-width: 2.1; }
+
+/* ---------- pet stage ---------- */
+.stage {
+  --floor-h: 36px;
+  position: relative; width: 100%; max-width: 680px; height: 244px; margin: 30px auto 0;
+  border-radius: var(--radius-lg); border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--sky-1), var(--sky-2) 88%);
+  box-shadow: var(--shadow); overflow: hidden; isolation: isolate;
+  -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
+}
+@media (max-width: 639px) { .stage { height: 200px; --floor-h: 30px; border-radius: 24px; } }
+@media (max-width: 459px) { .stage { height: 172px; --floor-h: 26px; } }
+.stage__floor {
+  position: absolute; left: 0; right: 0; bottom: 0; height: var(--floor-h);
+  background: var(--floor); border-top: 1px solid var(--floor-line);
+}
+.cloud { position: absolute; left: -120px; top: 22px; width: 96px; height: 32px; color: var(--cloud); opacity: .9; }
+.cloud svg { width: 100%; height: 100%; fill: currentColor; }
+.cloud--2 { top: 58px; width: 60px; height: 20px; opacity: .7; }
+.js .cloud { animation: drift 95s linear infinite; animation-delay: -38s; }
+.js .cloud--2 { animation-duration: 130s; animation-delay: -95s; }
+@keyframes drift { from { left: -120px; } to { left: 100%; } }
+.pet { position: absolute; left: 0; bottom: calc(var(--floor-h) - 3px); z-index: 1; will-change: transform; }
+.pet__body { position: relative; z-index: 1; cursor: pointer; will-change: transform; }
+.pet canvas { image-rendering: pixelated; }
+.pet__shadow {
+  position: absolute; bottom: -6px; left: 50%; width: 60px; height: 12px; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--pet-shadow), transparent);
+  transform: translateX(-50%); transition: width .35s var(--ease), left .35s var(--ease), opacity .35s var(--ease);
+}
+.zzz { position: absolute; width: 0; height: 0; display: none; z-index: 2; pointer-events: none; }
+.pet[data-anim='sleep'] .zzz { display: block; }
+.zzz span {
+  position: absolute; left: 0; bottom: 0; opacity: 0;
+  font-family: var(--font-pixel); font-weight: 600; line-height: 1; color: var(--primary);
+  font-size: calc(8px + var(--s, 4) * 1.6px);
+  text-shadow: 0 1px 0 var(--surface);
+  animation: zzz 3.6s ease-in-out infinite;
+}
+.zzz span:nth-child(2) { animation-delay: 1.2s; font-size: calc(9px + var(--s, 4) * 2px); }
+.zzz span:nth-child(3) { animation-delay: 2.4s; font-size: calc(10px + var(--s, 4) * 2.6px); }
+@keyframes zzz {
+  0% { opacity: 0; transform: translate(0, 0) scale(.6); }
+  25% { opacity: .85; }
+  100% { opacity: 0; transform: translate(calc(var(--s, 4) * 5px), calc(var(--s, 4) * -10px)) scale(1); }
+}
+.heart {
+  position: absolute; width: 14px; height: 12px; margin: -6px 0 0 -7px; pointer-events: none; z-index: 3;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 6' shape-rendering='crispEdges'%3E%3Cpath fill='%233b2a24' d='M1 0h2v1H1zM4 0h2v1H4zM0 1h1v2H0zM6 1h1v2H6zM1 3h1v1H1zM5 3h1v1H5zM2 4h1v1H2zM4 4h1v1H4zM3 5h1v1H3z'/%3E%3Cpath fill='%23f27f95' d='M1 1h2v2H1zM4 1h2v2H4zM3 2h1v2H3zM2 3h3v1H2z'/%3E%3C/svg%3E") center/contain no-repeat;
+  image-rendering: pixelated; opacity: 0; animation: heart 1.8s ease-out forwards;
+}
+@keyframes heart {
+  0% { opacity: 0; transform: translate(0, 0) scale(.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--hx, 10px), -42px) scale(1.1); }
+}
+
+/* ---------- sections ---------- */
+.section { padding: 56px 0; }
+@media (min-width: 640px) { .section { padding: 72px 0; } }
+@media (min-width: 900px) { .section { padding: 96px 0; } }
+.section--tight { padding-top: 8px; }
+.section__head { text-align: center; max-width: 640px; margin: 0 auto 40px; }
+.eyebrow {
+  display: inline-block; padding: 5px 14px; border-radius: 999px; background: var(--primary-soft); color: var(--primary-ink);
+  font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+}
+.section__head h2 { margin-top: 14px; font-size: clamp(26px, 1.4vw + 19px, 36px); line-height: 1.25; font-weight: 800; letter-spacing: -.01em; text-wrap: balance; }
+.section__sub { margin-top: 12px; color: var(--text-2); font-size: 17px; }
+.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+.reveal--d1 { transition-delay: .08s !important; }
+.reveal--d2 { transition-delay: .16s !important; }
+
+.card {
+  position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease), opacity .7s var(--ease);
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+/* ---------- features ---------- */
+.features { display: grid; gap: 20px; max-width: 560px; margin: 0 auto; }
+@media (min-width: 960px) { .features { grid-template-columns: repeat(3, 1fr); max-width: none; gap: 24px; } }
+.feature { padding: 12px; display: flex; flex-direction: column; }
+.feature__body { padding: 20px 12px 14px; }
+.feature__title { display: flex; align-items: center; gap: 12px; font-size: 20px; line-height: 1.3; font-weight: 800; }
+.picon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 13px; background: var(--primary-soft); }
+.picon--green { background: var(--success-soft); }
+.picon--warm { background: var(--accent-soft); }
+.picon svg, .picon canvas { width: 24px; height: 24px; image-rendering: pixelated; }
+.feature__lead { margin-top: 12px; color: var(--text-2); font-size: 15.5px; }
+.ticks { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 8px; font-size: 15px; }
+.ticks li { position: relative; padding-left: 26px; }
+.ticks li::before {
+  content: ''; position: absolute; left: 2px; top: .42em; width: 14px; height: 14px; border-radius: 5px;
+  background: var(--success-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='%2345a876' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7.2l2 2 4-4.4'/%3E%3C/svg%3E") center/14px no-repeat;
+}
+
+/* illustration frame */
+.art {
+  position: relative; height: 188px; border-radius: 16px; overflow: hidden;
+  background: var(--surface-2); border: 1px solid var(--border);
+  user-select: none; -webkit-user-select: none;
+}
+
+/* art 1: week */
+.cal { position: absolute; inset: 12px 12px 10px 8px; display: grid; grid-template-rows: 22px 1fr; }
+.cal__days, .cal__body { display: grid; grid-template-columns: 34px 1fr; }
+.cal__cols-h { display: grid; grid-template-columns: repeat(5, 1fr); }
+.cal__cols-h span { text-align: center; font-size: 11px; font-weight: 800; color: var(--text-3); letter-spacing: .02em; }
+.cal__cols-h .is-today { color: var(--primary-ink); }
+.cal__cols-h .is-today::after { content: ''; display: block; width: 4px; height: 4px; margin: 1px auto 0; border-radius: 2px; background: var(--primary); }
+.cal__times { display: grid; grid-template-rows: repeat(4, 1fr); }
+.cal__times span { font-size: 10px; font-weight: 700; color: var(--text-3); transform: translateY(-7px); text-align: right; padding-right: 6px; }
+.cal__grid {
+  --row: 36px; position: relative; border-left: 1px solid var(--border);
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, transparent calc(100% - 1px), var(--border) calc(100% - 1px));
+  background-size: 100% var(--row), 20% 100%;
+}
+.ev {
+  position: absolute; left: calc(var(--c) * 20% + 3px); width: calc(20% - 6px);
+  top: calc(var(--r) * var(--row) + 2px); height: calc(var(--h) * var(--row) - 4px);
+  border-radius: 7px; padding: 4px 4px 0 7px; overflow: hidden;
+  font-style: normal; font-size: 10px; line-height: 1.25; font-weight: 800; text-align: left;
+}
+.ev::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: currentColor; opacity: .8; }
+.ev b { display: block; overflow-wrap: anywhere; hyphens: auto; }
+.ev--blue { background: var(--primary-soft); color: var(--primary-ink); }
+.ev--solid { background: var(--primary); color: #fff; }
+.ev--solid::before { background: rgba(255, 255, 255, .5); }
+.ev--warm { background: var(--accent-soft); color: var(--accent-ink); }
+.ev--green { background: var(--success-soft); color: #2d7f55; }
+@media (prefers-color-scheme: dark) { .ev--green { color: #7fd3a8; } .ev--solid { background: #3a82cc; } }
+.ev__bell { display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; font-size: 9.5px; font-weight: 800; opacity: .9; }
+.ev__bell svg { width: 10px; height: 10px; stroke-width: 2.4; }
+.ev__grip { position: absolute; left: 50%; bottom: 3px; width: 14px; height: 3px; margin-left: -7px; border-radius: 2px; background: currentColor; opacity: .45; }
+.js .ev--grow { animation: grow 7s var(--ease) infinite; }
+@keyframes grow {
+  0%, 16% { height: calc(1.3 * var(--row) - 4px); }
+  40%, 78% { height: calc(2.3 * var(--row) - 4px); }
+  96%, 100% { height: calc(1.3 * var(--row) - 4px); }
+}
+.ev--ghost {
+  display: grid; place-items: center; padding: 0; background: transparent; color: var(--primary);
+  border: 1.5px dashed color-mix(in srgb, var(--primary) 55%, transparent); font-size: 15px;
+}
+.ev--ghost::before { display: none; }
+.js .ev--ghost { animation: breathe 3.6s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+
+/* art 2: three views */
+.mv { position: absolute; inset: 0; padding: 12px; display: flex; flex-direction: column; }
+.mv__top { display: flex; align-items: center; gap: 8px; }
+.mv__tabs {
+  position: relative; display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; max-width: 230px;
+  padding: 3px; border-radius: 999px; background: var(--surface-3);
+}
+.mv__thumb {
+  position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3);
+  border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-sm);
+  transform: translateX(calc(var(--i, 0) * 100%)); transition: transform .5s var(--ease);
+}
+.mv__tab {
+  position: relative; z-index: 1; height: 24px; display: grid; place-items: center; border-radius: 999px;
+  font-size: 11.5px; font-weight: 800; color: var(--text-2); cursor: pointer; white-space: nowrap; transition: color .3s var(--ease);
+}
+.mv__tab.is-on { color: var(--primary-ink); }
+.mv__share { margin-left: auto; display: flex; align-items: center; }
+.av {
+  width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  font-style: normal; font-size: 10.5px; font-weight: 800; color: #fff; border: 2px solid var(--surface-2);
+}
+.av + .av { margin-left: -7px; }
+.av--a { background: #e3a066; }
+.av--b { background: #45a876; }
+.av--c { background: #3d8bd9; }
+.av--link { background: var(--surface); color: var(--primary-ink); border-color: var(--border); }
+.av--link svg { width: 12px; height: 12px; stroke-width: 2.4; }
+.mv__views { position: relative; flex: 1; margin-top: 10px; }
+.mv__view { position: absolute; inset: 0; opacity: 0; transform: translateY(6px); transition: opacity .55s var(--ease), transform .55s var(--ease); pointer-events: none; }
+.mv__view.is-on { opacity: 1; transform: none; }
+.mv__view svg { width: 100%; height: 100%; overflow: visible; }
+.tb { list-style: none; padding: 0; display: grid; gap: 5px; }
+.tb li {
+  display: flex; align-items: center; gap: 8px; height: 27px; padding: 0 6px 0 8px; border-radius: 9px;
+  background: var(--surface); border: 1px solid var(--border); font-size: 12px; font-weight: 700;
+}
+.tb li span { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tb .av { width: 18px; height: 18px; font-size: 9px; border-width: 0; }
+.ck {
+  position: relative; width: 14px; height: 14px; flex: none; border-radius: 5px; border: 1.5px solid var(--border-strong);
+  transition: background-color .35s var(--ease), border-color .35s var(--ease);
+}
+.ck::after {
+  content: ''; position: absolute; inset: -1.5px; opacity: 0; transform: scale(.6); transition: opacity .35s var(--ease), transform .35s var(--ease);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.8 7.2l2.1 2.1 4.3-4.6'/%3E%3C/svg%3E") center/100% no-repeat;
+}
+.is-done .ck, .tb li.tick-late.is-ticked .ck { background: var(--success); border-color: var(--success); }
+.is-done .ck::after, .tb li.tick-late.is-ticked .ck::after { opacity: 1; transform: none; }
+.is-done span { color: var(--text-3); text-decoration: line-through; text-decoration-color: var(--border-strong); }
+.rm-base { fill: none; stroke: var(--border-strong); stroke-width: 2.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+.rm-done { fill: none; stroke: var(--success); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 100 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.2s var(--ease) .15s; }
+.mv__view.is-on .rm-done { stroke-dashoffset: 47; }
+.rm-dot { fill: var(--surface); stroke: var(--border-strong); stroke-width: 2; }
+.rm-dot--done { fill: var(--success); stroke: var(--success); }
+.rm-label { font-family: var(--font); font-size: 10.5px; font-weight: 800; fill: var(--text-2); }
+.rm-pet { transform-box: fill-box; transform-origin: 50% 100%; transform: scale(.72); transition: transform .9s var(--ease) .5s; image-rendering: pixelated; }
+.mv__view.is-on .rm-pet { transform: scale(1); }
+.mm-line { fill: none; stroke: color-mix(in srgb, var(--primary) 45%, transparent); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .8s var(--ease); }
+.mv__view.is-on .mm-line { stroke-dashoffset: 0; }
+.mm-line:nth-of-type(2) { transition-delay: .08s; }
+.mm-line:nth-of-type(3) { transition-delay: .16s; }
+.mm-line:nth-of-type(4) { transition-delay: .24s; }
+.mm-node rect { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.2; }
+.mm-node text, .mm-root text { font-family: var(--font); font-size: 11px; font-weight: 800; fill: var(--text); }
+.mm-node { opacity: 0; transition: opacity .5s var(--ease) .35s; }
+.mv__view.is-on .mm-node { opacity: 1; }
+.mm-root rect { fill: var(--primary); }
+.mm-root text { fill: #fff; }
+@media (prefers-color-scheme: dark) { .mm-root rect { fill: #3a82cc; } }
+
+/* art 3: desktop pet */
+.desk { position: absolute; inset: 0; background: linear-gradient(160deg, var(--sky-1), var(--sky-2)); }
+.desk__win {
+  position: absolute; left: 14px; top: 14px; width: 46%; height: 54px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); padding: 8px 10px;
+}
+.desk__win i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 3px; background: var(--border-strong); }
+.desk__win b { display: block; height: 5px; border-radius: 3px; background: var(--surface-3); margin-top: 7px; }
+.desk__win b + b { width: 62%; margin-top: 5px; }
+.desk__note {
+  position: absolute; left: 18px; bottom: 34px; width: 48%; padding: 8px 10px; border-radius: 10px;
+  background: #fff6e6; color: #6b4a2b; box-shadow: 0 1px 2px rgba(70, 48, 28, .08), 0 4px 12px rgba(70, 48, 28, .08);
+  font-size: 11px; font-weight: 700; line-height: 1.45; transform: rotate(-1.5deg);
+}
+@media (prefers-color-scheme: dark) { .desk__note { background: #3a3126; color: #f0dcc2; } }
+.desk__note strong { display: block; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: #b07a45; margin-bottom: 2px; }
+.desk__note span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.desk__note span::before { content: '· '; }
+.desk__bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 24px; display: flex; align-items: center; gap: 5px; padding: 0 10px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent); border-top: 1px solid var(--border);
+}
+.desk__bar i { width: 12px; height: 12px; border-radius: 4px; background: var(--surface-3); }
+.desk__bar i:first-child { background: var(--primary); opacity: .8; }
+.desk__clock { margin-left: auto; font-size: 10.5px; font-weight: 800; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.desk__pet { position: absolute; right: 6px; bottom: 21px; }
+.desk__pet canvas { image-rendering: pixelated; transition: opacity .45s var(--ease); }
+.desk__pet .pet__shadow { bottom: -5px; }
+.bubble {
+  position: absolute; right: 18px; bottom: calc(100% - 14px); z-index: 2; display: flex; align-items: center; gap: 7px;
+  padding: 7px 11px 7px 8px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); border: 1px solid var(--border);
+  white-space: nowrap; text-align: left; opacity: 0; transform: translateY(6px) scale(.96); transform-origin: 80% 100%;
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+.bubble::after {
+  content: ''; position: absolute; right: 26px; bottom: -6px; width: 10px; height: 10px; background: var(--surface);
+  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transform: rotate(45deg);
+}
+.bubble.is-on { opacity: 1; transform: none; }
+.bubble__ic { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-ink); }
+.bubble__ic svg { width: 14px; height: 14px; stroke-width: 2.3; }
+.bubble b { display: block; font-size: 11.5px; line-height: 1.2; }
+.bubble small { display: block; font-size: 10px; font-weight: 700; color: var(--text-2); line-height: 1.3; }
+
+/* ---------- download ---------- */
+.platforms { display: grid; gap: 20px; max-width: 560px; margin: 0 auto; }
+@media (min-width: 960px) { .platforms { grid-template-columns: repeat(3, 1fr); max-width: none; gap: 24px; align-items: start; } }
+.plat { padding: 24px 22px 22px; display: flex; flex-direction: column; }
+@media (min-width: 960px) { .plat { min-height: 100%; } }
+@media (max-width: 959px) { .plat.is-you { order: -1; } }
+.plat.is-you { border-color: color-mix(in srgb, var(--primary) 50%, var(--border)); box-shadow: 0 0 0 4px var(--primary-soft), var(--shadow); }
+.plat.is-you:hover { box-shadow: 0 0 0 4px var(--primary-soft), var(--shadow-hover); }
+.plat__badge {
+  position: absolute; top: 18px; right: 18px; display: none; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary-ink); font-size: 12px; font-weight: 800;
+}
+.plat__badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+.plat.is-you .plat__badge { display: inline-flex; }
+.plat__head { display: flex; align-items: center; gap: 14px; }
+.plat__icon { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 15px; background: var(--surface-3); color: var(--text); }
+.plat.is-you .plat__icon { background: var(--primary-soft); color: var(--primary-ink); }
+.plat__icon .ic { width: 26px; height: 26px; stroke-width: 1.8; }
+.plat h3 { font-size: 21px; line-height: 1.2; font-weight: 800; }
+.plat__req { font-size: 13.5px; color: var(--text-2); font-weight: 600; margin-top: 2px; }
+.plat .btn { margin-top: 20px; width: 100%; }
+.steps { list-style: none; padding: 0; margin-top: 20px; display: grid; gap: 12px; counter-reset: step; font-size: 15px; line-height: 1.55; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
+.steps li::before {
+  content: counter(step); width: 26px; height: 26px; margin-top: -1px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--surface-3); color: var(--text-2); font-size: 13px; font-weight: 800;
+}
+.plat.is-you .steps li::before { background: var(--primary-soft); color: var(--primary-ink); }
+.chip-ic {
+  display: inline-grid; place-items: center; width: 24px; height: 24px; margin: -3px 1px 0; vertical-align: middle;
+  border-radius: 7px; background: var(--primary-soft); color: var(--primary-ink);
+}
+.chip-ic .ic { width: 15px; height: 15px; stroke-width: 2.1; }
+.note {
+  display: flex; gap: 10px; margin-top: 18px; padding: 12px 14px; border-radius: 14px;
+  background: var(--accent-soft); color: var(--accent-ink); font-size: 14px; line-height: 1.5; font-weight: 600;
+}
+.note .ic { width: 18px; height: 18px; margin-top: 1px; }
+.qr {
+  display: flex; align-items: center; gap: 14px; margin-top: 20px; padding: 12px; border-radius: 16px;
+  background: var(--surface-2); border: 1px dashed var(--border-strong);
+}
+.qr[hidden] { display: none; }
+.qr__code { width: 104px; height: 104px; flex: none; padding: 6px; border-radius: 12px; background: #fff; box-shadow: var(--shadow-sm); }
+.qr__code svg { width: 100%; height: 100%; }
+.qr p { font-size: 14px; color: var(--text-2); font-weight: 600; line-height: 1.5; }
+
+/* ---------- footer ---------- */
+.foot { padding: 34px 0 44px; border-top: 1px solid var(--border); }
+.foot__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; color: var(--text-2); font-size: 14px; font-weight: 600; }
+.foot__pets { display: flex; gap: 6px; }
+.foot__pets canvas { image-rendering: pixelated; }
+.foot__dot { color: var(--text-3); }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+  .js .reveal { opacity: 1; transform: none; }
+  .card:hover, .btn:hover { transform: none; }
+  .zzz span { animation: none !important; opacity: 1; }
+  .zzz span:nth-child(1) { transform: translate(0, 0); }
+  .zzz span:nth-child(2) { transform: translate(calc(var(--s, 4) * 2px), calc(var(--s, 4) * -4px)); }
+  .zzz span:nth-child(3) { transform: translate(calc(var(--s, 4) * 4px), calc(var(--s, 4) * -9px)); }
+}
+</style>
+</head>
+<body>
+<!-- Generated by web/tools/build-site.mjs on 2026-10-29 from web/site/index.html. Edit the template and rebuild (node web/tools/build-site.mjs). Quick edit: GITHUB_REPO / APP_URL / VERSION are at the top of the main script near the end of this file. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></symbol>
+  <symbol id="i-win" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 12h17M12 4.5v15"/></symbol>
+  <symbol id="i-mac" viewBox="0 0 24 24"><rect x="4.5" y="5" width="15" height="10.5" rx="1.8"/><path d="M2.5 18.8h19"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.8" y="2.5" width="10.4" height="19" rx="2.8"/><path d="M10.6 5.2h2.8M10.6 18.8h2.8"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v11M8.5 7 12 3.5 15.5 7"/><path d="M8.5 10.5H7.2a1.7 1.7 0 0 0-1.7 1.7v6.1a1.7 1.7 0 0 0 1.7 1.7h9.6a1.7 1.7 0 0 0 1.7-1.7v-6.1a1.7 1.7 0 0 0-1.7-1.7h-1.3"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="cloud" viewBox="0 0 24 8"><path d="M7 0h6v1h2v1h3v1h2v1h2v1h1v3H0V5h1V4h2V3h2V1h2z"/></symbol>
+</svg>
+
+<a class="skip" href="#main" data-i18n="skip">Bỏ qua đến nội dung</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <nav class="top__nav" aria-label="Menu" data-i18n-aria="nav">
+      <a href="#features" data-i18n="nav.features">Tính năng</a>
+      <a href="#download" data-i18n="nav.download">Tải về</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Ngôn ngữ / Language" data-lang="vi">
+      <span class="lang__thumb" aria-hidden="true"></span>
+      <button type="button" data-set-lang="vi" aria-pressed="true" lang="vi" title="Tiếng Việt">VI</button>
+      <button type="button" data-set-lang="en" aria-pressed="false" lang="en" title="English">EN</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-labelledby="brand">
+    <div class="wrap">
+      <h1 class="brand rise" id="brand">
+        <span class="brand__logo" aria-hidden="true"><svg width="64" height="64" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#54a0ea" d="M4 0h24v1h-24z"/><path fill="#539fe9" d="M3 1h26v1h-26z"/><path fill="#529ee8" d="M2 2h28v1h-28z"/><path fill="#519de8" d="M1 3h5v1h-5zM7 3h24v1h-24z"/><path fill="#2e2622" d="M6 3h1v1h-1zM5 4h1v1h-1zM7 4h1v1h-1zM5 5h1v1h-1zM8 5h1v1h-1zM5 6h1v1h-1zM7 6h1v1h-1zM9 6h1v1h-1zM5 7h2v1h-2zM8 7h1v1h-1zM10 7h2v1h-2zM5 8h2v1h-2zM9 8h1v1h-1zM12 8h1v1h-1zM6 9h1v1h-1zM10 9h10v1h-10zM6 10h1v1h-1zM10 10h1v1h-1zM20 10h4v1h-4zM6 11h1v1h-1zM8 11h2v1h-2zM20 11h1v1h-1zM24 11h1v1h-1zM6 12h2v1h-2zM20 12h1v1h-1zM25 12h1v1h-1zM7 13h1v1h-1zM20 13h1v1h-1zM26 13h1v1h-1zM6 14h1v1h-1zM20 14h1v1h-1zM26 14h1v1h-1zM5 15h1v1h-1zM20 15h1v1h-1zM27 15h1v1h-1zM5 16h1v1h-1zM20 16h1v1h-1zM27 16h1v1h-1zM5 17h1v1h-1zM11 17h2v1h-2zM18 17h2v1h-2zM21 17h1v1h-1zM27 17h1v1h-1zM5 18h1v1h-1zM11 18h2v1h-2zM18 18h2v1h-2zM21 18h1v1h-1zM28 18h1v1h-1zM5 19h1v1h-1zM22 19h1v1h-1zM28 19h1v1h-1zM5 20h1v1h-1zM13 20h1v1h-1zM15 20h1v1h-1zM17 20h1v1h-1zM23 20h1v1h-1zM28 20h1v1h-1zM5 21h1v1h-1zM14 21h1v1h-1zM16 21h1v1h-1zM24 21h1v1h-1zM27 21h1v1h-1zM6 22h1v1h-1zM24 22h3v1h-3zM7 23h1v1h-1zM23 23h1v1h-1zM7 24h1v1h-1zM23 24h1v1h-1zM8 25h2v1h-2zM21 25h2v1h-2zM10 26h1v1h-1zM20 26h1v1h-1zM11 27h9v1h-9z"/><path fill="#519ce7" d="M0 4h5v1h-5zM8 4h24v1h-24z"/><path fill="#fff7ea" d="M6 4h1v1h-1zM6 5h2v1h-2zM6 6h1v1h-1zM8 6h1v1h-1zM9 7h1v1h-1zM10 8h2v1h-2zM11 10h9v1h-9zM10 11h10v1h-10zM8 12h12v1h-12zM8 13h12v1h-12zM7 14h13v1h-13zM6 15h14v1h-14zM6 16h14v1h-14zM6 17h5v1h-5zM13 17h5v1h-5zM20 17h1v1h-1zM6 18h5v1h-5zM13 18h5v1h-5zM20 18h1v1h-1zM6 19h16v1h-16zM6 20h3v1h-3zM11 20h2v1h-2zM14 20h1v1h-1zM16 20h1v1h-1zM18 20h2v1h-2zM22 20h1v1h-1zM6 21h8v1h-8zM15 21h1v1h-1zM17 21h7v1h-7zM7 22h17v1h-17zM8 23h15v1h-15z"/><path fill="#509be6" d="M0 5h5v1h-5zM9 5h23v1h-23z"/><path fill="#4f9ae5" d="M0 6h5v1h-5zM10 6h22v1h-22z"/><path fill="#4e99e5" d="M0 7h5v1h-5zM12 7h20v1h-20z"/><path fill="#f3a5b5" d="M7 7h1v1h-1zM7 8h2v1h-2zM7 9h3v1h-3zM7 10h3v1h-3zM7 11h1v1h-1zM9 20h2v1h-2zM20 20h2v1h-2z"/><path fill="#4d98e4" d="M0 8h5v1h-5zM13 8h19v1h-19z"/><path fill="#4c97e3" d="M0 9h6v1h-6zM20 9h12v1h-12z"/><path fill="#4c96e2" d="M0 10h6v1h-6zM24 10h8v1h-8z"/><path fill="#4b95e1" d="M0 11h6v1h-6zM25 11h7v1h-7z"/><path fill="#e0a062" d="M21 11h3v1h-3zM21 12h4v1h-4zM21 13h5v1h-5zM21 14h5v1h-5zM21 15h6v1h-6zM21 16h6v1h-6zM22 17h5v1h-5zM22 18h6v1h-6zM23 19h5v1h-5z"/><path fill="#4a94e1" d="M0 12h6v1h-6zM26 12h6v1h-6z"/><path fill="#4993e0" d="M0 13h7v1h-7zM27 13h5v1h-5z"/><path fill="#4892df" d="M0 14h6v1h-6zM27 14h5v1h-5z"/><path fill="#4791de" d="M0 15h5v1h-5zM28 15h4v1h-4zM0 16h5v1h-5zM28 16h4v1h-4z"/><path fill="#4690dd" d="M0 17h5v1h-5zM28 17h4v1h-4z"/><path fill="#458fdc" d="M0 18h5v1h-5zM29 18h3v1h-3z"/><path fill="#448edb" d="M0 19h5v1h-5zM29 19h3v1h-3z"/><path fill="#438ddb" d="M0 20h5v1h-5zM29 20h3v1h-3z"/><path fill="#c48046" d="M24 20h4v1h-4zM25 21h2v1h-2z"/><path fill="#428cda" d="M0 21h5v1h-5zM28 21h4v1h-4z"/><path fill="#428bd9" d="M0 22h6v1h-6zM27 22h5v1h-5z"/><path fill="#418ad8" d="M0 23h7v1h-7zM24 23h8v1h-8z"/><path fill="#4089d7" d="M0 24h7v1h-7zM24 24h8v1h-8z"/><path fill="#f2e4d0" d="M8 24h15v1h-15zM10 25h11v1h-11zM11 26h9v1h-9z"/><path fill="#3f88d7" d="M0 25h8v1h-8zM23 25h9v1h-9z"/><path fill="#3e87d6" d="M0 26h10v1h-10zM21 26h11v1h-11z"/><path fill="#3d86d5" d="M0 27h11v1h-11zM20 27h12v1h-12z"/><path fill="#3d85d4" d="M1 28h30v1h-30z"/><path fill="#3c84d4" d="M2 29h28v1h-28z"/><path fill="#3b83d3" d="M3 30h26v1h-26z"/><path fill="#3a82d2" d="M4 31h24v1h-24z"/></svg></span>
+        <span class="brand__name">BUN</span>
+      </h1>
+      <p class="hero__tag rise rise--2" data-i18n="hero.tag">Lịch trình, checklist và một <span class="hl">bé thú cưng pixel</span> luôn ở cạnh bạn</p>
+
+      <div class="stage rise rise--3" id="stage" role="img" aria-label="Bé cún và bé mèo pixel đang chơi" data-i18n-aria="stage">
+        <span class="cloud" aria-hidden="true"><svg viewBox="0 0 24 8" shape-rendering="crispEdges"><use href="#cloud"/></svg></span>
+        <span class="cloud cloud--2" aria-hidden="true"><svg viewBox="0 0 24 8" shape-rendering="crispEdges"><use href="#cloud"/></svg></span>
+        <div class="stage__floor"></div>
+      </div>
+
+      <div class="hero__cta rise rise--4">
+        <a class="btn btn--primary btn--lg" id="heroBtn" href="#download">
+          <svg class="ic" aria-hidden="true"><use href="#i-dl"/></svg><span id="heroBtnLabel">Tải BUN</span>
+        </a>
+        <p class="hero__meta" id="heroMeta">Windows · macOS · iPhone</p>
+        <a class="hero__other" href="#download" data-i18n="hero.other">Tải cho thiết bị khác ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="section section--tight" id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <header class="section__head reveal">
+        <p class="eyebrow" data-i18n="feat.eyebrow">Tính năng</p>
+        <h2 id="features-title" data-i18n="feat.title">Ba điều nhỏ cho một ngày gọn gàng</h2>
+      </header>
+
+      <div class="features">
+        <!-- 1. Weekly schedule -->
+        <article class="card feature reveal">
+          <div class="art" aria-hidden="true">
+            <div class="cal">
+              <div class="cal__days">
+                <span></span>
+                <div class="cal__cols-h">
+                  <span data-i18n="cal.d1">T2</span><span data-i18n="cal.d2">T3</span><span class="is-today" data-i18n="cal.d3">T4</span><span data-i18n="cal.d4">T5</span><span data-i18n="cal.d5">T6</span>
+                </div>
+              </div>
+              <div class="cal__body">
+                <div class="cal__times"><span>8:00</span><span>9:00</span><span>10:00</span><span>11:00</span></div>
+                <div class="cal__grid">
+                  <i class="ev ev--blue" style="--c:0;--r:.5;--h:1"><b data-i18n="cal.e1">Họp nhóm</b></i>
+                  <i class="ev ev--warm ev--grow" style="--c:1;--r:1.4;--h:1.3"><b>Gym</b><span class="ev__bell"><svg class="ic"><use href="#i-bell"/></svg>−10′</span><span class="ev__grip"></span></i>
+                  <i class="ev ev--solid" style="--c:2;--r:0;--h:1.5"><b data-i18n="cal.e2">Báo cáo</b></i>
+                  <i class="ev ev--green" style="--c:3;--r:1;--h:1"><b data-i18n="cal.e3">Đọc sách</b></i>
+                  <i class="ev ev--ghost" style="--c:4;--r:2;--h:1">+</i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature__body">
+            <h3 class="feature__title"><span class="picon" data-px="cal"></span><span data-i18n="f1.title">Lịch trình tuần</span></h3>
+            <p class="feature__lead" data-i18n="f1.lead">Cả tuần gọn trong một màn hình, nhìn là biết hôm nay cần làm gì.</p>
+            <ul class="ticks">
+              <li data-i18n="f1.b1">Bấm vào khung giờ trống để thêm việc</li>
+              <li data-i18n="f1.b2">Kéo mép trên hoặc dưới để kéo dài</li>
+              <li data-i18n="f1.b3">Nhắc trước vài phút để không bị trễ</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 2. Checklist, three views -->
+        <article class="card feature reveal reveal--d1">
+          <div class="art" aria-hidden="true">
+            <div class="mv" id="mv">
+              <div class="mv__top">
+                <div class="mv__tabs">
+                  <span class="mv__thumb"></span>
+                  <span class="mv__tab is-on" data-v="0" data-i18n="mv.t1">Bảng</span>
+                  <span class="mv__tab" data-v="1" data-i18n="mv.t2">Lộ trình</span>
+                  <span class="mv__tab" data-v="2" data-i18n="mv.t3">Mindmap</span>
+                </div>
+                <div class="mv__share"><em class="av av--a">L</em><em class="av av--b">M</em><em class="av av--link"><svg class="ic"><use href="#i-link"/></svg></em></div>
+              </div>
+              <div class="mv__views">
+                <div class="mv__view is-on" data-v="0">
+                  <ul class="tb">
+                    <li class="is-done"><i class="ck"></i><span data-i18n="mv.r1">Đặt vé tàu đi Đà Lạt</span><em class="av av--a">L</em></li>
+                    <li class="is-done"><i class="ck"></i><span data-i18n="mv.r2">Đặt khách sạn</span><em class="av av--b">M</em></li>
+                    <li class="tick-late"><i class="ck"></i><span data-i18n="mv.r3">Lên lịch đi chơi</span><em class="av av--c">B</em></li>
+                    <li><i class="ck"></i><span data-i18n="mv.r4">Soạn hành lý</span><em class="av av--a">L</em></li>
+                  </ul>
+                </div>
+                <div class="mv__view" data-v="1">
+                  <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid meet">
+                    <path class="rm-base" d="M22 96 C 56 96 62 54 98 54 S 140 92 170 92 S 210 44 242 44 S 272 30 282 26"/>
+                    <path class="rm-done" pathLength="100" d="M22 96 C 56 96 62 54 98 54 S 140 92 170 92 S 210 44 242 44 S 272 30 282 26"/>
+                    <circle class="rm-dot rm-dot--done" cx="22" cy="96" r="5"/>
+                    <circle class="rm-dot rm-dot--done" cx="98" cy="54" r="6"/>
+                    <circle class="rm-dot rm-dot--done" cx="170" cy="92" r="6"/>
+                    <circle class="rm-dot" cx="242" cy="44" r="6"/>
+                    <path d="M282 26 V4" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M283 4 h13 l-4 5 l4 5 h-13 z" fill="var(--accent)"/>
+                    <text class="rm-label" x="98" y="77" text-anchor="middle" data-i18n="mv.m1">Vé tàu</text>
+                    <text class="rm-label" x="170" y="113" text-anchor="middle" data-i18n="mv.m2">Khách sạn</text>
+                    <text class="rm-label" x="242" y="67" text-anchor="middle" data-i18n="mv.m3">Hành lý</text>
+                    <image class="rm-pet" id="rmPet" x="154" y="56" width="32" height="32"/>
+                  </svg>
+                </div>
+                <div class="mv__view" data-v="2">
+                  <svg viewBox="0 0 300 118" preserveAspectRatio="xMidYMid meet">
+                    <path class="mm-line" pathLength="100" d="M150 59 C 120 59 110 22 72 22"/>
+                    <path class="mm-line" pathLength="100" d="M150 59 C 120 59 110 96 72 96"/>
+                    <path class="mm-line" pathLength="100" d="M150 59 C 180 59 190 22 228 22"/>
+                    <path class="mm-line" pathLength="100" d="M150 59 C 180 59 190 96 228 96"/>
+                    <g class="mm-node"><rect x="22" y="9" width="76" height="26" rx="13"/><text x="60" y="26" text-anchor="middle" data-i18n="mv.n1">Vé tàu</text></g>
+                    <g class="mm-node"><rect x="22" y="83" width="76" height="26" rx="13"/><text x="60" y="100" text-anchor="middle" data-i18n="mv.n2">Khách sạn</text></g>
+                    <g class="mm-node"><rect x="202" y="9" width="76" height="26" rx="13"/><text x="240" y="26" text-anchor="middle" data-i18n="mv.n3">Ăn gì</text></g>
+                    <g class="mm-node"><rect x="202" y="83" width="76" height="26" rx="13"/><text x="240" y="100" text-anchor="middle" data-i18n="mv.n4">Hành lý</text></g>
+                    <g class="mm-root"><rect x="110" y="44" width="80" height="30" rx="15"/><text x="150" y="63" text-anchor="middle" data-i18n="mv.root">Đà Lạt</text></g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature__body">
+            <h3 class="feature__title"><span class="picon picon--green" data-px="list"></span><span data-i18n="f2.title">Checklist 3 chế độ</span></h3>
+            <p class="feature__lead" data-i18n="f2.lead">Một danh sách, ba cách nhìn. Đổi qua lại chỉ bằng một cú bấm.</p>
+            <ul class="ticks">
+              <li data-i18n="f2.b1"><b>Bảng</b>: gọn gàng, xong việc nào tích việc đó</li>
+              <li data-i18n="f2.b2"><b>Lộ trình</b>: thú cưng lớn dần theo tiến độ</li>
+              <li data-i18n="f2.b3"><b>Mindmap</b>: thấy toàn cảnh mọi ý tưởng</li>
+              <li data-i18n="f2.b4">Chia sẻ bằng link, giao việc cho bạn bè</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 3. Pixel pet -->
+        <article class="card feature reveal reveal--d2">
+          <div class="art" aria-hidden="true">
+            <div class="desk">
+              <div class="desk__win"><i></i><i></i><i></i><b></b><b></b></div>
+              <div class="desk__note">
+                <strong data-i18n="pet.noteTitle">Note hôm nay</strong>
+                <span data-i18n="pet.note1">Gọi điện cho mẹ</span>
+                <span data-i18n="pet.note2">Mua hạt cho Bun</span>
+              </div>
+              <div class="desk__pet" id="deskPet">
+                <div class="bubble" id="deskBubble">
+                  <span class="bubble__ic"><svg class="ic"><use href="#i-bell"/></svg></span>
+                  <span><b id="deskBubbleTitle">Họp nhóm · 9:00</b><small id="deskBubbleSub">còn 5 phút nữa</small></span>
+                </div>
+              </div>
+              <div class="desk__bar"><i></i><i></i><i></i><span class="desk__clock" id="deskClock">8:55</span></div>
+            </div>
+          </div>
+          <div class="feature__body">
+            <h3 class="feature__title"><span class="picon picon--warm" data-px="pet"></span><span data-i18n="f3.title">Thú cưng pixel</span></h3>
+            <p class="feature__lead" data-i18n="f3.lead">Một bé mèo hoặc cún nhỏ sống ngay trên màn hình desktop của bạn.</p>
+            <ul class="ticks">
+              <li data-i18n="f3.b1">Nhắc việc bằng hoạt ảnh và nhạc chuông</li>
+              <li data-i18n="f3.b2">Giữ note mỗi ngày, hôm sau còn nhắc lại</li>
+              <li data-i18n="f3.b3">Ngủ, vươn vai, đi dạo trong lúc bạn làm việc</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOWNLOAD ============ -->
+  <section class="section" id="download" aria-labelledby="download-title">
+    <div class="wrap">
+      <header class="section__head reveal">
+        <p class="eyebrow" data-i18n="dl.eyebrow">Tải về</p>
+        <h2 id="download-title" data-i18n="dl.title">Mang BUN về máy của bạn</h2>
+        <p class="section__sub" data-i18n="dl.sub">Chọn thiết bị của bạn. Cài đặt chỉ mất một lát.</p>
+      </header>
+
+      <div class="platforms">
+        <!-- Windows -->
+        <article class="card plat reveal" id="plat-win" data-os="win" aria-labelledby="plat-win-t">
+          <span class="plat__badge" data-i18n="dl.you">Máy của bạn</span>
+          <div class="plat__head">
+            <span class="plat__icon" aria-hidden="true"><svg class="ic"><use href="#i-win"/></svg></span>
+            <div><h3 id="plat-win-t">Windows</h3><p class="plat__req" data-i18n="win.req">Windows 10 / 11 · bộ cài .exe</p></div>
+          </div>
+          <a class="btn btn--primary" data-dl="win" href="#download"><svg class="ic" aria-hidden="true"><use href="#i-dl"/></svg><span data-i18n="win.btn">Tải cho Windows</span></a>
+          <ol class="steps">
+            <li><span data-i18n="win.s1">Mở file <b>BUN-Setup.exe</b> vừa tải về.</span></li>
+            <li><span data-i18n="win.s2">Làm theo trình cài đặt. BUN sẽ có biểu tượng ngay ngoài desktop.</span></li>
+          </ol>
+          <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span data-i18n="win.note">Nếu Windows SmartScreen cảnh báo: bấm <b>Thông tin thêm</b> → <b>Vẫn chạy</b>.</span></p>
+        </article>
+
+        <!-- macOS -->
+        <article class="card plat reveal reveal--d1" id="plat-mac" data-os="mac" aria-labelledby="plat-mac-t">
+          <span class="plat__badge" data-i18n="dl.you">Máy của bạn</span>
+          <div class="plat__head">
+            <span class="plat__icon" aria-hidden="true"><svg class="ic"><use href="#i-mac"/></svg></span>
+            <div><h3 id="plat-mac-t">macOS</h3><p class="plat__req" data-i18n="mac.req">MacBook, iMac · bộ cài .dmg</p></div>
+          </div>
+          <a class="btn btn--primary" data-dl="mac" href="#download"><svg class="ic" aria-hidden="true"><use href="#i-dl"/></svg><span data-i18n="mac.btn">Tải cho macOS</span></a>
+          <ol class="steps">
+            <li><span data-i18n="mac.s1">Mở file <b>.dmg</b>, kéo <b>BUN</b> vào thư mục <b>Applications</b>.</span></li>
+            <li><span data-i18n="mac.s2">Lần đầu mở BUN, macOS sẽ chặn vì app chưa được Apple ký: vào <b>Cài đặt hệ thống → Quyền riêng tư &amp; Bảo mật</b>, kéo xuống và bấm <b>Vẫn mở</b> (Open Anyway).</span></li>
+            <li><span data-i18n="mac.s3">Từ đó, bé thú cưng tự xuất hiện mỗi khi bạn bật Mac.</span></li>
+          </ol>
+        </article>
+
+        <!-- iPhone -->
+        <article class="card plat reveal reveal--d2" id="plat-ios" data-os="ios" aria-labelledby="plat-ios-t">
+          <span class="plat__badge" data-i18n="dl.you">Máy của bạn</span>
+          <div class="plat__head">
+            <span class="plat__icon" aria-hidden="true"><svg class="ic"><use href="#i-phone"/></svg></span>
+            <div><h3 id="plat-ios-t">iPhone</h3><p class="plat__req" data-i18n="ios.req">iOS 16.4 trở lên · không cần App Store</p></div>
+          </div>
+          <a class="btn btn--primary" data-dl="ios" href="/app/"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span data-i18n="ios.btn">Mở BUN trên iPhone</span></a>
+          <ol class="steps">
+            <li><span data-i18n="ios.s1">Mở link bằng <b>Safari</b>.</span></li>
+            <li><span><span data-i18n="ios.s2">Bấm nút <b>Chia sẻ</b></span> <span class="chip-ic" aria-hidden="true"><svg class="ic"><use href="#i-share"/></svg></span></span></li>
+            <li><span><span data-i18n="ios.s3">Chọn <b>Thêm vào MH chính</b> (Add to Home Screen)</span> <span class="chip-ic" aria-hidden="true"><svg class="ic"><use href="#i-add"/></svg></span></span></li>
+            <li><span data-i18n="ios.s4">Mở BUN từ màn hình chính.</span></li>
+            <li><span data-i18n="ios.s5">Vào <b>Cài đặt</b> (bánh răng) → bật <b>Thông báo trên điện thoại</b> để bé thú cưng nhắc việc, có âm thanh và rung, kể cả khi đã đóng app.</span></li>
+          </ol>
+          <div class="qr" id="qr" hidden>
+            <div class="qr__code" id="qrCode"></div>
+            <p data-i18n="ios.qr">Đang dùng máy tính? Quét mã này bằng camera iPhone để mở BUN.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span class="foot__pets" id="footPets" aria-hidden="true"></span>
+    <span>© BUN</span>
+    <span class="foot__dot" aria-hidden="true">·</span>
+    <span><span data-i18n="foot.ver">Phiên bản</span> <span data-ver>1.0.0</span></span>
+  </div>
+</footer>
+
+<script type="application/json" id="sprite-data">{"cat":{"w":48,"h":40,"rle":true,"pal":{"k":"#3b2a24","w":"#fffaf3","s":"#eedfcf","t":"#d9a066","d":"#b97c4b","b":"#8a5332","p":"#f6b8bd","r":"#f59aa6","e":"#2a1b17","y":"#ef8f9c","z":"#c8606f"},"frames":{"sit_0":"253.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk23.k9wkwkwk9wk24.k9wkwk9wk26.k19wk27.k18wtk5.4k18.k17w2tk4.k4tk16.k17w4tk3.k2tk2tk15.k17w4tk3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","sit_blink":"253.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt21wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk23.k9wkwkwk9wk24.k9wkwk9wk26.k19wk27.k18wtk5.4k18.k17w2tk4.k4tk16.k17w4tk3.k2tk2tk15.k17w4tk3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","sit_tail_in":"253.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk23.k9wkwkwk9wk24.k9wkwk9wk26.k19wk27.k18wtk4.4k19.k17w2tk3.k4tk17.k17w4tk2.k2tk2tk16.k17w4tk2.k2tk.2k16.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","sit_tail_out":"253.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk23.k9wkwkwk9wk24.k9wkwk9wk26.k19wk27.k18wtk6.4k17.k17w2tk5.k4tk15.k17w4tk4.k2tk2tk14.k17w4tk4.k2tk.2k14.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","sit_ear":"274.2k25.2k18.kpk25.kpk16.k2pk25.k2pk14.k3pk25.k3p14kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk23.k9wkwkwk9wk24.k9wkwk9wk26.k19wk27.k18wtk5.4k18.k17w2tk4.k4tk16.k17w4tk3.k2tk2tk15.k17w4tk3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","walk_0":"388.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk44.k2tk12.2k19.2k9.k2tk12.kpk17.kpk9.k2tk12.k2pk15.k2pk10.k2tk11.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk11.k2tk10.k2p5t9b5tk11.k2t12k8t7b6tk11.3k11tk9t5b7tk11.k12tk7t4w3b4w5tk9.k13tk4t8wb8w2tk9.k13tk2t4w2e9w2e4wk8.kw9t4wk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.k11t3wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k11t5wk19wk11.k9t18wk19.k9t18wk20.k7t18wk22.2k3t18s2k24.k3w15k3wk25.k3w2k3sk5.k3sk3wk23.k3wk.k3sk4.k3s2k3wk23.k3wk2.k3sk3.k3sk.k3wk21.k4wk2.k4sk.k4sk.k4wk21.4k4.4k3.4k3.4k14.","walk_1":"388.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk12.2k19.2k9.k2tk12.kpk17.kpk9.k2tk12.k2pk15.k2pk9.k2tk12.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk10.k2tk11.k2p5t9b5tk11.k2tk10.k8t7b6tk11.k2t12k9t5b7tk11.3k10tk7t4w3b4w5tk10.k12tk4t8wb8w2tk9.k13tk2t4w2e9w2e4wk9.k13tk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.kw9t4wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k11t5wk19wk10.k11t18wk18.k9t18wk19.k9t18wk20.k7t18wk22.2k3t18s2k24.k3w15k3wk25.k3wk3sk6.k2sk3wk24.k3w2k3sk5.k3sk3wk24.k3w2k3sk5.k3sk3wk25.3k.k4sk5.4k4wk29.4k10.4k16.","walk_2":"389.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk44.k2tk11.2k19.2k10.k2tk11.kpk17.kpk10.k2tk11.k2pk15.k2pk10.k2tk11.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk11.k2tk10.k2p5t9b5tk11.k2t12k8t7b6tk11.3k11tk9t5b7tk11.k12tk7t4w3b4w5tk9.k13tk4t8wb8w2tk9.k13tk2t4w2e9w2e4wk8.kw9t4wk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.k11t3wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k11t5wk19wk11.k9t18wk19.k9t18wk20.k7t18wk22.2k3t18s2k24.k3w15k3wk26.k3wk2sk7.ksk3wk26.k3wksk8.2k3wk28.k3w2k9.k3wk28.k4wk8.k4w2k28.4k10.5k17.","walk_3":"389.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk11.2k19.2k10.k2tk11.kpk17.kpk10.k2tk11.k2pk15.k2pk10.k2tk11.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk10.k2tk11.k2p5t9b5tk11.k2tk10.k8t7b6tk11.k2t12k9t5b7tk11.3k10tk7t4w3b4w5tk10.k12tk4t8wb8w2tk9.k13tk2t4w2e9w2e4wk9.k13tk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.kw9t4wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k11t5wk19wk10.k11t18wk18.k9t18wk19.k9t18wk20.k7t18wk22.2k3t18s2k24.k3w15k3wk25.k3wk3sk6.k2sk3wk25.k3wk2sk7.ksk3wk26.k3wk2sk7.ksk3wk26.k4w2k8.k2s3k28.4k11.4k19.","liedown_0":"445.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk23.k5w2e9w2e5wk23.k2w3r6wk6w3r2wk3.4k16.k9wkwkwk5w2t2wk2.k4tk16.k9wkwk5w4tk3.k2tk2tk15.2k16w3t2k3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t3ws9ws6tk2.k2tk17.k4t2wk4ws4wk6tk2.k2tk17.k5twk4wk4wk6tk2.k2tk17.k6tk4wk4wk6tk.k3tk17.k6tk4wk4wk6t2k4tk17.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk4tk18.k6tk4wk4wk6tk3tk19.8k4wk4w11k20.k6wk4wk4wk6wk23.k3ws2wkws2wk2wswk2ws3wk24.23k12.","liedown_1":"733.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt4w2e9w2e4wtk22.2k5w2e9w2e5wk21.ktk2w3r6wk6w3r2w2k19.k2tk9wkwkwk9wktk17.k4tk9wkwk9wk3tk15.k6tk19wk5tk14.k7t19k6tk14.k12t8w12tk14.k12t8w12tk14.k12t8w12tk15.k7t6k4w6k7tk17.k5tk6wk2wk6wk5tk19.k4tkws2wswk2wkws2wswk4tk21.26k11.","liedown_2":"983.11k19.2k13.3k3t2k6t3k16.kpk9.3k5tkpk9t3k13.k2pk7.k7tk2pk12tk12.k3pk5.k7wk3pk8t4ktk11.k3pt13kt3pk5wt2k4t3k10.k2p3t11b3t2pk5wk8t2k9.kp5t9b5tpk4wk10t2k8.k7t7b7tk4wk10t2k8.k8t5b8tk4wk10t2k7.k6t4w3b4w6tk3wk10t2k7.k3t8wb8w3tk3wk10t2k7.kt3w4k7w4k3wtk4wk8tkwk7.k5w2e9w2e5wk5w2k4t2kwk8.k2w3r6wk6w3r2wk7w4k2wk9.k9wkwkwk9wk12wk11.k9wkwk9wk12sk13.k19wk10s3k15.19k8s3k34.11k14.","sleep_0":"983.11k19.2k13.3k3t2k6t3k16.kpk9.3k5tkpk9t3k13.k2pk7.k7tk2pk12tk12.k3pk5.k7wk3pk8t4ktk11.k3pt13kt3pk5wt2k4t3k10.k2p3t11b3t2pk5wk8t2k9.kp5t9b5tpk4wk10t2k8.k7t7b7tk4wk10t2k8.k8t5b8tk4wk10t2k7.k6t4w3b4w6tk3wk10t2k7.k3t8wb8w3tk3wk10t3k6.kt3we2we7we2we3wtk4wk8tk2tk6.k5w2e9w2e5wk5w2k4t3k2tk6.k2w3r6wk6w3r2wk7w4k2w2k2tk5.k10wkwk10wk12wk.k2tk6.k21wks14k2tk8.k19wksk2d14tk9.19k2sk2d13tk26.21k4.","sleep_1":"935.11k34.3k11t3k16.2k10.3k6t2k9t3k13.kpk8.k8tkpk12tk12.k2pk6.k8wk2pk8t4ktk11.k3pk4.k8wk3pk5wt2k4t3k10.k3pt13kt3pk5wk8t2k9.k2p3t11b3t2pk4wk10t2k8.kp5t9b5tpk4wk10t2k8.k7t7b7tk4wk10t2k8.k8t5b8tk4wk10t2k7.k6t4w3b4w6tk3wk10t2k7.k3t8wb8w3tk3wk10t3k6.kt3we2we7we2we3wtk4wk8tk2tk6.k5w2e9w2e5wk5w2k4t3k2tk6.k2w3r6wk6w3r2wk7w4k2w2k2tk5.k10wkwk10wk12wk.k2tk6.k21wks14k2tk8.k19wksk2d14tk9.19k2sk2d13tk26.21k4.","stretch_0":"983.11k19.2k13.3k3t2k6t3k16.kpk9.3k5tkpk9t3k13.k2pk7.k7tk2pk12tk12.k3pk5.k7wk3pk8t4ktk11.k3pt13kt3pk5wt2k4t3k10.k2p3t11b3t2pk5wk8t2k9.kp5t9b5tpk4wk10t2k8.k7t7b7tk4wk10t2k8.k8t5b8tk4wk10t2k7.k6t4w3b4w6tk3wk10t2k7.k3t8wb8w3tk3wk10t3k6.kt3w4k7w4k3wtk4wk8tk2tk6.k5w2e9w2e5wk5w2k4t3k2tk6.k2w3r6wk6w3r2wk7w4k2w2k2tk5.k10wkwk10wk12wk.k2tk6.k21wks14k2tk8.k19wksk2d14tk9.19k2sk2d13tk26.21k4.","stretch_1":"733.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt3w4k7w4k3wtk22.2k5w2e9w2e5wk21.ktk2w3r6wk6w3r2w2k19.k2tk9wkwkwk9wktk17.k4tk9wkwk9wk3tk15.k6tk19wk5tk14.k7t19k6tk14.k12t8w12tk14.k12t8w12tk14.k12t8w12tk15.k7t6k4w6k7tk17.k5tk6wk2wk6wk5tk19.k4tkws2wswk2wkws2wswk4tk21.26k11.","stretch_2":"733.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t2we5wb5we2w3tk23.kt5we9we5wtk22.2k5we11we5wk21.ktk2w3r6wk6w3r2w2k19.k2tk10wkrk10wktk17.k4tk10wk10wk3tk15.k6tk19wk5tk14.k7t19k6tk14.k12t8w12tk14.k12t8w12tk14.k12t8w12tk15.k7t6k4w6k7tk17.k5tk6wk2wk6wk5tk19.k4tkws2wswk2wkws2wswk4tk21.26k11.","stretch_3":"733.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t2we5wb5we2w3tk23.kt5we9we5wtk22.2k5we11we5wk21.ktk2w3r5w3k5w3r2w2k19.k2tk9wk3rk9wktk17.k4tk8wk3rk8wk3tk15.k6tk8w3k8wk5tk14.k7t19k6tk14.k12t8w12tk14.k12t8w12tk14.k12t8w12tk15.k7t6k4w6k7tk17.k5tk6wk2wk6wk5tk19.k4tkws2wswk2wkws2wswk4tk21.26k11.","stretch_4":"733.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k6t4w3b4w6tk23.k3t8wb8w3tk23.kt21wtk22.2k5w2e9w2e5wk21.ktk2w3r6wk6w3r2w2k19.k2tk9wkwkwk9wktk17.k4tk9wkwk9wk3tk15.k6tk19wk5tk14.k7t19k6tk14.k12t8w12tk14.k12t8w12tk14.k12t8w12tk15.k7t6k4w6k7tk17.k5tk6wk2wk6wk5tk19.k4tkws2wswk2wkws2wswk4tk21.26k11.","stretch_5":"388.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk12.2k19.2k9.k2tk12.kpk17.kpk9.k2tk12.k2pk15.k2pk9.k2tk12.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk10.k2tk11.k2p5t9b5tk11.k2tk10.k8t7b6tk11.k2t12k9t5b7tk11.3k10tk7t4w3b4w5tk10.k12tk4t8wb8w2tk9.k13tk2t4w2e9w2e4wk9.k13tk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.kw9t4wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k11t5wk19wk10.k11t18wk18.k9t18wk19.k9t18wk20.k7t18wk22.2k3t18s2k24.k3w15k3wk25.k3wk3sk6.k2sk3wk25.k3wk3sk6.k2sk3wk25.k3wk3sk6.k2sk3wk25.k4wk3sk5.k2sk4wk25.8k7.7k16.","stretch_6":"388.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk44.k2tk44.k2tk44.k2tk12.2k19.2k10.k2tk11.kpk17.kpk10.k2tk11.k2pk15.k2pk10.k2tk11.k3pk13.k3pk11.k2tk10.k3pt13kt3pk11.k2t12k3p3t11b3tpk11.3k11tk2p5t9b5tk11.k13tk8t7b6tk10.k14tk9t5b7tk10.k13tk7t4w3b4w5tk8.kw9t4wk4t8wb8w2tk8.kw9t4wk2t4w2e9w2e4wk8.k11t3wk6w2e9w2e4wk8.k11t3wk3w3r6wk6w3rwk8.k11t3wk10wkwkwk8wk9.k9t5wk10wkwk8wk10.k9t6wk19wk12.k7t18wk22.2k3t18s2k24.k3w15k3wk25.k3wk3sk7.k2sk3wk24.k3wk3sk7.k2sk3wk24.k3wk3sk8.k2sk3wk23.k4wk3sk7.k2sk4wk23.8k9.7k14.","stretch_7":"102.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk44.k2tk44.k2tk44.k2tk45.k2tk44.k2tk44.k2tk45.k2tk44.k2tk44.k2t3k42.3k3t2k40.k7t2k37.k10t2k34.k10t2ktk17.2k14.k10tkpkt2k14.kpk13.k11tk2pk2t2k11.k2pk13.k11tk3pk3tk9.k3pk13.k11tk3pt13kt3pk14.k10tk3p3t11b3tpk14.k9twk2p5t9b5tk15.kt3w4twk8t7b6tk16.k3w3t2wk9t5b7tk16.k3wt2swk7t4w3b4w5tk15.k3wk3sk4t8wb8w2tk15.k3w5k2t3we2we7we2we3wk15.k3w2k2sk6w2e9w2e4wk15.k3w2k2sk3w3r6wk6w3rwk15.k3w2k2sk10wkwkwk8wk15.k3w2k3sk10wkwk8wk16.k3w2k3s2k19w5k13.k3w2k3sk.20k4wk12.k3w2k3sk2.k20ws2wk11.k4wk4sk.k20ws2wk12.4k.4k3.23k3.","stretch_8":"388.4k43.k4tk41.k2tk2tk41.2k.k2tk44.k2tk12.2k19.2k9.k2tk12.kpk17.kpk9.k2tk12.k2pk15.k2pk9.k2tk12.k3pk13.k3pk10.k2tk11.k3pt13kt3pk10.k2tk11.k3p3t11b3tpk10.k2tk11.k2p5t9b5tk11.k2tk10.k8t7b6tk11.k2t12k9t5b7tk11.3k10tk7t4w3b4w5tk10.k12tk4t8wb8w2tk9.k13tk2t3we2we7we2we3wk9.k13tk6w2e9w2e4wk8.kw9t4wk3w3r6wk6w3rwk8.kw9t4wk10wkwkwk8wk8.k11t4wk10wkwk8wk9.k4t3w4t5wk19wk10.k3t5w3t18wk18.k7w2t18wk18.k8w2t18wk16.2k8w2t18wk16.k8w2t18s2k16.k7w19k3wk17.k5w2k4.k3sk6.k2sk3wk17.k3w2k6.k3sk6.k2sk3wk18.3k8.k3sk6.k2sk3wk29.k4sk5.k2sk4wk29.4k7.7k16.","alert_0":"61.2k19.2k25.kpk17.kpk19.5k.k2pk15.k2pk18.kpwpwp2k3pk13.k3pk18.k5w2k3pt13kt3pk18.kw3pw2k2p3t11b3t2pk18.k2wp2w2kp5t9b5tpk19.5kwk7t7b7tk20.k4wk8t5b8tk20.k3wk5t2e3w3b3w2e5tk20.k2wk3twew2e3wb3w4ew3tk20.k2wkt3w4e7w4e3wtk21.kwk5w2e9w2e5wk21.kwk2w3r6wk6w3r2wk22.2k10wkrk10wk22.kwk10wk10wk24.kwk19wk25.kwk19wk26.2k17w5k24.2k16wkpwpwpk24.k16wk5wk24.k16wkw3pwk2.4k18.k16wk2wp2wk.k4tk16.k17wt5k2.k2tk2tk15.k17w4tk3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t14w6tk2.k2tk17.k4t13w6tk2.k2tk17.k5t12w6tk2.k2tk17.k6ts9ws6tk.k3tk17.k6tk9wk6t2k4tk17.k6tk9wk6tk4tk18.k6tk9wk6tk4tk18.k6tk9wk6tk3tk19.8k9w11k20.k6w11k6wk23.k3ws2wk9.k2ws3wk24.7k9.7k12.","alert_1":"61.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk24.k5t2e3w3b3w2e5tk2.5k13.5k2twew2e3wb3w4ew3tk.kpwpwpk11.kpwpwpk2w4e7w4e3wtk.k5wk11.k5wk3w2e9w2e5w3kw3pwk11.kw3pwk3r6wk6w3r2wkwk2wp2wk11.k2wp2wk8wkrk10wk2w5k13.5k10wk10wk5w2k15.k3wk19wk5wk18.k2wk19wk4wk20.kwk19wk3wk21.kwk19wk2wk23.2k19w3k25.k18wtk5.4k18.k17w2tk4.k4tk16.k17w4tk3.k2tk2tk15.k17w4tk3.k2tk.2k15.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t14w6tk2.k2tk17.k4t13w6tk2.k2tk17.k5t12w6tk2.k2tk17.k6ts9ws6tk.k3tk17.k6tk9wk6t2k4tk17.k6tk9wk6tk4tk18.k6tk9wk6tk4tk18.k6tk9wk6tk3tk19.8k9w11k20.k6w11k6wk23.k3ws2wk9.k2ws3wk24.7k9.7k12.","alert_2":"61.2k19.2k25.kpk17.kpk25.k2pk15.k2pk.5k19.k3pk13.k3p2kpwpwpk18.k3pt13kt3p2k5wk18.k2p3t11b3t2p2kw3pwk18.kp5t9b5tp2k2wp2wk18.k7t7b7tkw5k19.k8t5b8tk4wk19.k5t2e3w3b3w2e5tk3wk19.k3twew2e3wb3w4ew3tk2wk20.kt3w4e7w4e3wtk2wk20.k5w2e9w2e5wkwk21.k2w3r6wk6w3r2wkwk21.k10wkrk10w2k23.k10wk10wkwk24.k19wkwk25.k19wkwk23.5k17w2k23.kpwpwpk16w2k23.k5wk16wk24.kw3pwk15wtk6.4k14.k2wp2wk14w2tk5.k4tk14.5k14w4tk4.k2tk2tk14.k17w4tk4.k2tk.2k14.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t14w6tk2.k2tk17.k4t13w6tk2.k2tk17.k5t12w6tk2.k2tk17.k6ts9ws6tk.k3tk17.k6tk9wk6t2k4tk17.k6tk9wk6tk4tk18.k6tk9wk6tk4tk18.k6tk9wk6tk3tk19.8k9w11k20.k6w11k6wk23.k3ws2wk9.k2ws3wk24.7k9.7k12.","alert_3":"61.2k19.2k25.kpk17.kpk25.k2pk15.k2pk25.k3pk13.k3pk25.k3pt13kt3pk25.k2p3t11b3t2pk25.kp5t9b5tpk25.k7t7b7tk25.k8t5b8tk17.5k2.k5t2e3w3b3w2e5tk15.kpwpwpk.k3twew2e3wb3w4ew2t5k12.k5wk.kt3w4e7w4e2wkpwpwpk11.kw3pw3k5w2e9w2e3wk5wk11.k2wp2wkwk2w3r6wk6w3rkw3pwk12.5k2wk10wkrk8wk2wp2wk13.2k5wk10wk10w5k16.k5wk19wk3wk18.k4wk19wk2wk20.k3wk19wkwk22.k2wk19wkwk23.3k19w2k26.k18wtk6.4k17.k17w2tk5.k4tk15.k17w4tk4.k2tk2tk14.k17w4tk4.k2tk.2k14.k17w4tk3.k2tk18.kt15w5tk3.k2tk17.k3t14w6tk2.k2tk17.k4t13w6tk2.k2tk17.k5t12w6tk2.k2tk17.k6ts9ws6tk.k3tk17.k6tk9wk6t2k4tk17.k6tk9wk6tk4tk18.k6tk9wk6tk4tk18.k6tk9wk6tk3tk19.8k9w11k20.k6w11k6wk23.k3ws2wk9.k2ws3wk24.7k9.7k12.","play_0":"533.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk44.k2tk44.k2tk43.k2tk5.2k19.2k16.k2tk5.kpk17.kpk16.k2tk5.k2pk15.k2pk15.k2tk6.k3pk13.k3pk15.k2tk2.k3.k3pt13kt3pk15.k2t3kt4k3p3t11b3tpk15.ktk7tk2p5t9b5tk15.2k8tk8t7b6tk15.k9tk9t5b7tk15.k8tk6t2e3w3b3w2e4tk14.k8tk4twew2e3wb3w4ew2tk13.k9tk2t3w4e7w4e3wk14.k8tk6w2e9w2e4wk3.5k6.k8tk3w3r6wk6w3rwk2.kyz3yk5.k8tk10wkwkwk8wk.kz2p2yzyk5.k8tk10wkwk8wk2.kyp2yz2yk6.ks5t2sk19wk3.k3yz2yzk6.k5w4s24k2yz4yk5.k7w5k4s13wswksk2z3yzyk6.k5wk3sk.4k13wswks2k3yzyk8.9k6.17k2z5k4.","play_1":"484.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk44.k2tk44.k2tk44.k2tk44.k2tk5.2k19.2k16.k2tk5.kpk17.kpk15.k2tk6.k2pk15.k2pk15.k2tk2.k3.k3pk13.k3pk15.k2t3kt4k3pt13kt3pk15.ktk7tk3p3t11b3tpk15.2k8tk2p5t9b5tk15.k9tk8t7b6tk15.k9tk9t5b7tk15.k8tk6t2e3w3b3w2e4tk13.k9tk4twew2e3wb3w4ew2tk14.k8tk2t3w4e7w4e3wk14.k8tk6w2e9w2e4wk3.5k6.k8tk3w3r6wk6w3rwk2.kyz3yk6.k7tk10wkwkwk8wk.kz2p2yzyk6.ks5tsk10wkwk8wk2.kyp2yz2yk7.3k5sk19wk3.k3yz2yzk6.k5w3ks24k2yz4yk5.k7wks5k2s13wswksk2z3yzyk6.k5wk3sk3.2k13wswks2k3yzyk8.9k6.17k2z5k4.","play_2":"294.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk6.2k19.2k15.k2tk6.kpk17.kpk15.k2tk6.k2pk15.k2pk14.k2tk7.k3pk13.k3pk14.k2tk7.k3pt13kt3pk14.k2tk7.k3p3t11b3tpk13.k2tk8.k2p5t9b5tk13.k2tk8.k8t7b6tk13.k2tk8.k9t5b7tk13.k2tk4.4k6t2e3w3b3w2e4tk12.k2t5k3tk4twew2e3wb3w4ew2tk15.k7tk2t3w4e7w4e3wk14.k8tk6w2e9w2e4wk13.k9tk3w3r6wk6w3rwk12.k10tk11wkrk9w5k8.k10twk11wk9wk5wk7.k10t2wk19wk7wk6.k10t3w19k8wk6.k4t3w3t2w8s3k5.12k8.k3t3w2t7s4k29.ks4wt4s4k19.5k9.k4w3s3k22.kyz3yk7.k4w4k24.kz2p2yzyk6.k4wk2sk24.kyp2yz2yk5.k4wk2sk25.k3yz2yzk4.k4wk3sk25.k2yz4yk4.k3wk3sk26.k2z3yzyk3.k5wk2sk25.z.k3yzyk5.8k27.2z5k4.","play_3":"533.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk44.k2tk44.k2tk43.k2tk5.2k19.2k16.k2tk5.kpk17.kpk16.k2tk5.k2pk15.k2pk15.k2tk6.k3pk13.k3pk15.k2tk2.k3.k3pt13kt3pk15.k2t3kt4k3p3t11b3tpk15.ktk7tk2p5t9b5tk15.2k8tk8t7b6tk15.k9tk9t5b7tk5.4k6.k8tk6t2e3w3b3w2e4tk.3k4wk5.k8tk4twew2e3wb3w4ew2t2k8wk3.k9tk2t3w4e7w4e3wk9wk4.k8tk6w2e9w2e4wk5w4k5.k8tk3w3r6wk6w3rwk3w2k3yzk4.k8tk10wkwkwk8w4ky2pyz2yk4.k8tk10wkwk8w2k2.kypyz2yzk5.ks5t2sk19wk4.k2yz4yk5.k5w4s23k.k2z3yzyk4.k7w5k7sk2s3k8s2k4yz2yk5.k5wk3sk.8k13sk.k2yz2yk7.9k10.9k2z2k3z5k3.","play_4":"533.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk44.k2tk44.k2tk43.k2tk5.2k19.2k16.k2tk5.kpk17.kpk16.k2tk5.k2pk15.k2pk15.k2tk6.k3pk13.k3pk15.k2tk2.k3.k3pt13kt3pk15.k2t3kt4k3p3t11b3tpk15.ktk7tk2p5t9b5tk15.2k8tk8t7b6tk15.k9tk9t5b7tk15.k8tk6t2e3w3b3w2e4tk14.k8tk4twew2e3wb3w4ew2tk13.k9tk2t3w4e7w4e3wk14.k8tk6w2e9w2e4wk5.5k4.k8tk3w3r6wk6w3rwk4.k3yzyk3.k8tk10wkwkwk8wk3.ky2pz2yzk3.k8tk10wkwk8wk4.kypz4yk4.ks5t2sk19wk5.k2z3yzyk4.k5w4s23k2.k4yz2yk3.k7w5k4s13wswksk.k3yz2yzk4.k5wk3sk.4k13wswksz2.kyz3yk6.9k6.10kz2k3zk.3z5k2.","play_5":"533.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk44.k2tk44.k2tk44.k2tk43.k2tk5.2k19.2k16.k2tk5.kpk17.kpk16.k2tk5.k2pk15.k2pk15.k2tk6.k3pk13.k3pk.4k10.k2tk2.k3.k3pt13kt3p2k4wk9.k2t3kt4k3p3t11b3tpk6wk8.ktk7tk2p5t9b5tk6wk8.2k8tk8t7b6tk3w3k9.k9tk9t5b7tk2wk12.k8tk7t4w3b4w5t2k13.k8tk4t2we5wb5we2w2tk13.k9tk2t5we9we5wk14.k8tk6we11we4wk5.5k4.k8tk3w3r6wk6w3rwk4.k3yzyk3.k8tk10wkwkwk8wk3.ky2pz2yzk3.k8tk10wkwk8wk4.kypz4yk4.ks5t2sk19wk5.k2z3yzyk4.k5w4s23k2.k4yz2yk3.k7w5k7sk2s3k8sk.k3yz2yzk4.k5wk3sk.8k13sz2.kyz3yk6.9k10.6kz2k3zk.3z5k2.","play_6":"821.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk4.2k19.2k17.k2tk4.kpk17.kpk17.k2tk4.k2pk15.k2pk17.k2tk4.k3pk13.k3pk16.k2tk5.k3pt13kt3pk16.k2tk5.k3p3t11b3tpk16.k2tk5.k2p5t9b5tk4.4k7.k2tk6.k8t7b6tk2.2k4wk6.k2t8k9t5b7tk.k7wk5.k2t2k3t2k7t4w3b4w5tk8wk5.ktk6tk4t8wb8w2tk4w4k6.3k6tk2t3we2we7we2we3wk3wkz3yk6.2k6tk6w2e9w2e4wkw2k2p2yzyk5.2k6tk3w3r6wk6w3rw3kyp2yz2y2k4.2k6tk10wkwkwk8wk.k3yz2yzksk3.2k7tk10wkwk8wk2.k2yz4yk2s4.3k3t2kwk19wk3.k2z3yzyk2s5.kw3k4w19k3.z.k3yzy4k6.18k2.3k8.2z5k4.","play_7":"820.4k43.k4tk42.k2tk2tk41.k2tk.2k41.k2tk5.2k19.2k16.k2tk5.kpk17.kpk16.k2tk5.k2pk15.k2pk16.k2tk5.k3pk13.k3pk16.k2tk5.k3pt13kt3pk16.k2tk5.k3p3t11b3tpk16.k2tk5.k2p5t9b5tk15.k2tk6.k8t7b6tk3.4k8.k2t8k9t5b7tk.2k4wk7.k2t2k3t2k7t4w3b4w5tk7wk6.ktk6tk4t8wb8w2tk7wk6.3k6tk2t3we2we7we2we3wk3w4kyk6.2k6tk6w2e9w2e4wk2wk2p4yk5.2k6tk3w3r6wk6w3rw3kzp3yzy2k4.2k6tk10wkwkwk8wk.k4yz2yksk3.2k7tk10wkwk8wk2.k3yz2yzk2s4.3k3t2kwk19wk3.k2yz4yk2s5.kw3k4w19k3.z.kz3yz4k6.18k2.3k8.2z5k4."},"anims":{"sit":{"loop":true,"seq":[["sit_0",1600],["sit_blink",140],["sit_0",1200],["sit_tail_in",350],["sit_0",250],["sit_tail_out",350],["sit_0",1100],["sit_ear",120],["sit_0",110],["sit_ear",120],["sit_0",1300],["sit_blink",140],["sit_0",200],["sit_blink",140]]},"walk":{"loop":true,"seq":[["walk_0",140],["walk_1",140],["walk_2",140],["walk_3",140]]},"liedown":{"loop":false,"seq":[["liedown_0",280],["liedown_1",420],["liedown_2",450],["sleep_0",300]]},"sleep":{"loop":true,"seq":[["sleep_0",850],["sleep_1",850]]},"stretch":{"loop":false,"seq":[["stretch_0",700],["stretch_1",800],["stretch_2",250],["stretch_3",1100],["stretch_1",350],["stretch_4",150],["stretch_1",300],["stretch_5",500],["stretch_6",300],["stretch_7",2000],["stretch_6",250],["stretch_5",300],["stretch_8",1500],["stretch_5",1200]]},"alert":{"loop":true,"seq":[["alert_0",120],["alert_1",120],["alert_2",120],["alert_3",120]]},"play":{"loop":true,"seq":[["play_0",160],["play_1",130],["play_0",130],["play_1",130],["play_2",120],["play_3",140],["play_4",140],["play_5",130],["play_3",130],["play_6",150],["play_7",150],["play_6",150],["play_7",150]]}},"meta":{"zzz":[16,19],"scratch":[24,13]},"iconSize":16,"icon":"17.2k10.2k2.kpk8.kpk2.k2pk6.k2pk2.k2pt6kt2pk2.kp2t6b2tpk2.k4t4b4tk.k6t2b6t2k3t8w3t2ktw2e6w2ewt2k2w2e6w2e2w2kw2r3w2p3w2rw2k4wkw2kwk4wk.k4wk2wk4wk3.k10wk5.10k3."},"dog":{"w":48,"h":40,"rle":true,"pal":{"o":"#3d2b26","i":"#8a6a5c","w":"#fdf8ee","s":"#e9dcc8","d":"#d3c1a8","t":"#eba868","T":"#c47b45","c":"#4e4356","g":"#f5c443","p":"#f29aa0","b":"#a6d0f2","B":"#74a6dc"},"frames":{"sit_0":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Tiw2o7w2owi2T4to19.o4tTi2w2o7w2o2wiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","sit_blink":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Ti13wi2T4to19.o4tTiw3o7w3owiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","sit_tail":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Tiw2o7w2owi2T4to19.o4tTi2w2o7w2o2wiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso22.os5wi5wi5wi5wso.o19.os4iwi5wi5wiw4isiowo18.os5wi5wi5wi5wsi2wo18.o2s4wi2wi2wi2wi2wi4w2siwso19.o5si2si2si2si2si5si2so21.26o9.","sit_lookl":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Ti2o7w2o2wi2T4to19.o4tTiw2o7w2o3wiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","sit_lookr":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Ti2w2o7w2oi2T4to19.o4tTi3w2o7w2owiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","sit_earflop":"453.7o4.4o31.2o7w2o.o4t2o24.5o11woi6to22.o3ti13wiT6to20.o5ti13wiT5to19.o6ti14wiT4to18.o5t2Ti15wi2Tto19.o5tTi17wiTo20.o4t2Tiw2o7w2o5wio21.o4tTi2w2o7w2o5wo23.o2t2Ti18wo23.ot2Tiw2p4w3o4w2p3wo24.oTi9wo9wo26.2os6wiwiwi6wso28.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","walk_0":"559.6o18.2o19.3o6w2o15.o2wo17.o2ti8wo13.o4wo15.o4ti8wo12.o5wo14.o5ti8wo12.o4wo14.o5tTi7wo13.o3wo14.oi3t2Ti2w2o3wio12.o4wo13.owi3Ti3w2o5wo12.o3wi13oi2w3i9w3o13.owi14wi7w2p5w3o14.o15wis14wo14.o9wsws4wis2c8w2i2wo14.o10ws6wis3c7w2so15.o3wsws12w2i5cw2s3o16.o4ws11wswsw2i2c3io19.o17ws3wioi2go20.o7wsws11wo.o2go20.os7ws11wso2.2o21.o2s17w2so26.o3ws13w3so26.o3w3s2i4o2s3w3io25.o3w4ido4.2oi3wio26.o3wio3do6.o3wio26.o3wo.o3do6.o3wo25.o3wo2.o3do5.oi3wo25.o3wo2.o3dio4.oi3wio23.o4wo3.o4do2.o2di4wo22.o4so3.o4do2.o2di4so23.4o5.4o4.7o16.","walk_1":"511.6o39.3o6w2o16.2o18.o2ti8wo14.o2wo16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o4wo14.o5tTi2w2o3wio12.o3wo14.o4t2Ti2w2o5wo11.o4wo13.o4t2Ti7w3o12.o3wi13o2i2t2Tiw2p5w3o13.owi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io26.o3w3io5.oi3wi2do25.o3wi3do6.o3wido25.o4w2i3do6.o3wio25.o4soi3do6.o3wio26.4o.o3do6.o3wo32.o4do5.o4wo31.o4do5.o4so32.4o7.4o18.","walk_2":"511.6o39.3o6w2o16.2o18.o2ti8wo14.o2wo16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o4wo14.o5tTi2w2o3wio12.o3wo14.o4t2Ti2w2o5wo11.o4wo13.o4t2Ti7w3o12.o3wi13o2i2t2Tiw2p5w3o13.owi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io27.o3w2io5.oi3wi3do26.o3wido6.o3wi3do26.o3w2io6.o3wo3dio26.o4wo5.o3wo.o4do25.o4so5.o3wo.o4do25.o4io5.o4wo.4o26.o4do5.o4so32.4o7.4o20.","walk_3":"559.6o17.2o20.3o6w2o14.o2w2o17.o2ti8wo13.o4wo15.o4ti8wo12.o5wo14.o5ti8wo12.o5wo13.o5tTi7wo13.oi3wo13.oi3t2Ti2w2o3wio13.o3wo13.owi3Ti3w2o5wo13.o2wi13oi2w3i9w3o14.oi14wi7w2p5w3o14.o15wis14wo14.o9wsws4wis2c8w2i2wo14.o10ws6wis3c7w2so15.o3wsws12w2i5cw2s3o16.o4ws11wswsw2i2c3io19.o17ws3wioi2go20.o7wsws11wo.o2go20.os7ws11wso2.2o21.o2s17w2so26.o3ws13w3so26.o3w3s6o2s3w3io27.o3wio6.o3w2i3do26.o3wio6.o3wio3do27.o3wo6.o3wo.o3do25.oi3wo5.o3wo2.o3do25.oi3wio4.o3wo2.o3dio23.o2di4wo2.o4wo3.o4do22.o2di4so2.o4so3.o4do23.7o4.4o5.4o13.","walk_4":"511.6o39.3o6w2o15.2o19.o2ti8wo13.o2w2o16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o5wo13.o5tTi2w2o3wio12.oi3wo13.o4t2Ti2w2o5wo12.o3wo13.o4t2Ti7w3o13.o2wi13o2i2t2Tiw2p5w3o14.oi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io26.o3w3io5.oi3wi2do26.o3wido6.o3wi3do27.o3wio5.o4w2i3do26.o3wio5.o4soi3do26.o3wo7.4o.o3do26.o4wo11.o4do25.o4so11.o4do26.4o13.4o15.","walk_5":"511.6o39.3o6w2o15.2o19.o2ti8wo13.o2w2o16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o5wo13.o5tTi2w2o3wio12.oi3wo13.o4t2Ti2w2o5wo12.o3wo13.o4t2Ti7w3o13.o2wi13o2i2t2Tiw2p5w3o14.oi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3s2i4o2s3w3io26.o3w3ido4.2oi3wido26.o3wi3do6.o3wido26.o3wo3dio5.o3w2io25.o3wo.o4do5.o4wo25.o3wo.o4do5.o4so25.o4wo.4o6.o4io25.o4so11.o4do26.4o13.4o17.","ld_0":"453.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Tiw2i7w2iwi2T4to19.o4tTiw3o7w3owiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo24.2os6wiwiwi6ws2o27.o2s5wiwi5w2so30.oi4s5w4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso25.ows2wi5wi5wi2wswo24.o5wi5wi5wi5wo23.os4wi5wi5wi4wso.2o19.os5wi5wi5wi5wso2wo18.os4iwi5wi5wiw4isi2wo18.os5wi5wi5wi5wsiwo19.o2s4wi2wi2wi2wi2wi4w2siso20.o5si2si2si2si2si5siso22.25o10.","ld_1":"837.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Tiw2i7w2iwi2T4to19.o4tTiw3o7w3owiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto22.oTi9wo9wiTo22.ow2is6wiwiwi6ws2iwo20.o4wi2s5wiwi5w2si4wo18.o6w2i4s5w4s2i6wo16.o8wc13ic8wo15.o8wo13c9wo15.os6wo4wo4wo4wo7wso15.os5wo6wo2wo6wo6wso15.o2s4wo6wo2wo6wo5w2so16.o5sosisiso4sosisiso6so18.29o9.","ld_2":"933.7o39.2o7w2o32.5o11w5o26.o3ti13wi3to24.o5ti11wi5to22.o6ti11wi6to20.o5t2Ti11wi2T5to19.o5tTi13wiT5to19.o4t2Tio2wo5wo2woi2T4to19.o4tTi2w2o7w2o2wiT4to20.o2t2Ti15wi2T2to21.ot2Tiw2p4w3o4w2pwi2Tto20.owiTi9wo9wiTiwo18.o3w2is6wiwiwi6ws2i3wo16.o6wi2s5wiwi5w2si6wo15.o7w2i4s5w4s2i7wo15.os6woc13ic7wso15.os5wo2w13cwo6wso15.o2s4wo6wo2wo6wo5w2so16.o5sosisiso4sosisiso6so18.29o9.","sleep_0":"1135.6o28.8o3.3o6w2o23.3o8w3o2ti8wo20.2o12wi4ti8wo18.o14wi5ti8wo16.ow5iwsws5wi5tTi7wo15.owi5wiws6wi5tTiwo2wo2wio13.owi7wi7wi4t2Ti2w2o5wo12.oi9wi4wswi4t2Ti7w3o11.owi9wi5ws2i2t2Tiw2p5w3o11.owi9wi6wisi2Ti10wo12.o2i10wi5wisc2i7w2i2wo11.o2w7i5wi5wis3c7w2sio11.o9w3i2si6w2i5cw2s3iwo12.o11w2i9w2i4c2i4wo13.oi9si10si10so15.32o7.","sleep_1":"1121.8o6.6o25.3o8w6o6w2o21.2o13wi2ti8wo19.o14wi4ti8wo17.o7wsws5wi5ti8wo15.o2w5i2ws6wi5tTi7wo14.o2wi5wi8wi5tTiwo2wo2wio13.owi7wi5wswi4t2Ti2w2o5wo12.oi9wi4wswi4t2Ti7w3o11.owi9wi5ws2i2t2Tiw2p5w3o11.owi9wi6wisi2Ti10wo12.o2i10wi5wisc2i7w2i2wo11.o2w7i5wi5wis3c7w2sio11.o9w3i2si6w2i5cw2s3iwo12.o11w2i9w2i4c2i4wo13.oi9si10si10so15.32o7.","st_lift":"798.6o39.3o6w2o36.o2ti8wo34.o4ti8wo33.o5ti8wo32.o5tTi7wo32.o5tTi2w2i3wio31.o4t2Tiw3o5wo30.o4t2Ti7w3o30.oi2t2Tiw2p5w3o29.oisi2Ti10wo20.10o2isc2i7w2i2wo17.3o12wis3c7w2so16.2ow5i10w2i5cw2s3o16.o2wi5wi11w2i2c3io18.o2wi7wi13wi2go19.owi9wi12wi2go19.owi9wi12w2io20.owi9wi12wi2do.2o13.3oiwi10wi7w8io2wo10.2o3wiswi10wi5wi11wo9.o5wo2swi9si5wi11wo9.o3s2o.o3s9i6si10so11.3o4.29o10.","st_yawn1":"798.6o39.3o6w2o36.o2ti8wo34.o4ti8wo33.o5ti8wo32.o5tTi7wio31.o5tTi2w2o3w3o30.o4t2Tiwo2wo2w3o30.o4t2Ti2p3w3io31.oi2t2Ti5wiopo31.oisi2Ti7wipo21.10oiwic2i9wio18.3o13wi3c2s3w2s2o17.2ow5i12w5ci3o18.o2wi5wi13w2cio20.o2wi7wi13wi2go19.owi9wi12wi2go19.owi9wi12w2io20.owi9wi12wi2do.2o13.3oiwi10wi7w8io2wo10.2o3wiswi10wi5wi11wo9.o5wo2swi9si5wi11wo9.o3s2o.o3s9i6si10so11.3o4.29o10.","st_yawn2":"702.6o39.3o6w3o35.o2ti9w2o32.o4ti10w2o30.o5ti9w3o29.o5tTi8w3o29.o5tTi2w2o3w2io30.o4t2Tipo2wowi2o31.o4t2Ti5wi3o31.oi2t2Ti5wi4o31.osi2Ti6wi2opo31.oic2i7wio2po30.o2wi3cs6wi3po19.10oi4w5c6w2io16.3o17w2c2i3s4o15.2ow5i15wi2gi2o18.o2wi5wi13w2i2go19.o2wi7wi13wi2o20.owi9wi12wo22.owi9wi12wi2o20.owi9wi12wi2do.2o13.3oiwi10wi7w8io2wo10.2o3wiswi10wi5wi11wo9.o5wo2swi9si5wi11wo9.o3s2o.o3s9i6si10so11.3o4.29o10.","st_awake":"798.6o39.3o6w2o36.o2ti8wo34.o4ti8wo33.o5ti8wo32.o5tTi7wo32.o5tTi2w2o3wio31.o4t2Ti2w2o5wo30.o4t2Ti7w3o30.oi2t2Tiw2p5w3o29.oisi2Ti10wo20.10o2isc2i7w2i2wo17.3o12wis3c7w2so16.2ow5i10w2i5cw2s3o16.o2wi5wi11w2i2c3io18.o2wi7wi13wi2go19.owi9wi12wi2go19.owi9wi12w2io20.owi9wi12wi2do.2o13.3oiwi10wi7w8io2wo10.2o3wiswi10wi5wi11wo9.o5wo2swi9si5wi11wo9.o3s2o.o3s9i6si10so11.3o4.29o10.","st_sit":"510.6o39.3o6w2o36.o2ti8wo34.o4ti8wo33.o5ti8wo32.o5tTi7wo32.o5tTi2w2o3wio31.o4t2Ti2w2o5wo30.o4t2Ti7w3o30.oi2t2Tiw2p5w3o30.osi2Ti10wo31.osc2i7w2i2wo32.os3c7w2so30.3o3i5cw2s3o28.3o5w2io2c3io29.2o9wo.oi2go28.2o11wo2.o2go27.o13wo3.2o27.o14wo31.o5i10wio29.oi5wi9wido27.oi7wi8wido26.oi9wi7wido25.o2i9wi7wido23.2ow2i9wi7wido20.3o3w2i10wi6wido18.2o5woiwi10wi4wsido17.o5w2o.oswi9si5wi2do16.o3s2o4.o2s9i6si2do17.3o7.20o16.","stand":"511.6o39.3o6w2o16.2o18.o2ti8wo14.o2wo16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o4wo14.o5tTi2w2o3wio12.o3wo14.o4t2Ti2w2o5wo11.o4wo13.o4t2Ti7w3o12.o3wi13o2i2t2Tiw2p5w3o13.owi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io26.o3w3io5.oi3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","st_bow":"533.2o45.o2wo43.o4wo42.o5wo42.o4wo43.o3wo43.o4wo21.6o16.o2w2i3o15.3o6w2o15.oi5w3o11.o2ti8wo14.o9w3o7.o4ti8wo13.o12w3o4.o5ti8wo12.o4wsws8w3o.o5tTi7wo12.o5ws12woi5tTi2w2o3wio11.o13wsws3wi4t2Ti2w2o5wo10.o14ws4wi4t2Ti7w3o10.o7wsws9w2i2t2Tiw2p5w3o10.o8ws10wisi2Ti10wo11.os18wisc2i7w2i2wo11.os19wis3c7w2so13.o3ws16w2i5cw2s3o14.o3w5s14wio2c3io17.o3w5i4s10wo.oi2go18.o3wi3d5o3s7wo2.o2go2.2o13.o3wi3do5.3o4s4i2o4i2o2do12.o3wi3do8.o12i2wi2do12.o3wi3do8.o14wi2do12.o4wi3do7.o14wido13.o4si3do7.o13s3o15.8o9.13o10.","st_bow2":"532.2o45.o2w2o43.o4wo42.o5wo42.o5wo42.oi3wo43.o3wo21.6o17.ow2i3o15.3o6w2o16.o5w3o11.o2ti8wo14.o9w3o7.o4ti8wo13.o12w3o4.o5ti8wo12.o4wsws8w3o.o5tTi7wo12.o5ws12woi5tTi2w2o3wio11.o13wsws3wi4t2Ti2w2o5wo10.o14ws4wi4t2Ti7w3o10.o7wsws9w2i2t2Tiw2p5w3o10.o8ws10wisi2Ti10wo11.os18wisc2i7w2i2wo11.os19wis3c7w2so13.o3ws16w2i5cw2s3o14.o3w5s14wio2c3io17.o3w5i4s10wo.oi2go18.o3wi3d5o3s7wo2.o2go2.2o13.o3wi3do5.3o4s4i2o4i2o2do12.o3wi3do8.o12i2wi2do12.o3wi3do8.o14wi2do12.o4wi3do7.o14wido13.o4si3do7.o13s3o15.8o9.13o10.","st_back":"464.6o39.3o6w2o36.o2ti8wo14.2o18.o4ti8wo12.o2w2o16.o5ti8wo11.o4wo15.o5tTi7wo11.o5wo14.o5tTiwo2wo2wio11.o5wo13.o4t2Ti2w2o5wo11.oi3wo13.o4t2Ti7w3o12.o3wo13.oi2t2Tiw2p5w3o13.o2wi13oisi2Ti10wo15.oi14wisc2i7w2i2wo15.o16wis3c7w2so15.o9wsws6w2i5cw2s3o16.o10ws9w2i2c3io19.o3wsws15wioi2go20.o4ws11wsws2wo.o2go20.o17ws3wo2.2o21.o7wsws11wo25.os7ws11wso25.o2s17w2so24.oi4ws13w3so22.2o6w3si5o2s3w3io21.o8w3io5.oi3wi2do20.o8wi3do6.o3wi2do19.o8woi3do6.o3wi2do18.o7w2o.o3do5.o3wi2do18.o6w2o3.o3do5.o3wi2do17.o5w2o5.o4do4.o4wi2do16.o4so7.o4do4.o4si2do17.4o9.4o6.7o16.","st_shake1":"507.2o.6o38.o2to6w2o16.2o17.o4ti7wo14.o2w2o15.o5ti7wo13.o4wo14.o5tTi7wo12.o5wo13.oi3t2Ti7wo13.o5wo12.owi3Ti3w2o3wio13.oi3wo12.o2w3i3wo2wo4wo13.o3wo12.o14w3o14.o2wi12oi7w2p5w3o15.oi13wis14wo16.o14wis2c8w2i2wo15.o9wsws4wis3c7w2so16.o10ws6w2i5cw2s3o17.o3wsws13w2i2c3io20.o4ws11wsws2w2i2go21.o17ws3wio2go21.o7wsws11wo.2o22.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io26.o3w3io5.oi3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","st_shake2":"512.6o40.2o6w2o15.2o20.oi9wo13.o2wo18.o2ti9wo11.o4wo16.o4ti9wo10.o5wo15.o5ti8wo11.o4wo15.o5tTi2w2o3wio11.o3wo15.o5tTiwo2wo4wo10.o4wo14.o4t2Ti7w3o11.o3wi14oi4t2Ti2p5w3o12.owi15w2i2t2Ti9wo14.o16wisi2Ti6w2i2wo13.o9wsws6wis2ic7w2so14.o10ws8w2i5cw2s3o15.o3wsws15wio2c3io18.o4ws11wsws2wo.oi2go19.o17ws3wo2.o2go19.o7wsws11wo3.2o20.os7ws11wso25.o2s17w2so26.o3ws13w3so26.o3w3si5o2s3w3io26.o3w3io5.oi3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","alert_0":"397.4o4.7o4.4o23.2o4to.2o7w2o.o4t2o20.o6tio11woi6to18.o6tTi13wiT6to17.o5tTi15wiT5to17.o4tTi17wiT4to18.ot2Ti19wi2Tto20.oTi5w2o7w2o5wiTo22.oi5w2o7w2o5wio24.o5w2o7w2o5wo25.o21wo25.o3w2p4w3o4w2p3wo26.o9wo9wo27.os5wi5oi5wso28.o2s4wi3pi4w2so30.oi4swipiw4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo7.2o19.o8w3i8wo5.o2wo17.osws7wi7wswso3.o3wo17.ows2wi5wi5wi2wswo3.o3wo16.o5wi5wi5wi5wo.o4wo16.os4wi5wi5wi4wso.o3wo17.os4wi5wi5wi4wsio4wo16.os5wi5wi5wi5wsi3wo17.os4iwi5wi5wiw4isi3wo17.os5wi5wi5wi5wsi3wo17.o2s4wi2wi2wi2wi2wi4w2si2wo19.o5si2si2si2si2si5si2so21.26o9.","alert_1":"445.4o4.7o4.4o23.2o4to.2o7w2o.o4t2o20.o6tio11woi6to18.o6tTi13wiT6to17.o5tTi15wiT5to17.o4tTi17wiT4to18.ot2Ti19wi2Tto20.oTi5w2o7w2o5wiTo22.oi5w2o7w2o5wio24.o5w2o7w2o5wo25.o21wo25.o3w2p4w3o4w2p3wo26.o9wo9wo27.os5wi5oi5wso28.o2s4wi3pi4w2so30.oi4swipiw4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo26.osws7wi7wswso.2o22.ows2wi5wi5wi2wswio2wo20.o5wi5wi5wi5wi2wo20.os4wi5wi5wi4wsi2wo19.os5wi5wi5wi5wsio20.os4iwi5wi5wiw4isio20.os5wi5wi5wi5wso21.o2s4wi2wi2wi2wi2wi4w2so22.o5si2si2si2si2si5so24.23o12.","alert_2":"445.4o4.7o4.4o23.2o4to.2o7w2o.o4t2o20.o6tio11woi6to18.o6tTi13wiT6to17.o5tTi15wiT5to17.o4tTi17wiT4to18.ot2Ti19wi2Tto20.oTi5w2o7w2o5wiTo22.oi5w2o7w2o5wio24.o5w2o7w2o5wo25.o21wo25.o3w2p4w3o4w2p3wo26.o9wo9wo27.os5wi5oi5wso28.o2s4wi3pi4w2so30.oi4swipiw4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo30.o6wi3gi6wo28.o8w3i8wo22.2o2.osws7wi7wswso20.o2wo.ows2wi5wi5wi2wswo20.o3wo5wi5wi5wi5wo19.o3wis4wi5wi5wi4wso20.owis5wi5wi5wi5wso19.owis4iwi5wi5wiw4iso20.ois5wi5wi5wi5wso21.o2s4wi2wi2wi2wi2wi4w2so22.o5si2si2si2si2si5so24.23o12.","alert_3":"397.4o4.7o4.4o23.2o4to.2o7w2o.o4t2o20.o6tio11woi6to18.o6tTi13wiT6to17.o5tTi15wiT5to17.o4tTi17wiT4to18.ot2Ti19wi2Tto20.oTi5w2o7w2o5wiTo22.oi5w2o7w2o5wio24.o5w2o7w2o5wo25.o21wo25.o3w2p4w3o4w2p3wo26.o9wo9wo27.os5wi5oi5wso28.o2s4wi3pi4w2so30.oi4swipiw4sio31.oc13ico31.ow5c3i5cwo31.o5wi3gi5wo20.2o8.o6wi3gi6wo18.o2wo6.o8w3i8wo17.o3wo4.osws7wi7wswso16.o3wo4.ows2wi5wi5wi2wswo16.o4wo2.o5wi5wi5wi5wo16.o3wo2.os4wi5wi5wi4wso16.o4wo.os4wi5wi5wi4wso17.o3wios5wi5wi5wi5wso16.o4wis4iwi5wi5wiw4iso16.o4wis5wi5wi5wi5wso17.o3wi2s4wi2wi2wi2wi2wi4w2so18.o3si5si2si2si2si2si5so20.27o12.","play_bow":"533.2o45.o2wo43.o4wo42.o5wo42.o4wo43.o3wo43.o4wo21.6o16.o2w2i3o15.3o6w2o15.oi5w3o11.o2ti8wo14.o9w3o7.o4ti8wo13.o12w3o4.o5ti8wo12.o4wsws8w3o.o5tTi7wo12.o5ws12woi5tTi2w2o3wio11.o13wsws3wi4t2Ti2w2o5wo10.o14ws4wi4t2Ti7w3o10.o7wsws9w2i2t2Tiw2p5w3o10.o8ws10wisi2Ti10wo11.os18wisc2i7w2i2wio10.os19wis3c7w2si2bo10.o3ws16w2i5cw2s3iopbo10.o3w5s14wio2c4iobpopbo10.o3w5i4s10wo.oi2gio7bo9.o3wi3d5o3s7wo2.o2giobo3bobo8.o3wi3do5.3o4s4i2o4io3bp3bo8.o3wi3do8.o12i2wo5bo9.o3wi3do8.o13wo3bw3bo8.o4wi3do7.o13woB2bw2bBo8.o4si3do7.o13s2o2Bo2Bo10.8o9.13o2.2o.2o3.","play_bow2":"532.2o45.o2w2o43.o4wo42.o5wo42.o5wo42.oi3wo43.o3wo21.6o17.ow2i3o15.3o6w2o16.o5w3o11.o2ti8wo14.o9w3o7.o4ti8wo13.o12w3o4.o5ti8wo12.o4wsws8w3o.o5tTi7wo12.o5ws12woi5tTi2w2o3wio11.o13wsws3wi4t2Ti2w2o5wo10.o14ws4wi4t2Ti7w3o10.o7wsws9w2i2t2Tiw2p5w3o10.o8ws10wisi2Ti10wo11.os18wisc2i7w2i2wio10.os19wis3c7w2si2bo10.o3ws16w2i5cw2s3iopbo10.o3w5s14wio2c4iobpopbo10.o3w5i4s10wo.oi2gio7bo9.o3wi3d5o3s7wo2.o2giobo3bobo8.o3wi3do5.3o4s4i2o4io3bp3bo8.o3wi3do8.o12i2wo5bo9.o3wi3do8.o13wo3bw3bo8.o4wi3do7.o13woB2bw2bBo8.o4si3do7.o13s2o2Bo2Bo10.8o9.13o2.2o.2o3.","play_grab":"533.2o45.o2wo43.o4wo42.o5wo42.o4wo43.o3wo43.o4wo43.o2w2i3o41.oi5w3o15.6o17.o9w3o9.3o6w2o15.o12w3o5.o2ti8wo14.o4wsws8w3o.o4ti8wo13.o5ws12woi5ti8wo12.o13wsws3wi5tTi7wo12.o14ws4wi5tTi2w2o3wio11.o7wsws9wi4t2Tiwo2wo4wo10.o8ws10wi4t2Ti7w3o10.os18w2i2t2Tiw2p5w3o10.os18wisi2Ti10wibo10.o3ws14wisc2i7w2i2wibo10.o3w5s11wis3c7w2sipbo10.o3w5i4s8w2i5cw2s3i4bo9.o3wi3d5o3s7w2i2c4ibo3bobo8.o3wi3do5.3o4s7i2gio3bp3bo8.o3wi3do8.o10i2giwo5bo9.o3wi3do8.o10w2iwo3bw3bo8.o4wi3do7.o13woB2bw2bBo8.o4si3do7.o13s2o2Bo2Bo10.8o9.13o2.2o.2o3.","play_hold":"511.6o39.3o6w2o16.2o18.o2ti8wo14.o2wo16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o4wo14.o5tTi2w2o3wio12.o3wo14.o4t2Ti2w2o5wo11.o4wo13.o4t2Ti7w3o12.o3wi13o2i2t2Tiw2p5w3o13.owi14wisi2Ti10wo15.o15wisc2i7w2i2wio13.o9wsws5wis3c7w2si2bo12.o10ws7w2i5cw2s3iopbo12.o3wsws14w2i2c4iobpopbo12.o4ws11wsws2wioi2gio7bo11.o17ws3wo.o2g2obo3bobo11.o7wsws11wo2.2o.o3bp3bo11.os7ws11wso6.o5bo12.o2s17w2so5.o3bw3bo12.o3ws13w3so5.oB2bw2bBo12.o3w3si5o2s3w3io6.o2Bo2Bo13.o3w3io5.oi3wi2do7.2o.2o14.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","play_shakeL":"507.2o.6o38.o2to6w2o16.2o17.o4ti7wo14.o2w2o15.o5ti7wo13.o4wo14.o5tTi7wo12.o5wo13.oi3t2Ti7wo13.o5wo12.owi3Ti3w2o3wio13.oi3wo12.o2w3i3wo2wo4wo13.o3wo12.o14w3o14.o2wi12oi7w2p5w3o15.oi13wis14wo16.o14wis2c8w2i2wio14.o9wsws4wis3c7w2si2bo13.o10ws6w2i5cw2s3iopbo13.o3wsws13w2i2c4ibpopbo14.o4ws11wsws2w2i2gi7bo13.o17ws3wio2gibo3bobo13.o7wsws11wo.2o3bp3bo14.os7ws11wso3.o5bo15.o2s17w2so2.o3bw3bo15.o3ws13w3so.oB2bw2bBo16.o3w3si5o2s3w3io2.o2Bo2Bo17.o3w3io5.oi3wi2do3.2o.2o18.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","play_shakeR":"512.6o40.2o6w2o15.2o20.oi9wo13.o2wo18.o2ti9wo11.o4wo16.o4ti9wo10.o5wo15.o5ti8wo11.o4wo15.o5tTi2w2o3wio11.o3wo15.o5tTiwo2wo4wo10.o4wo14.o4t2Ti7w3o11.o3wi14oi4t2Ti2p5w3o12.owi15w2i2t2Ti9wo14.o16wisi2Ti6w2i2wo13.o9wsws6wis2ic7w2sibo12.o10ws8w2i5cw2s3ipbo12.o3wsws15wio2c4ibpopb2o11.o4ws11wsws2wo.oi2gio7bo10.o17ws3wo2.o2g2obo3bobo10.o7wsws11wo3.2o.o3bp3bo10.os7ws11wso7.o5b2o10.o2s17w2so7.o3bw3bo10.o3ws13w3so7.oB2bw2bBo10.o3w3si5o2s3w3io8.o2Bo2Bo11.o3w3io5.oi3wi2do9.2o.2o12.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o3wi2do6.o3wi2do26.o4wi2do5.o4wi2do25.o4si2do5.o4si2do26.7o7.7o16.","play_tug":"890.2o.6o18.2o18.o2to6w2o15.o2wo16.o4ti7wo13.o4wo15.o5ti7wo12.o5wo10.4oi5tTi7wo12.o4wo6.4o4w2i3t2Ti7wo13.o3wo3.3o8wiwi3Ti3w2o3wio12.o4w3o11wi2w3i3wo2wo4wo12.o3wi13wi14w3o13.owi14wi7w2p5w3o14.o15wis14wio14.o15wis2c8w2i2wibo13.o2w5i9wis3c7w2sipbo13.owi5wi9w2i5cw2s3ipopbo12.oi7wi9ws2i2c3i2o7bo11.o9wi4ws3w2id2i2go2.obo3bobo10.o9wi4so3wi2d2i2go2.o3bp3bo10.o9w2i3o.o3wi2d2io4.2o5bo10.o10wo4.o3w2idio5.o3bw3bo10.o10wo4.o4wi2do5.oB2bw2bBo10.o9so4.o4si2do6.o2Bo2Bo12.9o6.7o8.2o.2o2.","play_tug2":"889.2o.6o17.2o19.o2to6w2o14.o2w2o16.o4ti7wo13.o4wo15.o5ti7wo12.o5wo10.4oi5tTi7wo12.o5wo5.4o4w2i3t2Ti7wo13.oi3wo2.3o8wiwi3Ti3w2o3wio13.o3wi2o11wi2w3i3wo2wo4wo13.o2wi13wi14w3o14.oi14wi7w2p5w3o14.o15wis14wio14.o15wis2c8w2i2wibo13.o2w5i9wis3c7w2siopbo12.owi5wi9w2i5cw2so2ipopb2o11.oi7wi9ws2i2c3io.o7bo10.o9wi4ws3w2id2i2go2.obo3bobo10.o9wi4soi3wi2di2go3.o3bp3bo9.o9w2i3o.o3wi2d2io5.o5b2o9.o10wo5.o3wi2do6.o3bw3bo9.o10wo4.o4wi2do5.oB2bw2bBo10.o9so5.o4si2do5.2o2Bo2Bo11.9o7.7o8.2o.2o2.","play_drop":"511.6o39.3o6w2o16.2o18.o2ti8wo14.o2wo16.o4ti8wo12.o4wo15.o5ti8wo11.o5wo14.o5tTi7wo12.o4wo14.o5tTi2w2o3wio12.o3wo14.o4t2Ti2w2o5wo11.o4wo13.o4t2Ti7w3o12.o3wi13o2i2t2Tiw2p5w3o13.owi14wisi2Ti10wo15.o15wisc2i7w2i2wo14.o9wsws5wis3c7w2so15.o10ws7w2i5cw2s3o16.o3wsws14w2i2c3io19.o4ws11wsws2wioi2go20.o17ws3wo.o2go20.o7wsws11wo2.2o21.os7ws11wso8.2o.2o12.o2s17w2so7.o2bo2bo12.o3ws13w3so7.obpopbo12.o3w3si5o2s3w3io7.obpopbo12.o3w3io5.oi3wi2do6.o7bo11.o3wi2do6.o3wi2do6.obo3bobo11.o3wi2do6.o3wi2do6.o3bp3bo11.o3wi2do6.o3wi2do7.o5bo12.o3wi2do6.o3wi2do6.o3bw3bo11.o4wi2do5.o4wi2do5.oB2bw2bBo11.o4si2do5.o4si2do6.o2Bo2Bo13.7o7.7o8.2o.2o3."},"anims":{"sit":{"loop":true,"seq":[["sit_0",1800],["sit_blink",130],["sit_0",900],["sit_tail",260],["sit_0",260],["sit_tail",260],["sit_0",1200],["sit_lookl",700],["sit_0",200],["sit_lookr",700],["sit_0",900],["sit_earflop",380],["sit_0",700],["sit_blink",120],["sit_0",250],["sit_blink",120],["sit_0",800]]},"walk":{"loop":true,"seq":[["walk_0",130],["walk_1",130],["walk_2",130],["walk_3",130],["walk_4",130],["walk_5",130]]},"liedown":{"loop":false,"seq":[["ld_0",300],["ld_1",350],["ld_2",350],["sleep_0",300]]},"sleep":{"loop":true,"seq":[["sleep_0",900],["sleep_1",900]]},"stretch":{"loop":false,"seq":[["sleep_0",300],["st_lift",900],["st_yawn1",220],["st_yawn2",1100],["st_yawn1",180],["st_lift",300],["st_awake",400],["st_sit",350],["stand",400],["st_bow",600],["st_bow2",300],["st_bow",300],["st_bow2",300],["st_bow",500],["stand",300],["st_back",1500],["stand",250],["st_shake1",80],["st_shake2",80],["st_shake1",80],["st_shake2",80],["st_shake1",80],["st_shake2",80],["stand",700]]},"alert":{"loop":true,"seq":[["alert_0",100],["alert_1",100],["alert_2",100],["alert_3",100],["alert_2",100],["alert_1",100]]},"play":{"loop":true,"seq":[["play_bow",200],["play_bow2",120],["play_bow",120],["play_grab",130],["play_hold",110],["play_shakeL",100],["play_shakeR",100],["play_shakeL",100],["play_shakeR",100],["play_tug",140],["play_tug2",140],["play_tug",140],["play_tug2",140],["play_shakeL",100],["play_shakeR",100],["play_shakeL",100],["play_shakeR",100],["play_drop",160]]}},"meta":{"zzz":[37,22],"tail":[42,27]},"iconSize":16,"icon":"21.6o8.2o6w2o5.o10wo3.o2t8w2to.o3t8w3t2o3t8w3t2o2tTw2o2w2owT2t2o2tTw2o2w2owT2t2o2tT8wT2t2o2tTp2w2o2wpT2to.o2Ts6ws2To3.3o2s2w2s3o6.o2c2g2co10.o2go13.2o7."}}</script>
+<script>
+/* ===================== CẤU HÌNH · CONFIG ===================== */
+// Thay 'TEN-GITHUB/bun' bằng "tên-tài-khoản/tên-repo" GitHub nơi bạn đăng bản phát hành.
+// Mục Releases của repo phải có đúng 2 file: BUN-Setup.exe và BUN-mac.dmg.
+// (EN) Replace with your "github-user/repo". Its Releases must contain BUN-Setup.exe and BUN-mac.dmg.
+const GITHUB_REPO = 'TEN-GITHUB/bun';
+const APP_URL = '/app/';   // bản web cho iPhone (Add to Home Screen) · iPhone web app
+const VERSION = '1.0.0';   // hiện ở hero và cuối trang · shown in the hero and footer
+/* ============================================================= */
+
+const DOWNLOADS = {
+  win: `https://github.com/${GITHUB_REPO}/releases/latest/download/BUN-Setup.exe`,
+  mac: `https://github.com/${GITHUB_REPO}/releases/latest/download/BUN-mac.dmg`,
+  ios: APP_URL,
+};
+
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const safe = (fn) => { try { fn(); } catch (err) { console.error(err); } };
+const motionMQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+let reduced = motionMQ.matches;
+
+/* ---------- scroll reveal (runs first so content never stays hidden) ---------- */
+safe(() => {
+  const els = $$('.reveal');
+  if (reduced || !('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('is-in')); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      el.classList.add('is-in');
+      io.unobserve(el);
+      setTimeout(() => el.classList.remove('reveal', 'reveal--d1', 'reveal--d2', 'is-in'), 1100);
+    });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+  els.forEach((e) => io.observe(e));
+});
+
+/* ---------- text ---------- */
+const EN = {
+  'skip': 'Skip to content',
+  'nav.features': 'Features',
+  'nav.download': 'Download',
+  'hero.tag': 'Your schedule, your checklists and a little <span class="hl">pixel pet</span> always by your side',
+  'hero.other': 'Get it for another device ↓',
+  'feat.eyebrow': 'Features',
+  'feat.title': 'Three small things for a tidier day',
+  'cal.d1': 'Mon', 'cal.d2': 'Tue', 'cal.d3': 'Wed', 'cal.d4': 'Thu', 'cal.d5': 'Fri',
+  'cal.e1': 'Team sync', 'cal.e2': 'Report', 'cal.e3': 'Reading',
+  'f1.title': 'Weekly schedule',
+  'f1.lead': 'Your whole week on one screen, so you always know what today looks like.',
+  'f1.b1': 'Click an empty time slot to add a task',
+  'f1.b2': 'Drag the top or bottom edge to make it longer',
+  'f1.b3': 'Get a reminder a few minutes before',
+  'mv.t1': 'Table', 'mv.t2': 'Roadmap', 'mv.t3': 'Mind map',
+  'mv.r1': 'Book train to Da Lat', 'mv.r2': 'Book a hotel', 'mv.r3': 'Plan the days', 'mv.r4': 'Pack the bags',
+  'mv.m1': 'Tickets', 'mv.m2': 'Hotel', 'mv.m3': 'Packing',
+  'mv.n1': 'Train', 'mv.n2': 'Hotel', 'mv.n3': 'Food', 'mv.n4': 'Packing', 'mv.root': 'Da Lat',
+  'f2.title': 'Checklists, three views',
+  'f2.lead': 'One list, three ways to look at it. Switch with a single click.',
+  'f2.b1': '<b>Table</b>: tidy rows you tick off one by one',
+  'f2.b2': '<b>Roadmap</b>: your pet grows as you make progress',
+  'f2.b3': '<b>Mind map</b>: see the whole picture at once',
+  'f2.b4': 'Share with a link and assign tasks to friends',
+  'pet.noteTitle': "Today's note", 'pet.note1': 'Call mom', 'pet.note2': 'Buy treats for Bun',
+  'f3.title': 'Pixel pet',
+  'f3.lead': 'A little cat or dog that lives right on your desktop.',
+  'f3.b1': 'Reminds you with an animation and a chime',
+  'f3.b2': 'Keeps a note every day and recaps it the next',
+  'f3.b3': 'Naps, stretches and strolls while you work',
+  'dl.eyebrow': 'Download',
+  'dl.title': 'Bring BUN home',
+  'dl.sub': 'Pick your device. Setup only takes a moment.',
+  'dl.you': 'Your device',
+  'win.req': 'Windows 10 / 11 · .exe installer',
+  'win.btn': 'Download for Windows',
+  'win.s1': 'Open the <b>BUN-Setup.exe</b> you just downloaded.',
+  'win.s2': 'Follow the installer. BUN adds a shortcut to your desktop.',
+  'win.note': 'If Windows SmartScreen shows a warning, click <b>More info</b> → <b>Run anyway</b>.',
+  'mac.req': 'MacBook, iMac · .dmg installer',
+  'mac.btn': 'Download for macOS',
+  'mac.s1': 'Open the <b>.dmg</b> and drag <b>BUN</b> into <b>Applications</b>.',
+  'mac.s2': 'The first time, macOS blocks BUN because it isn’t signed by Apple yet: open <b>System Settings → Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>.',
+  'mac.s3': 'From then on, your pet shows up by itself every time your Mac starts.',
+  'ios.req': 'iOS 16.4 or later · no App Store needed',
+  'ios.btn': 'Open BUN on iPhone',
+  'ios.s1': 'Open the link in <b>Safari</b>.',
+  'ios.s2': 'Tap <b>Share</b>',
+  'ios.s3': 'Choose <b>Add to Home Screen</b>',
+  'ios.s4': 'Open BUN from your Home Screen.',
+  'ios.s5': 'Open <b>Settings</b> (the gear) → turn on <b>Phone notifications</b> so your pet can remind you, with sound and vibration, even when the app is closed.',
+  'ios.qr': 'On a computer? Scan this with your iPhone camera to open BUN.',
+  'foot.ver': 'Version',
+};
+const TXT = {
+  vi: {
+    nav: 'Menu', stage: 'Bé cún và bé mèo pixel đang chơi',
+    btn: { win: 'Tải cho Windows', mac: 'Tải cho macOS', ios: 'Mở BUN trên iPhone', other: 'Tải BUN' },
+    meta: { win: 'Windows 10 / 11 · phiên bản {v}', mac: 'macOS · phiên bản {v}', ios: 'Rồi bấm Chia sẻ → Thêm vào MH chính', other: 'Có cho Windows, macOS và iPhone' },
+    desk: [
+      { title: 'Họp nhóm · 9:00', sub: 'còn 5 phút nữa', clock: '8:55' },
+      { title: 'Đi tập gym · 17:30', sub: 'còn 10 phút nữa', clock: '17:20' },
+    ],
+  },
+  en: {
+    nav: 'Menu', stage: 'A pixel dog and cat playing',
+    btn: { win: 'Download for Windows', mac: 'Download for macOS', ios: 'Open BUN on iPhone', other: 'Get BUN' },
+    meta: { win: 'Windows 10 / 11 · version {v}', mac: 'macOS · version {v}', ios: 'Then tap Share → Add to Home Screen', other: 'For Windows, macOS and iPhone' },
+    desk: [
+      { title: 'Team sync · 9:00', sub: 'in 5 minutes', clock: '8:55' },
+      { title: 'Gym · 17:30', sub: 'in 10 minutes', clock: '17:20' },
+    ],
+  },
+};
+const LANG_KEY = 'bun.lang';
+let lang = 'vi';
+try { const saved = localStorage.getItem(LANG_KEY); if (saved === 'vi' || saved === 'en') lang = saved; } catch (err) { /* storage blocked */ }
+const viText = new Map();
+const langListeners = [];
+
+function applyLang(next, save) {
+  lang = next;
+  document.documentElement.lang = next;
+  $$('[data-i18n]').forEach((el) => {
+    if (!viText.has(el)) viText.set(el, el.innerHTML);
+    const en = EN[el.dataset.i18n];
+    el.innerHTML = next === 'en' && en != null ? en : viText.get(el);
+  });
+  $$('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', TXT[next][el.dataset.i18nAria]));
+  const sw = $('.lang');
+  if (sw) sw.dataset.lang = next;
+  $$('[data-set-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.setLang === next)));
+  $$('[data-ver]').forEach((el) => { el.textContent = VERSION; });
+  langListeners.forEach((fn) => safe(fn));
+  if (save) { try { localStorage.setItem(LANG_KEY, next); } catch (err) { /* ignore */ } }
+}
+$$('[data-set-lang]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.setLang !== lang) applyLang(b.dataset.setLang, true); }));
+
+/* ---------- platform ---------- */
+function detectOS() {
+  const forced = new URLSearchParams(location.search).get('os');
+  if (['win', 'mac', 'ios', 'android', 'other'].includes(forced)) return forced;
+  const ua = navigator.userAgent || '';
+  const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  const touch = (navigator.maxTouchPoints || 0) > 1;
+  if (/iPhone|iPod/i.test(ua)) return 'ios';
+  if (/iPad/i.test(ua) || (/Mac/i.test(plat) && touch)) return 'ios'; // iPadOS reports itself as a Mac
+  if (/Android/i.test(ua)) return 'android';
+  if (/Win/i.test(plat) || /Windows/i.test(ua)) return 'win';
+  if (/Mac/i.test(plat) || /Macintosh|Mac OS X/i.test(ua)) return 'mac';
+  return 'other';
+}
+const OS = detectOS();
+const MAIN = ['win', 'mac', 'ios'].includes(OS) ? OS : null;
+
+safe(() => {
+  $$('[data-dl]').forEach((a) => {
+    const key = a.dataset.dl;
+    a.href = DOWNLOADS[key];
+    if (MAIN && key !== MAIN) { a.classList.remove('btn--primary'); a.classList.add('btn--soft'); }
+  });
+  if (MAIN) $('#plat-' + MAIN).classList.add('is-you');
+});
+
+function renderHero() {
+  const t = TXT[lang];
+  const key = MAIN || 'other';
+  const btn = $('#heroBtn');
+  btn.href = MAIN ? DOWNLOADS[MAIN] : '#download';
+  $('#heroBtnLabel').textContent = t.btn[key];
+  $('use', btn).setAttribute('href', key === 'ios' ? '#i-phone' : '#i-dl');
+  $('#heroMeta').textContent = t.meta[key].replace('{v}', VERSION);
+  $('.hero__other').hidden = !MAIN; // the main button already scrolls to the downloads
+}
+langListeners.push(renderHero);
+
+/* ---------- pixel sprites ---------- */
+const SPR = JSON.parse(document.getElementById('sprite-data').textContent);
+const unrle = (s) => s.replace(/(\d+)(\D)/g, (_, n, c) => c.repeat(+n));
+const rgbCache = {};
+function rgba(hex) {
+  if (!rgbCache[hex]) {
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+    rgbCache[hex] = [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), h.length === 8 ? parseInt(h.slice(6, 8), 16) : 255];
+  }
+  return rgbCache[hex];
+}
+const frameCache = new Map();
+// Rasterise a frame once at 1x; returns { canvas, minX, maxX, minY }.
+function frame(animal, name) {
+  const key = animal + ':' + name;
+  if (frameCache.has(key)) return frameCache.get(key);
+  const s = SPR[animal];
+  const isIcon = name === '@icon';
+  const w = isIcon ? s.iconSize : s.w;
+  const h = isIcon ? s.iconSize : s.h;
+  const raw = isIcon ? s.icon : s.frames[name];
+  const px = s.rle ? unrle(raw) : raw;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(w, h);
+  let minX = w, maxX = -1, minY = h;
+  for (let i = 0; i < w * h; i++) {
+    const ch = px[i];
+    if (ch === '.' || !s.pal[ch]) continue;
+    const [r, g, b, a] = rgba(s.pal[ch]);
+    img.data.set([r, g, b, a], i * 4);
+    const x = i % w, y = (i / w) | 0;
+    if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y;
+  }
+  ctx.putImageData(img, 0, 0);
+  const out = { key, canvas: c, minX, maxX, minY };
+  frameCache.set(key, out);
+  return out;
+}
+// A canvas that shows frames at an integer number of *device* pixels per art pixel.
+function pixelCanvas(canvas, w, h) {
+  const ctx = canvas.getContext('2d');
+  let last = '';
+  return {
+    size(cssScale) {
+      const dpr = window.devicePixelRatio || 1;
+      const dev = Math.max(1, Math.round(cssScale * dpr));
+      canvas.width = w * dev; canvas.height = h * dev;
+      canvas.style.width = (w * dev) / dpr + 'px';
+      canvas.style.height = (h * dev) / dpr + 'px';
+      last = '';
+      return dev / dpr; // the real css scale
+    },
+    draw(img, flip) {
+      const k = img.key + (flip ? '<' : '>');
+      if (k === last) return;
+      last = k;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.imageSmoothingEnabled = false;
+      if (flip) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+      ctx.drawImage(img.canvas, 0, 0, canvas.width, canvas.height);
+    },
+  };
+}
+function frameAt(def, t) {
+  const total = def.total || (def.total = def.seq.reduce((a, [, ms]) => a + ms, 0));
+  if (!def.loop && t >= total) return { name: def.seq[def.seq.length - 1][0], done: true };
+  let r = def.loop ? t % total : t;
+  for (const [name, ms] of def.seq) { if (r < ms) return { name, done: false }; r -= ms; }
+  return { name: def.seq[def.seq.length - 1][0], done: !def.loop };
+}
+const hasAnim = (animal, a) => !!SPR[animal].anims[a];
+const animLen = (animal, a) => SPR[animal].anims[a].seq.reduce((s, [, ms]) => s + ms, 0);
+const snap = (v) => { const d = window.devicePixelRatio || 1; return Math.round(v * d) / d; };
+
+/* ---------- hero stage: the dog and the cat ---------- */
+// Each pet loops through its own calm little routine. `to` is a position inside the pet's half of the stage (0..1).
+const PLANS = {
+  dog: [
+    { a: 'sit', d: 5200 },
+    { a: 'walk', to: 0.12 },
+    { a: 'sit', d: 2600 },
+    { a: 'play', loops: 2 },
+    { a: 'walk', to: 0.8 },
+    { a: 'sit', d: 3800 },
+    { a: 'walk', to: 0.45 },
+    { a: 'sit', d: 4200 },
+    { a: 'liedown' },
+    { a: 'sleep', d: 9000 },
+    { a: 'stretch' },
+    { a: 'sit', d: 2400 },
+  ],
+  cat: [
+    { a: 'sit', d: 2800 },
+    { a: 'walk', to: 0.88 },
+    { a: 'sit', d: 4200 },
+    { a: 'walk', to: 0.3 },
+    { a: 'play', loops: 2, flip: true },
+    { a: 'sit', d: 2600 },
+    { a: 'liedown' },
+    { a: 'sleep', d: 10500 },
+    { a: 'stretch' },
+    { a: 'sit', d: 3200 },
+  ],
+};
+const WALK_SPEED = 11; // art pixels per second
+
+function Pet(stage, animal, side, startAt) {
+  const s = SPR[animal];
+  const el = document.createElement('div');
+  el.className = 'pet pet--' + animal;
+  el.innerHTML = '<div class="pet__shadow"></div><div class="pet__body"><canvas></canvas><div class="zzz"><span>z</span><span>z</span><span>z</span></div></div>';
+  stage.appendChild(el);
+  const body = el.firstChild.nextSibling;
+  const shadow = el.firstChild;
+  const zzz = body.lastChild;
+  const pc = pixelCanvas(body.firstChild, s.w, s.h);
+  const plan = PLANS[animal].map((st) => (hasAnim(animal, st.a) || st.a === 'walk' ? st : { a: 'sit', d: 3000 }));
+  const me = { el, animal, x: 0, cs: 4, zone: [0, 0], frac: startAt, step: -1, cur: null, t0: 0, queue: [], lastShadow: '' };
+
+  me.layout = (stageW, cs) => {
+    const f0 = me.zone[1] > me.zone[0] ? (me.x - me.zone[0]) / (me.zone[1] - me.zone[0]) : me.frac;
+    me.cs = pc.size(cs);
+    el.style.setProperty('--s', me.cs);
+    const half = 21 * me.cs; // half of a walking body
+    const pad = stageW > 500 ? 22 : 12, gap = 4, mid = stageW / 2;
+    me.zone = side === 'left' ? [pad + half, mid - half - gap] : [mid + half + gap, stageW - pad - half];
+    if (me.zone[1] < me.zone[0]) me.zone[1] = me.zone[0];
+    if (me.cur && me.cur.a === 'walk') {
+      me.x = me.posOf(Math.min(1, Math.max(0, f0)));
+      me.cur.from = me.x;
+      me.cur.to = me.posOf(me.cur.toFrac);
+      me.cur.dur = (Math.abs(me.cur.to - me.x) / (WALK_SPEED * me.cs)) * 1000;
+      me.t0 = clock;
+    } else me.x = me.posOf(me.frac);
+    zzz.style.left = s.meta.zzz ? s.meta.zzz[0] * me.cs + 'px' : '50%';
+    zzz.style.top = s.meta.zzz ? s.meta.zzz[1] * me.cs + 'px' : '20%';
+    me.lastShadow = '';
+  };
+  me.posOf = (f) => me.zone[0] + (me.zone[1] - me.zone[0]) * f;
+
+  me.next = (t) => {
+    let st;
+    if (me.queue.length) st = me.queue.shift();
+    else { me.step = (me.step + 1) % plan.length; st = plan[me.step]; }
+    me.cur = Object.assign({}, st);
+    me.t0 = t;
+    if (me.cur.a === 'walk') {
+      me.cur.from = me.x;
+      me.cur.to = me.posOf(me.cur.to);
+      me.frac = me.cur.toFrac = st.to;
+      me.cur.dur = (Math.abs(me.cur.to - me.cur.from) / (WALK_SPEED * me.cs)) * 1000;
+      me.cur.flip = me.cur.to < me.cur.from;
+      if (me.cur.dur < 300) return me.next(t);
+    } else if (me.cur.d == null) {
+      me.cur.d = animLen(animal, me.cur.a) * (me.cur.loops || 1);
+    }
+  };
+
+  me.poke = (t) => {
+    if (!me.cur || me.cur.a === 'alert' || me.cur.a === 'stretch') return;
+    if (me.cur.a === 'sleep' || me.cur.a === 'liedown') {
+      // wake up: stretch now, then carry on after the plan's stretch step
+      let k = me.step;
+      for (let n = 0; n < plan.length; n++) { k = (k + 1) % plan.length; if (plan[k].a === 'stretch') break; }
+      me.step = k;
+      me.queue = hasAnim(animal, 'stretch') ? [{ a: 'stretch' }] : [];
+      me.next(t);
+      return;
+    }
+    if (me.cur.a === 'walk') me.frac = (me.x - me.zone[0]) / Math.max(1, me.zone[1] - me.zone[0]);
+    me.queue = [{ a: 'alert', d: animal === 'dog' ? 1500 : 1200 }, { a: 'sit', d: 900 }, Object.assign({}, plan[me.step])];
+    me.next(t);
+    hearts(body, (s.w / 2) * me.cs, 10 * me.cs);
+  };
+
+  me.update = (t) => {
+    if (!me.cur) me.next(t);
+    let e = t - me.t0;
+    if (me.cur.a === 'walk' ? e >= me.cur.dur : e >= me.cur.d) { me.next(t); e = 0; }
+    const c = me.cur;
+    let anim = c.a, flip = !!c.flip, hop = 0;
+    if (anim === 'walk') {
+      const k = Math.min(1, e / c.dur);
+      me.x = c.from + (c.to - c.from) * k;
+      flip = c.flip;
+      const cyc = animLen(animal, 'walk');
+      hop = Math.abs(Math.sin((e / cyc) * Math.PI * 2));
+    }
+    const f = frame(animal, frameAt(s.anims[anim], e).name);
+    pc.draw(f, flip);
+    el.dataset.anim = anim;
+    el.style.transform = 'translate3d(' + snap(me.x - (s.w * me.cs) / 2) + 'px,0,0)';
+    body.style.transform = 'translate3d(0,' + snap(-hop * 0.75 * me.cs) + 'px,0)';
+    // soft shadow under the visible body
+    const minX = flip ? s.w - 1 - f.maxX : f.minX;
+    const maxX = flip ? s.w - 1 - f.minX : f.maxX;
+    const sk = minX + ',' + maxX + ',' + (hop > 0.5 ? 1 : 0);
+    if (sk !== me.lastShadow) {
+      me.lastShadow = sk;
+      shadow.style.left = ((minX + maxX + 1) / 2) * me.cs + 'px';
+      shadow.style.width = (maxX - minX + 1) * me.cs * (hop > 0.5 ? 0.7 : 0.8) + 'px';
+      shadow.style.opacity = hop > 0.5 ? 0.75 : 1;
+    }
+  };
+
+  me.still = (anim) => {
+    const f = frame(animal, s.anims[anim].seq[0][0]);
+    pc.draw(f, false);
+    el.dataset.anim = anim;
+    me.x = me.posOf(me.frac);
+    el.style.transform = 'translate3d(' + snap(me.x - (s.w * me.cs) / 2) + 'px,0,0)';
+    body.style.transform = '';
+    shadow.style.left = ((f.minX + f.maxX + 1) / 2) * me.cs + 'px';
+    shadow.style.width = (f.maxX - f.minX + 1) * me.cs * 0.8 + 'px';
+  };
+
+  body.addEventListener('pointerdown', (ev) => { ev.preventDefault(); if (!reduced) me.poke(stageClock()); });
+  return me;
+}
+
+function hearts(parent, x, y) {
+  [-12, 6, 20].forEach((hx, i) => {
+    const h = document.createElement('span');
+    h.className = 'heart';
+    h.style.left = x + hx * 0.6 + 'px';
+    h.style.top = y + 'px';
+    h.style.setProperty('--hx', hx + 'px');
+    h.style.animationDelay = i * 0.22 + 's';
+    parent.appendChild(h);
+    setTimeout(() => h.remove(), 2400 + i * 220);
+  });
+}
+
+let clock = 0;
+const stageClock = () => clock;
+
+safe(() => {
+  const stage = $('#stage');
+  if (!stage || !SPR.dog || !SPR.cat) return;
+  const pets = [Pet(stage, 'dog', 'left', 0.78), Pet(stage, 'cat', 'right', 0.22)];
+  let visible = true;
+  const layout = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    let cs = w >= 600 ? 4 : w >= 440 ? 3 : 2.5;
+    const floor = parseFloat(getComputedStyle(stage).getPropertyValue('--floor-h')) || 30;
+    cs = Math.min(cs, (h - floor - 18) / SPR.dog.h);
+    pets.forEach((p) => p.layout(w, cs));
+    if (reduced) { pets[0].still('sit'); pets[1].still(hasAnim('cat', 'sleep') ? 'sleep' : 'sit'); }
+  };
+  layout();
+  let rw = stage.clientWidth;
+  window.addEventListener('resize', () => { if (stage.clientWidth !== rw) { rw = stage.clientWidth; layout(); } });
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(stage);
+  let prev = performance.now();
+  const tick = (now) => {
+    const dt = Math.min(64, now - prev);
+    prev = now;
+    if (visible && !reduced && !document.hidden) {
+      clock += dt;
+      pets.forEach((p) => p.update(clock));
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  const onMotion = () => { reduced = motionMQ.matches; layout(); };
+  if (motionMQ.addEventListener) motionMQ.addEventListener('change', onMotion);
+});
+
+/* ---------- feature card 3: the pet reminds you ---------- */
+safe(() => {
+  const host = $('#deskPet');
+  if (!host) return;
+  const canvas = document.createElement('canvas');
+  const shadow = document.createElement('div');
+  shadow.className = 'pet__shadow';
+  host.appendChild(shadow);
+  host.appendChild(canvas);
+  const bubble = $('#deskBubble');
+  let animal = 'dog', cycle = 0, cs = 2.5;
+  let pc = pixelCanvas(canvas, SPR.dog.w, SPR.dog.h);
+  const sizeIt = () => { cs = pc.size(host.closest('.art').clientWidth < 330 ? 2.25 : 2.5); };
+  sizeIt();
+  window.addEventListener('resize', sizeIt);
+  const setText = () => {
+    const d = TXT[lang].desk[cycle % 2];
+    $('#deskBubbleTitle').textContent = d.title;
+    $('#deskBubbleSub').textContent = d.sub;
+    $('#deskClock').textContent = d.clock;
+  };
+  langListeners.push(setText);
+  const placeShadow = (f) => {
+    shadow.style.left = ((f.minX + f.maxX + 1) / 2) * cs + 'px';
+    shadow.style.width = (f.maxX - f.minX + 1) * cs * 0.8 + 'px';
+  };
+  const show = (anim, t) => {
+    const def = SPR[animal].anims[anim];
+    const name = frameAt(def, t).name;
+    const f = frame(animal, name);
+    pc.draw(f, false);
+    placeShadow(f);
+  };
+  if (reduced) { show('sit', 0); bubble.classList.add('is-on'); return; }
+  // timeline (ms): sit, bubble + alert, sit with bubble, bubble off, sit, swap pet
+  const T = { alert: 3200, alertEnd: 5600, bubbleOff: 7600, swap: 9800, total: 10400 };
+  let visible = false, t = 0, prev = performance.now();
+  new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(host);
+  const loop = (now) => {
+    const dt = Math.min(64, now - prev);
+    prev = now;
+    if (visible && !document.hidden && !reduced) {
+      t += dt;
+      if (t >= T.total) {
+        t = 0; cycle++;
+        animal = animal === 'dog' ? 'cat' : 'dog';
+        pc = pixelCanvas(canvas, SPR[animal].w, SPR[animal].h);
+        sizeIt();
+        setText();
+        canvas.style.opacity = 1;
+      }
+      const alerting = t >= T.alert && t < T.alertEnd;
+      show(alerting ? 'alert' : 'sit', alerting ? t - T.alert : t);
+      bubble.classList.toggle('is-on', t >= T.alert - 150 && t < T.bubbleOff);
+      canvas.style.opacity = t >= T.swap ? 0 : 1;
+      shadow.style.opacity = t >= T.swap ? 0 : 1;
+      if (alerting && animal === 'dog' && !host._h && t - T.alert > 300) {
+        host._h = 1;
+        hearts(host, SPR.dog.meta.tail ? SPR.dog.meta.tail[0] * cs : 40, SPR.dog.meta.tail ? SPR.dog.meta.tail[1] * cs : 30);
+      }
+      if (!alerting) host._h = 0;
+    }
+    requestAnimationFrame(loop);
+  };
+  show('sit', 0);
+  requestAnimationFrame(loop);
+});
+
+/* ---------- feature card 2: cycle the three views ---------- */
+safe(() => {
+  const root = $('#mv');
+  if (!root) return;
+  const tabs = $$('.mv__tab', root), views = $$('.mv__view', root), thumb = $('.mv__thumb', root);
+  const late = $('.tick-late', root);
+  let i = 0, timer = null, paused = false;
+  const go = (n) => {
+    i = n;
+    tabs.forEach((tb, k) => tb.classList.toggle('is-on', k === n));
+    views.forEach((v, k) => v.classList.toggle('is-on', k === n));
+    thumb.style.setProperty('--i', n);
+    if (late) {
+      late.classList.remove('is-ticked');
+      if (n === 0) setTimeout(() => { if (i === 0) late.classList.add('is-ticked'); }, reduced ? 0 : 1300);
+    }
+  };
+  tabs.forEach((tb, k) => tb.addEventListener('click', () => { go(k); paused = true; }));
+  root.addEventListener('mouseenter', () => { paused = true; });
+  root.addEventListener('mouseleave', () => { paused = false; });
+  go(0);
+  if (reduced) return;
+  let visible = false;
+  new IntersectionObserver((es) => {
+    visible = es[0].isIntersecting;
+    if (visible && !timer) timer = setInterval(() => { if (!paused && !document.hidden) go((i + 1) % 3); }, 4200);
+    if (!visible && timer) { clearInterval(timer); timer = null; }
+  }).observe(root);
+});
+
+/* ---------- little pixel icons ---------- */
+const PX = {
+  cal: {
+    pal: { o: 'var(--px-ink)', b: 'var(--primary)', w: '#fff', g: '#cfc4b6', a: 'var(--accent)' },
+    rows: [
+      '..o......o..',
+      '.oooooooooo.',
+      'obobbbbbbobo',
+      'obbbbbbbbbbo',
+      'oooooooooooo',
+      'owwwwwwwwwwo',
+      'owggwggwaawo',
+      'owggwggwaawo',
+      'owwwwwwwwwwo',
+      'owggwggwggwo',
+      'owggwggwggwo',
+      '.oooooooooo.',
+    ],
+  },
+  list: {
+    pal: { o: 'var(--px-ink)', p: 'var(--primary)', w: '#fff', s: 'var(--success)', g: '#cfc4b6', a: 'var(--accent)' },
+    rows: [
+      '....oooo....',
+      '.ooooppoooo.',
+      'owwwoooowwwo',
+      'owsswggggwwo',
+      'owsswwwwwwwo',
+      'owwwwwwwwwwo',
+      'owsswggggwwo',
+      'owsswwwwwwwo',
+      'owwwwwwwwwwo',
+      'owaawgggwwwo',
+      'owaawwwwwwwo',
+      '.oooooooooo.',
+    ],
+  },
+};
+function pxSvg({ pal, rows }) {
+  const paths = {};
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      const ch = row[x];
+      let n = 1;
+      while (row[x + n] === ch) n++;
+      if (ch !== '.') paths[ch] = (paths[ch] || '') + 'M' + x + ' ' + y + 'h' + n + 'v1h-' + n + 'z';
+      x += n;
+    }
+  });
+  const body = Object.keys(paths).map((k) => '<path style="fill:' + pal[k] + '" d="' + paths[k] + '"/>').join('');
+  return '<svg viewBox="0 0 ' + rows[0].length + ' ' + rows.length + '" shape-rendering="crispEdges" aria-hidden="true">' + body + '</svg>';
+}
+function iconCanvas(animal, cssScale) {
+  const s = SPR[animal];
+  const c = document.createElement('canvas');
+  const pc = pixelCanvas(c, s.iconSize, s.iconSize);
+  pc.size(cssScale);
+  const f = frame(animal, '@icon');
+  pc.draw(f, false);
+  return c;
+}
+safe(() => {
+  $$('[data-px]').forEach((el) => {
+    const k = el.dataset.px;
+    if (k === 'pet') { if (SPR.cat && SPR.cat.icon) el.appendChild(iconCanvas('cat', 1.5)); }
+    else el.innerHTML = pxSvg(PX[k]);
+  });
+  const fp = $('#footPets');
+  if (fp) ['cat', 'dog'].forEach((a) => { if (SPR[a] && SPR[a].icon) fp.appendChild(iconCanvas(a, 1.25)); });
+  const rm = $('#rmPet');
+  if (rm && SPR.cat && SPR.cat.icon) {
+    const c = iconCanvas('cat', 4);
+    rm.setAttribute('href', c.toDataURL());
+  }
+});
+
+/* ---------- QR code for the iPhone link (desktop visitors) ---------- */
+// Minimal QR encoder: byte mode, error correction level M, versions 1-10.
+function qrMatrix(text) {
+  const data = Array.from(new TextEncoder().encode(text));
+  const ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26];
+  const BLK = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5];
+  const rawMods = (v) => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; };
+  const dataCw = (v) => Math.floor(rawMods(v) / 8) - ECC[v] * BLK[v];
+  let ver = 1;
+  while (4 + (ver < 10 ? 8 : 16) + data.length * 8 > dataCw(ver) * 8) { if (++ver > 10) return null; }
+  const bits = [];
+  const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+  put(4, 4); put(data.length, ver < 10 ? 8 : 16); data.forEach((b) => put(b, 8));
+  const cap = dataCw(ver) * 8;
+  put(0, Math.min(4, cap - bits.length));
+  put(0, (8 - (bits.length % 8)) % 8);
+  for (let p = 0xec; bits.length < cap; p ^= 0xec ^ 0x11) put(p, 8);
+  const cw = [];
+  for (let i = 0; i < bits.length; i += 8) cw.push(bits.slice(i, i + 8).reduce((a, b) => (a << 1) | b, 0));
+  const mul = (x, y) => { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11d); z ^= ((y >>> i) & 1) * x; } return z; };
+  const deg = ECC[ver];
+  const div = new Array(deg).fill(0); div[deg - 1] = 1;
+  for (let i = 0, root = 1; i < deg; i++, root = mul(root, 2)) for (let j = 0; j < deg; j++) { div[j] = mul(div[j], root); if (j + 1 < deg) div[j] ^= div[j + 1]; }
+  const remainder = (d) => { const r = new Array(deg).fill(0); d.forEach((b) => { const f = b ^ r.shift(); r.push(0); div.forEach((c, i) => { r[i] ^= mul(c, f); }); }); return r; };
+  const nb = BLK[ver], raw = Math.floor(rawMods(ver) / 8), nShort = nb - (raw % nb), shortLen = Math.floor(raw / nb);
+  const blocks = [];
+  for (let i = 0, k = 0; i < nb; i++) {
+    const len = shortLen - deg + (i < nShort ? 0 : 1);
+    const d = cw.slice(k, k + len); k += len;
+    const e = remainder(d);
+    if (i < nShort) d.push(0);
+    blocks.push(d.concat(e));
+  }
+  const all = [];
+  for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== shortLen - deg || j >= nShort) all.push(b[i]); });
+  const N = ver * 4 + 17;
+  const M = Array.from({ length: N }, () => new Array(N).fill(false));
+  const F = Array.from({ length: N }, () => new Array(N).fill(false));
+  const set = (x, y, v) => { M[y][x] = v; F[y][x] = true; };
+  for (let i = 0; i < N; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  const finder = (cx, cy) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const x = cx + dx, y = cy + dy; if (x >= 0 && x < N && y >= 0 && y < N) { const d = Math.max(Math.abs(dx), Math.abs(dy)); set(x, y, d !== 2 && d !== 4); } } };
+  finder(3, 3); finder(N - 4, 3); finder(3, N - 4);
+  if (ver > 1) {
+    const na = Math.floor(ver / 7) + 2, step = Math.floor((ver * 8 + na * 3 + 5) / (na * 4 - 4)) * 2;
+    const pos = [6];
+    for (let p = N - 7; pos.length < na; p -= step) pos.splice(1, 0, p);
+    pos.forEach((a, i) => pos.forEach((b, j) => {
+      if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) return;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(a + dx, b + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+    }));
+  }
+  const format = (mask) => {
+    const d = mask; // level M = 00
+    let r = d;
+    for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+    const b = ((d << 10) | r) ^ 0x5412;
+    const g = (i) => ((b >>> i) & 1) === 1;
+    for (let i = 0; i <= 5; i++) set(8, i, g(i));
+    set(8, 7, g(6)); set(8, 8, g(7)); set(7, 8, g(8));
+    for (let i = 9; i < 15; i++) set(14 - i, 8, g(i));
+    for (let i = 0; i < 8; i++) set(N - 1 - i, 8, g(i));
+    for (let i = 8; i < 15; i++) set(8, N - 15 + i, g(i));
+    set(8, N - 8, true);
+  };
+  format(0);
+  if (ver >= 7) {
+    let r = ver;
+    for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1f25);
+    const b = (ver << 12) | r;
+    for (let i = 0; i < 18; i++) { const v = ((b >>> i) & 1) === 1, a = N - 11 + (i % 3), c = Math.floor(i / 3); set(a, c, v); set(c, a, v); }
+  }
+  let bi = 0;
+  for (let right = N - 1; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let vert = 0; vert < N; vert++) for (let j = 0; j < 2; j++) {
+      const x = right - j, up = ((right + 1) & 2) === 0, y = up ? N - 1 - vert : vert;
+      if (!F[y][x] && bi < all.length * 8) { M[y][x] = ((all[bi >>> 3] >>> (7 - (bi & 7))) & 1) === 1; bi++; }
+    }
+  }
+  const MASKS = [
+    (x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x) => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+    (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
+    (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0, (x, y) => (((x + y) % 2) + ((x * y) % 3)) % 2 === 0,
+  ];
+  const applyMask = (m) => { for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!F[y][x] && MASKS[m](x, y)) M[y][x] = !M[y][x]; };
+  const penalty = () => {
+    let p = 0, dark = 0;
+    const lines = [];
+    for (let y = 0; y < N; y++) lines.push(M[y].map((v) => (v ? 1 : 0)).join(''));
+    for (let x = 0; x < N; x++) lines.push(M.map((r) => (r[x] ? 1 : 0)).join(''));
+    lines.forEach((s) => {
+      (s.match(/0{5,}|1{5,}/g) || []).forEach((run) => { p += run.length - 2; });
+      p += 40 * (('0000' + s + '0000').match(/(?=10111010000|00001011101)/g) || []).length;
+    });
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (M[y][x]) dark++;
+      if (x < N - 1 && y < N - 1 && M[y][x] === M[y][x + 1] && M[y][x] === M[y + 1][x] && M[y][x] === M[y + 1][x + 1]) p += 3;
+    }
+    p += (Math.ceil(Math.abs(dark * 20 - N * N * 10) / (N * N)) - 1) * 10;
+    return p;
+  };
+  let best = 0, bestP = Infinity;
+  for (let m = 0; m < 8; m++) { applyMask(m); format(m); const p = penalty(); if (p < bestP) { bestP = p; best = m; } applyMask(m); }
+  applyMask(best); format(best);
+  return M;
+}
+safe(() => {
+  if (OS === 'ios' || OS === 'android' || !/^https?:$/.test(location.protocol)) return;
+  const url = new URL(APP_URL, location.href).href;
+  const M = qrMatrix(url);
+  if (!M) return;
+  const N = M.length, q = 4;
+  let d = '';
+  M.forEach((row, y) => row.forEach((v, x) => { if (v) d += 'M' + (x + q) + ' ' + (y + q) + 'h1v1h-1z'; }));
+  $('#qrCode').innerHTML = '<svg viewBox="0 0 ' + (N + q * 2) + ' ' + (N + q * 2) + '" shape-rendering="crispEdges" role="img" aria-label="QR: ' + url + '"><rect width="100%" height="100%" fill="#fff"/><path fill="#2f2a26" d="' + d + '"/></svg>';
+  $('#qr').hidden = false;
+});
+
+/* ---------- go ---------- */
+safe(() => {
+  const thumb = $('.lang__thumb');
+  if (thumb) thumb.style.transition = 'none'; // no slide on first paint
+  applyLang(lang, false);
+  if (thumb) requestAnimationFrame(() => requestAnimationFrame(() => { thumb.style.transition = ''; }));
+});
+})();
+</script>
+</body>
+</html>
