@@ -81,11 +81,19 @@ const validId = (id) => typeof id === 'string' && /^[a-z0-9]{8,32}$/.test(id);
 const toHex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 const fromHex = (hex) => new Uint8Array(hex.match(/../g).map((h) => parseInt(h, 16)));
 
-export async function hashCode(code, saltHex) {
+// PBKDF2 rounds for new codes. The BUN cloud runs on Cloudflare Workers,
+// which refuse more than 100,000 rounds.
+const CODE_ITERATIONS = 100000;
+// Codes saved on a device before 1.1.1 (no `codeIter`) used 120,000 rounds;
+// only devices check those, so they keep working.
+const LEGACY_ITERATIONS = 120000;
+const iterationsOf = (u) => u.codeIter || LEGACY_ITERATIONS;
+
+export async function hashCode(code, saltHex, iterations = CODE_ITERATIONS) {
   const enc = new TextEncoder();
   const key = await globalThis.crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
   const bits = await globalThis.crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt: fromHex(saltHex), iterations: 120000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: fromHex(saltHex), iterations, hash: 'SHA-256' },
     key,
     256,
   );
@@ -164,18 +172,18 @@ export class Backend {
     return { user: this.publicUser(user), settings: this.settingsFor(user.id) };
   }
 
-  async register({ animal, name, code, starterBoard = true }) {
+  // `tag` asks for a particular Name#tag (an account moving to the cloud keeps its ID when it's free).
+  async register({ animal, name, code, starterBoard = true, tag: wantTag = null }) {
     name = String(name || '').trim();
     code = String(code || '');
     if (animal !== 'cat' && animal !== 'dog') fail('BAD_ANIMAL');
     if (name.length < 1 || name.length > 24) fail('BAD_NAME');
     if (code.length < 4) fail('CODE_TOO_SHORT');
     const sameName = Object.values(this.db.users).filter((u) => u.codeHash && u.name.toLowerCase() === name.toLowerCase());
-    for (const u of sameName) if ((await hashCode(code, u.codeSalt)) === u.codeHash) fail('ACCOUNT_EXISTS');
+    for (const u of sameName) if ((await hashCode(code, u.codeSalt, iterationsOf(u))) === u.codeHash) fail('ACCOUNT_EXISTS');
     const used = new Set(Object.values(this.db.users).filter((u) => u.name.toLowerCase() === name.toLowerCase()).map((u) => u.tag));
-    let tag;
-    do tag = String(1000 + Math.floor(Math.random() * 9000));
-    while (used.has(tag));
+    let tag = /^\d{4}$/.test(String(wantTag ?? '')) ? String(wantTag) : null;
+    while (!tag || used.has(tag)) tag = String(1000 + Math.floor(Math.random() * 9000));
     const salt = toHex(globalThis.crypto.getRandomValues(new Uint8Array(16)));
     const user = {
       id: randomId(),
@@ -183,7 +191,8 @@ export class Backend {
       tag,
       animal,
       codeSalt: salt,
-      codeHash: await hashCode(code, salt),
+      codeHash: await hashCode(code, salt, CODE_ITERATIONS),
+      codeIter: CODE_ITERATIONS,
       createdAt: new Date().toISOString(),
     };
     this.db.users[user.id] = user;
@@ -202,7 +211,7 @@ export class Backend {
   async verifyLogin(name, code) {
     const [base, tag] = String(name || '').trim().toLowerCase().split('#');
     const candidates = Object.values(this.db.users).filter((u) => u.codeHash && u.name.toLowerCase() === base && (!tag || u.tag === tag));
-    for (const u of candidates) if ((await hashCode(String(code || ''), u.codeSalt)) === u.codeHash) return u;
+    for (const u of candidates) if ((await hashCode(String(code || ''), u.codeSalt, iterationsOf(u))) === u.codeHash) return u;
     return null;
   }
 
@@ -860,8 +869,12 @@ export class Backend {
     const me = this.me();
     const mapUser = (id) => (id === localUserId ? me.id : null);
     let count = 0;
+    const myBoardNames = new Set(Object.values(this.db.boards).filter((b) => b.ownerId === me.id).map((b) => b.name));
+    const hasTasks = new Set(Object.values(tasks).map((t) => t.boardId));
     for (const b of Object.values(boards)) {
       if (!validId(b.id) || this.db.boards[b.id] || b.ownerId !== localUserId) continue;
+      // Another device's empty starter "Checklist" would only be a duplicate.
+      if (!hasTasks.has(b.id) && myBoardNames.has(b.name)) continue;
       this.db.boards[b.id] = { ...b, ownerId: me.id, members: { [me.id]: 'owner' }, roadmapOrder: b.roadmapOrder || null };
       count++;
     }

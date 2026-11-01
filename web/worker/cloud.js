@@ -3,7 +3,7 @@
 // the signed-in user. Devices keep a replica and talk to it through
 // src/core/cloud.js:
 //
-//   POST /api/cloud/register  { animal, name, code, starterBoard? } -> { token, snapshot }
+//   POST /api/cloud/register  { animal, name, code, starterBoard?, tag? } -> { token, snapshot }
 //   POST /api/cloud/login     { name, code }                         -> { token, snapshot }
 //   POST /api/cloud/batch     { ops: [{ method, args }] }  (Bearer)  -> { results, snapshot }
 //   POST /api/cloud/logout    {}                           (Bearer)  -> {}
@@ -12,7 +12,7 @@
 
 import { Backend, BunError, WRITE_METHODS } from '../../src/core/backend.js';
 
-const CHUNK = 900_000; // characters per stored value (values are limited to 2 MB)
+const CHUNK = 500_000; // characters per stored value: at most 1 MB even as UTF-16 (values are limited to 2 MB)
 const RPC_METHODS = new Set([...WRITE_METHODS, 'importData']);
 const MAX_OPS = 200;
 const LOGIN_WINDOW = 10 * 60 * 1000;
@@ -85,6 +85,7 @@ export class BunCloud {
       name: body.name,
       code: body.code,
       starterBoard: body.starterBoard !== false,
+      tag: body.tag ?? null,
     });
     const userId = session.user.id;
     this.backend.db.session = null; // the server has no "current user"

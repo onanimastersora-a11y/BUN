@@ -7,7 +7,7 @@ Thư mục `web/` là một Cloudflare Worker. Nó làm 4 việc:
 - Lấy giá chứng khoán từ Yahoo Finance cho app.
 - Gửi thông báo nhắc việc tới iPhone mỗi phút.
 
-> **Đã deploy bản 1.0 rồi?** Bạn chỉ cần làm phần [Cập nhật lên bản 1.1](#cập-nhật-lên-bản-11) ở cuối trang.
+> **Đã deploy bản 1.0 rồi?** Làm phần [Cập nhật lên bản 1.1](#cập-nhật-lên-bản-11) ở cuối trang. **Đã có bản 1.1.0?** Chỉ cần làm phần [Cập nhật lên bản 1.1.1](#cập-nhật-lên-bản-111).
 
 **Cần có:** Node.js 20 trở lên và một tài khoản Cloudflare miễn phí (đăng ký tại https://dash.cloudflare.com/sign-up).
 
@@ -171,3 +171,32 @@ Bản 1.1 thêm tài khoản dùng chung trên mọi thiết bị. Làm lần l�
    Sau khoảng 10 phút, tải bản mới từ trang web và cài đè lên bản cũ.
 
 **Lần đầu mở bản 1.1:** nếu trên máy đã có tài khoản cũ (tạo trước khi có máy chủ), BUN sẽ hỏi lại **code một lần** để đưa tài khoản và các bảng, việc, note lên máy chủ. Tài khoản cùng tên và cùng code trên các máy khác nhau sẽ được gộp thành một.
+
+## Cập nhật lên bản 1.1.1
+
+Bản 1.1.0 không đồng bộ được tài khoản: nút **Đồng bộ** báo "Có lỗi xảy ra", và tạo tài khoản mới cũng lỗi. Nguyên nhân: Cloudflare chỉ cho băm code tối đa 100.000 vòng, còn bản 1.1.0 dùng 120.000. Bản 1.1.1 dùng 100.000 vòng cho mọi code mới; code cũ trên máy vẫn dùng được.
+
+1. Đưa máy chủ mới lên Cloudflare (sửa lỗi ngay cho mọi thiết bị):
+
+   ```powershell
+   npm run build:web
+   cd web
+   npm run deploy
+   cd ..
+   ```
+
+2. iPhone: đóng hẳn BUN rồi mở lại 1–2 lần để lấy bản mới. Không cần cài lại.
+
+3. Windows và Mac: tạo bản cài mới.
+
+   ```powershell
+   git add -A
+   git commit -m "BUN 1.1.1"
+   git push
+   git tag v1.1.1
+   git push origin v1.1.1
+   ```
+
+   Sau khoảng 10 phút, tải bản mới từ trang web và cài đè lên bản cũ.
+
+4. Bấm **Đồng bộ** và nhập code. Nên cài bản 1.1.1 trước khi bấm: bản 1.1.1 giữ nguyên ID của bạn (ví dụ `Mì#4127`). Bản 1.1.0 vẫn đồng bộ được, nhưng ID sẽ đổi sang số khác.

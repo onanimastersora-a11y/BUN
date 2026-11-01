@@ -286,6 +286,7 @@ const vi = {
   'err.CREATOR_CANNOT_LEAVE': 'Người tạo không thể rời bảng.',
   'err.NEED_ONLINE': 'Cần kết nối mạng để đăng nhập trên thiết bị này.',
   'err.TOO_MANY_TRIES': 'Sai quá nhiều lần, thử lại sau ít phút nhé.',
+  'err.SERVER': 'Máy chủ đang gặp sự cố, thử lại sau ít phút nhé.',
   'err.default': 'Có lỗi xảy ra, thử lại nhé.',
 };
 
@@ -562,6 +563,7 @@ const en = {
   'err.CREATOR_CANNOT_LEAVE': "The creator can't leave the board.",
   'err.NEED_ONLINE': 'You need an internet connection to sign in on this device.',
   'err.TOO_MANY_TRIES': 'Too many wrong tries, please wait a few minutes.',
+  'err.SERVER': 'The server ran into a problem. Please try again in a few minutes.',
   'err.default': 'Something went wrong, please try again.',
 };
 

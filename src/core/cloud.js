@@ -148,22 +148,32 @@ export class CloudSync {
   async linkAccount(code) {
     const me = this.b.me();
     if (!(await this.b.verifyLogin(`${me.name}#${me.tag}`, code))) throw new BunError('LOGIN_FAILED');
-    let res;
+    // The same Name#tag already in the cloud, else the same name + code
+    // (linked from another device), else move this account there, keeping its ID.
+    let res = null;
     let fresh = false;
-    try {
-      res = await this.http('login', { name: me.name, code }, false);
-    } catch (err) {
-      if (err.code !== 'LOGIN_FAILED') throw err;
-      res = await this.http('register', { animal: me.animal, name: me.name, code, starterBoard: false }, false);
+    for (const name of [`${me.name}#${me.tag}`, me.name]) {
+      try {
+        res = await this.http('login', { name, code }, false);
+        break;
+      } catch (err) {
+        if (err.code !== 'LOGIN_FAILED') throw err;
+      }
+    }
+    if (!res) {
+      res = await this.http('register', { animal: me.animal, name: me.name, code, tag: me.tag, starterBoard: false }, false);
       fresh = true;
     }
     const db = this.b.db;
     const boards = Object.fromEntries(Object.entries(db.boards).filter(([, b]) => b.ownerId === me.id));
     const tasks = Object.fromEntries(Object.entries(db.tasks).filter(([, t]) => (t.boardId ? !!boards[t.boardId] : t.createdBy === me.id)));
     const payload = { localUserId: me.id, boards, tasks, notes: db.notes[me.id] || {}, settings: fresh ? db.settings[me.id] || null : null };
-    this.state = { ...this.state, token: res.token, userId: res.snapshot.userId, pending: [], pendingLink: null };
+    this.state = { ...this.state, token: res.token, userId: res.snapshot.userId, pending: [] };
     this.save();
     const out = await this.http('batch', { ops: [{ method: 'importData', args: [payload] }] });
+    // Keep this device's data unless the cloud really has it now.
+    if (!out.results[0]?.ok) throw new BunError(out.results[0]?.code || 'SERVER');
+    this.state.pendingLink = null;
     this.state.lastSync = new Date().toISOString();
     this.save();
     this.b.loadSnapshot(out.snapshot);

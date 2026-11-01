@@ -134,6 +134,10 @@ async function main() {
     if (!html.includes(key)) throw new Error(`Template is missing placeholder ${key}`);
     html = html.split(key).join(value);
   }
+  // The page always shows the version of the apps being released (package.json).
+  const { version } = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
+  if (!/const VERSION = '[^']*';/.test(html)) throw new Error('Template is missing const VERSION');
+  html = html.replace(/const VERSION = '[^']*';/, `const VERSION = '${version}';`);
   // Drop the template-only comment block in <head>.
   html = html.replace(/<!--\s*\n\s*BUN landing page: SOURCE TEMPLATE[\s\S]*?-->\n/, '');
   const left = html.match(/@@[A-Z_]+@@/);
