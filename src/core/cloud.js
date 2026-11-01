@@ -15,6 +15,7 @@ import { BunError, WRITE_METHODS, randomId } from './backend.js';
 import { dayKey } from './time.js';
 
 const POLL_MS = 20000;
+const REQUEST_MS = 25000; // a request that hangs longer counts as offline
 // Actions that need the cloud's knowledge of other people / boards.
 const ONLINE_ONLY = new Set(['sendFriendRequest']);
 
@@ -71,21 +72,22 @@ export class CloudSync {
   // ---------- transport ----------
 
   async http(path, body, auth = true) {
-    let res;
+    let data = null;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), REQUEST_MS);
     try {
-      res = await this.fetch(`${this.base}/api/cloud/${path}`, {
+      const res = await this.fetch(`${this.base}/api/cloud/${path}`, {
         method: 'POST',
         headers: { 'content-type': 'application/json', ...(auth && this.state.token ? { authorization: `Bearer ${this.state.token}` } : {}) },
         body: JSON.stringify(body || {}),
+        signal: ctrl.signal,
       });
-    } catch {
-      this.setOnline(false);
-      throw new BunError('NEED_ONLINE');
-    }
-    let data = null;
-    try {
       data = await res.json();
-    } catch {}
+    } catch {
+      // network error, timeout, or not a BUN answer
+    } finally {
+      clearTimeout(timer);
+    }
     if (!data) {
       this.setOnline(false);
       throw new BunError('NEED_ONLINE');
@@ -178,6 +180,7 @@ export class CloudSync {
     this.state.lastSync = new Date().toISOString();
     this.save();
     this.b.loadSnapshot(out.snapshot);
+    this.soon();
     return this.b.getSession();
   }
 
@@ -242,7 +245,7 @@ export class CloudSync {
   /** Send queued changes, then take the cloud's latest snapshot. */
   async sync() {
     if (this.syncing) return this.syncing;
-    this.syncing = (async () => {
+    const run = async () => {
       try {
         if (this.state.pendingLink && this.localUserId && !this.linked) {
           await this.linkAccount(this.state.pendingLink.code);
@@ -262,11 +265,16 @@ export class CloudSync {
           this.state = { ...this.state, token: null, userId: null };
           this.save();
         }
-      } finally {
-        this.syncing = null;
       }
-    })();
-    return this.syncing;
+    };
+    // Cleared once the run settles, never before it is stored: a run that ends
+    // without waiting (not linked yet) used to leave a finished promise here
+    // for good, and nothing was sent again until the app restarted.
+    const p = run().finally(() => {
+      if (this.syncing === p) this.syncing = null;
+    });
+    this.syncing = p;
+    return p;
   }
 
   // Take the cloud copy, then replay changes made while the request was in flight.

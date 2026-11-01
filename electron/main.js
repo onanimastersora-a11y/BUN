@@ -3,7 +3,7 @@
 // pet), the tray / menu-bar icon, start-at-login, bun:// links, the reminder
 // loop, market-data fetching (no CORS here) and the user's ringtone files.
 
-import { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, net, protocol, screen, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, net, powerMonitor, protocol, screen, shell } from 'electron';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -107,6 +107,8 @@ function start() {
       webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, sandbox: true },
     });
     mainWin.once('ready-to-show', () => mainWin.show());
+    // Coming back to BUN: fetch what other devices changed right away.
+    mainWin.on('focus', () => cloud?.sync().catch(() => {}));
     mainWin.on('close', (e) => {
       if (quitting) return;
       // Closing the window keeps BUN (and the pet) alive in the tray / menu bar.
@@ -483,6 +485,7 @@ function start() {
       for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('bun:cloud', status);
     });
     cloud.start();
+    powerMonitor.on('resume', () => cloud.sync().catch(() => {}));
     buildAppMenu();
 
     protocol.handle('bunmedia', (req) => {
