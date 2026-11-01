@@ -12,6 +12,7 @@
 //   user re-enters their code once and their boards/tasks/notes are uploaded.
 
 import { BunError, WRITE_METHODS, randomId } from './backend.js';
+import { dayKey } from './time.js';
 
 const POLL_MS = 20000;
 // Actions that need the cloud's knowledge of other people / boards.
@@ -216,6 +217,8 @@ export class CloudSync {
     if (method === 'createTask') return [{ ...args[0], id: args[0]?.id || randomId() }];
     if (method === 'createBoard') return [args[0], { ...(args[1] || {}), id: args[1]?.id || randomId() }];
     if (method === 'sendMessage') return [args[0], args[1], args[2] || randomId()];
+    // "Today" is this device's day, not the server's (UTC) day.
+    if (method === 'saveNote') return [args[0], args[1] || dayKey()];
     return args;
   }
 
