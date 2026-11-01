@@ -3175,3 +3175,167 @@
 .mobile .pet-root--embedded {
   margin-bottom: calc(66px + env(safe-area-inset-bottom));
 }
+
+/* ================= deadlines, repeat, time input ================= */
+
+/* A checklist deadline on the calendar: a line at the due time. */
+.cal-deadline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: 0;
+  border-top: 2px solid var(--accent);
+  cursor: grab;
+  touch-action: none;
+}
+.cal-deadline::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.cal-deadline__label {
+  position: absolute;
+  left: 12px;
+  right: 4px;
+  top: -20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cal-deadline__label b {
+  color: var(--accent);
+}
+.cal-deadline.is-late {
+  border-top-color: var(--danger);
+}
+.cal-deadline.is-late::before,
+.cal-deadline.is-late .cal-deadline__label b {
+  background: var(--danger);
+  color: var(--danger);
+}
+.cal-deadline.is-late::before {
+  background: var(--danger);
+}
+.cal-deadline.is-done {
+  opacity: 0.45;
+}
+.cal-deadline.is-done .cal-deadline__label {
+  text-decoration: line-through;
+}
+.cal-deadline.is-active {
+  z-index: 7;
+  cursor: grabbing;
+}
+.cal-block__repeat {
+  display: inline-block;
+  margin-right: 3px;
+  vertical-align: -1px;
+  opacity: 0.85;
+}
+
+.time-input {
+  width: 74px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.deadline-field .input[type='date'] {
+  flex: 1;
+}
+.repeat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.switch--sm {
+  width: 34px;
+  height: 20px;
+}
+.switch--sm::after {
+  width: 14px;
+  height: 14px;
+}
+.switch--sm.is-on::after {
+  transform: translateX(14px);
+}
+
+/* ================= cloud account ================= */
+
+.link-modal {
+  width: min(440px, calc(100vw - 32px));
+}
+.link-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}
+.link-modal__body h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.link-modal__body p {
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+.link-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+.sync-status {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+.sync-status i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.sync-status.is-ok i {
+  background: var(--success);
+}
+.sync-status__btn {
+  color: var(--primary);
+  font-weight: 800;
+}
+.sync-status__btn:disabled {
+  opacity: 0.5;
+}
+.week-mini__item.is-deadline {
+  background: var(--accent-soft);
+  color: var(--text);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.daily__time.is-deadline {
+  background: var(--accent-soft);
+  color: var(--accent);
+}

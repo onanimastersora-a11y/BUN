@@ -5,7 +5,11 @@
 //  - /api/yahoo/*  restricted Yahoo Finance pass-through (CORS + edge cache).
 //  - /api/push/*   Web Push subscriptions and reminders in D1; a cron every minute sends due reminders.
 
-import { b64urlDecode, b64urlEncode, PushError, sendWebPush } from './push.js';
+import { b64urlDecode, b64urlEncode, getVapidSigningKey, PushError, sendWebPush } from './push.js';
+import { BunCloud, handleCloud } from './cloud.js';
+
+// The accounts/sync Durable Object class must be exported from the main module.
+export { BunCloud };
 
 const YAHOO_ORIGIN = 'https://query1.finance.yahoo.com';
 const BROWSER_UA =
@@ -41,7 +45,7 @@ const PUSH_HOST_SUFFIXES = [
 const CORS_HEADERS = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, OPTIONS',
-  'access-control-allow-headers': 'content-type',
+  'access-control-allow-headers': 'content-type, authorization',
   'access-control-max-age': '86400',
 };
 
@@ -75,6 +79,7 @@ export default {
       }
       if (path.startsWith('/api/yahoo/')) return await handleYahoo(request, url, ctx);
       if (path.startsWith('/api/push/')) return await handlePush(request, url, env);
+      if (path.startsWith('/api/cloud/')) return await handleCloud(request, env, CORS_HEADERS);
       throw new HttpError(404, 'not found');
     } catch (err) {
       if (err instanceof HttpError) {
@@ -201,14 +206,31 @@ const DEVICE_ID_RE = /^[A-Za-z0-9._~:+/=-]{32,256}$/;
 
 async function handlePush(request, url, env) {
   const route = url.pathname.slice('/api/push/'.length);
-  const routes = ['key', 'subscribe', 'sync', 'unsubscribe', 'test'];
+  const routes = ['key', 'health', 'subscribe', 'sync', 'unsubscribe', 'test'];
   if (!routes.includes(route)) throw new HttpError(404, 'not found');
 
   if (route === 'key') {
     if (request.method !== 'GET') throw new HttpError(405, 'method not allowed');
-    const publicKey = (env.VAPID_PUBLIC_KEY || '').trim();
+    const publicKey = cleanKey(env.VAPID_PUBLIC_KEY);
     if (!publicKey) throw new HttpError(503, 'VAPID_PUBLIC_KEY is not configured');
     return json({ publicKey });
+  }
+
+  // Quick self-check of the key pair (never reveals the private key).
+  if (route === 'health') {
+    const publicKey = cleanKey(env.VAPID_PUBLIC_KEY);
+    const privateKey = cleanKey(env.VAPID_PRIVATE_KEY);
+    let keys = 'ok';
+    if (!publicKey) keys = 'missing VAPID_PUBLIC_KEY';
+    else if (!privateKey) keys = 'missing VAPID_PRIVATE_KEY secret';
+    else {
+      try {
+        await getVapidSigningKey(publicKey, privateKey);
+      } catch (err) {
+        keys = String(err.message || err);
+      }
+    }
+    return json({ ok: keys === 'ok', keys, database: !!env.DB, cloud: !!env.CLOUD });
   }
 
   if (request.method !== 'POST') throw new HttpError(405, 'method not allowed');
@@ -381,9 +403,17 @@ async function removeDevices(env, deviceIds) {
   ]);
 }
 
+// Tolerate keys pasted as `VAPID_PRIVATE_KEY=...`, with quotes or with spaces.
+const cleanKey = (v) =>
+  String(v || '')
+    .trim()
+    .replace(/^VAPID_(PUBLIC|PRIVATE)_KEY\s*=\s*/, '')
+    .replace(/^["']|["']$/g, '')
+    .replace(/\s+/g, '');
+
 function vapidFromEnv(env) {
-  const publicKey = (env.VAPID_PUBLIC_KEY || '').trim();
-  const privateKey = (env.VAPID_PRIVATE_KEY || '').trim();
+  const publicKey = cleanKey(env.VAPID_PUBLIC_KEY);
+  const privateKey = cleanKey(env.VAPID_PRIVATE_KEY);
   if (!publicKey || !privateKey) return null;
   return { publicKey, privateKey, subject: (env.VAPID_SUBJECT || '').trim() || 'https://bun-web.workers.dev' };
 }

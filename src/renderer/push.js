@@ -42,10 +42,20 @@ export const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navi
 export const pushSupported = () => !bridge.isElectron && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 export const pushEnabled = () => store.get(ENABLED_KEY) === '1' && pushSupported() && Notification.permission === 'granted';
 
+// Errors carry the server's reason (`err.detail`) so the app can show it.
 async function post(path, body) {
-  const res = await fetch(`/api/push/${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  let res;
+  try {
+    res = await fetch(`/api/push/${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  } catch {
+    throw Object.assign(new Error('offline'), { code: 'PUSH_SERVER', detail: 'offline' });
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.ok === false) {
+    const detail = data.error || data.reason || `HTTP ${data.status || res.status}`;
+    throw Object.assign(new Error(detail), { code: 'PUSH_SERVER', detail });
+  }
+  return data;
 }
 
 function b64urlToBytes(s) {
@@ -97,7 +107,7 @@ export async function syncReminders() {
         id: `${it.id}@${it.start}`,
         at: new Date(at).toISOString(),
         title: `${session.user.name} 🐾`,
-        body: t('pet.taskAlert', { name: it.name, n: leadMinutes }),
+        body: t(it.kind === 'deadline' ? 'pet.deadlineAlert' : 'pet.taskAlert', { name: it.name, n: leadMinutes }),
         url: '/app/',
         tag: it.id,
       };

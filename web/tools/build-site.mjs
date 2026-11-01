@@ -12,7 +12,7 @@
 // The optional `play` animation is picked up automatically when a sprite has it.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { dirname, resolve, relative } from 'node:path';
+import { dirname, join, resolve, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -141,6 +141,28 @@ async function main() {
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, html);
+  // Home Screen install from the landing page opens the app, not this page.
+  writeFileSync(
+    join(dirname(OUT), 'manifest.webmanifest'),
+    JSON.stringify(
+      {
+        name: 'BUN',
+        short_name: 'BUN',
+        start_url: '/app/',
+        scope: '/',
+        display: 'standalone',
+        background_color: '#f6f2ec',
+        theme_color: '#f6f2ec',
+        icons: [
+          { src: '/app/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/app/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/app/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
   const kb = (n) => (n / 1024).toFixed(1) + ' KB';
   console.log(`Built ${rel(OUT)}  ${kb(Buffer.byteLength(html))}  (sprites ${kb(spritesJson.length)}, logo ${kb(logo.length)})`);
   console.log(report.join('\n'));

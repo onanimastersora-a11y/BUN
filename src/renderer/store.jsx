@@ -119,3 +119,20 @@ export function useIsMobile() {
   }, []);
   return mobile;
 }
+
+// Cloud sync status: { linked, needsLink, autoLinking, online, pending, lastSync }.
+export function useCloud() {
+  const [status, setStatus] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    api.cloudStatus().then((s) => alive && setStatus(s)).catch(() => {});
+    const off = bridge.on('bun:cloud', (s) => alive && setStatus(s));
+    const off2 = bridge.on('bun:changed', (topics) => topics.includes('session') && api.cloudStatus().then((s) => alive && setStatus(s)).catch(() => {}));
+    return () => {
+      alive = false;
+      off();
+      off2();
+    };
+  }, []);
+  return status;
+}

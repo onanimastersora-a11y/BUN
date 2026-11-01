@@ -1,0 +1,301 @@
+/* Checklist board: deadlines and drag-and-drop in the table, mindmap and
+   roadmap views. Loaded from the view modules, which come before app.css, so
+   every override here is one notch more specific than the rule it changes. */
+
+/* ================= table ================= */
+
+.tbl {
+  position: relative;
+}
+.tbl > .tbl__row,
+.tbl-ghost .tbl__row {
+  grid-template-columns: 62px 46px minmax(200px, 1fr) 150px 170px 184px 74px;
+}
+.tbl .tbl__check,
+.tbl-ghost .tbl__check {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding-right: 6px;
+}
+
+/* Drag handle: faint until the row is hovered. */
+.tbl__grip {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 30px;
+  border-radius: 7px;
+  color: var(--text-3);
+  cursor: grab;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  opacity: 0.4;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.tbl__row:hover .tbl__grip {
+  opacity: 1;
+}
+.tbl__grip:hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+/* While a row is dragged: no hover effects, the source stays as a faint gap. */
+.tbl.is-sorting .tbl__row {
+  pointer-events: none;
+}
+.tbl .tbl__row.is-drag-src {
+  opacity: 0.32;
+  transition: opacity 0.15s;
+}
+.tbl .tbl__row.is-drop-into {
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+.tbl .tbl__row.is-landed {
+  animation: tbl-landed 0.9s var(--ease);
+}
+@keyframes tbl-landed {
+  from {
+    background: var(--primary-soft);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--primary) 55%, transparent);
+  }
+}
+
+/* Where the row will land: a line with a ring at its start, indented to the level. */
+.tbl-drop-line {
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--primary);
+  pointer-events: none;
+  z-index: 3;
+  transition: transform 0.12s var(--ease), width 0.12s var(--ease);
+}
+.tbl-drop-line::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: -4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2.5px solid var(--primary);
+  background: var(--surface);
+}
+
+/* The lifted row that follows the pointer (rendered on <body>). */
+.tbl-ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  will-change: transform;
+}
+.tbl-ghost__lift {
+  position: relative;
+  border-radius: 12px;
+  background: var(--surface);
+  transform-origin: 40px 50%;
+  animation: tbl-lift 0.18s var(--ease) forwards;
+}
+.tbl-ghost.is-returning .tbl-ghost__lift {
+  animation: tbl-drop 0.2s var(--ease) forwards;
+}
+@keyframes tbl-lift {
+  from {
+    transform: none;
+    box-shadow: 0 0 0 0 transparent;
+  }
+  to {
+    transform: scale(1.015) rotate(-0.5deg);
+    box-shadow: var(--shadow-lg), 0 0 0 1.5px color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+}
+@keyframes tbl-drop {
+  from {
+    transform: scale(1.015) rotate(-0.5deg);
+    box-shadow: var(--shadow-lg), 0 0 0 1.5px color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+  to {
+    transform: none;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.tbl-ghost .tbl__row {
+  background: transparent;
+  border-bottom: 0;
+}
+.tbl-ghost .tbl__grip {
+  opacity: 1;
+  color: var(--primary);
+}
+.tbl-ghost .tbl__actions {
+  opacity: 0;
+}
+.tbl-ghost__count {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+body.is-row-dragging,
+body.is-row-dragging *,
+body.is-mm-dragging,
+body.is-mm-dragging * {
+  cursor: grabbing !important;
+}
+
+/* Deadline cell. */
+.cell-btn.is-overdue {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+.cell-btn.is-overdue:hover {
+  background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+/* ================= mindmap ================= */
+
+.mindmap .mm-dot,
+.mindmap .mm-label__main {
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+.mm-label__time.is-overdue {
+  color: var(--danger);
+}
+.mm-node.is-dragging {
+  z-index: 5;
+}
+.mm-node.is-dragging .mm-dot {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 0 4px var(--surface), 0 0 0 6px color-mix(in srgb, var(--c) 45%, transparent), 0 12px 28px color-mix(in srgb, var(--c) 45%, transparent);
+}
+.mm-node.is-dragging .mm-label__main {
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+}
+.mm-node.is-carried {
+  opacity: 0.7;
+}
+.mm-node.is-drop-target .mm-dot {
+  transform: translate(-50%, -50%) scale(1.22);
+  box-shadow: 0 0 0 4px var(--surface), 0 0 0 8px var(--c), 0 0 26px color-mix(in srgb, var(--c) 60%, transparent);
+}
+.mm-node.is-drop-target .mm-label__main {
+  border-color: var(--c);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent), var(--shadow);
+}
+.mm-edge.is-detached {
+  opacity: 0;
+}
+.mm-edge.mm-edge--preview {
+  stroke-width: 3;
+  stroke-dasharray: 7 8;
+  opacity: 0.95;
+  animation: mm-march 0.6s linear infinite;
+}
+@keyframes mm-march {
+  to {
+    stroke-dashoffset: -15;
+  }
+}
+
+/* ================= roadmap ================= */
+
+.roadmap__goal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.roadmap__goal-actions .roadmap__add {
+  margin-top: 0;
+}
+.roadmap__goal-actions .roadmap__sort {
+  color: var(--primary-ink);
+}
+.roadmap .roadmap__node {
+  cursor: grab;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s;
+}
+.roadmap .roadmap__card {
+  -webkit-touch-callout: none;
+}
+.roadmap__time.is-overdue {
+  color: var(--danger);
+}
+
+/* Steps glide to their new slots while sorting and right after a drop. */
+.roadmap.is-sorting .roadmap__step {
+  transition: left 0.24s var(--ease), top 0.24s var(--ease);
+}
+.roadmap.is-sorting .roadmap__step.is-dragging {
+  transition: none;
+  z-index: 30;
+}
+.roadmap__step.is-dragging .roadmap__card {
+  transform: scale(1.03) rotate(-0.6deg);
+  box-shadow: var(--shadow-lg), 0 0 0 2px color-mix(in srgb, var(--primary) 40%, transparent);
+  cursor: grabbing;
+}
+.roadmap__step.is-dragging .roadmap__node {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 5px var(--bg), var(--shadow-lg);
+  cursor: grabbing;
+}
+
+/* The empty milestone where the dragged step will land. */
+.roadmap__slot {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  border: 3px dashed var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 5px var(--bg);
+  pointer-events: none;
+  transition: left 0.18s var(--ease), top 0.18s var(--ease);
+  animation: rm-slot 1.2s ease-in-out infinite;
+}
+@keyframes rm-slot {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* ================= phones ================= */
+
+@media (max-width: 760px) {
+  .tbl > .tbl__row,
+  .tbl-ghost .tbl__row {
+    grid-template-columns: 62px 30px minmax(0, 1fr) auto;
+  }
+  .tbl .tbl__check {
+    padding-right: 4px;
+  }
+  .tbl .tbl__grip {
+    width: 28px;
+    height: 36px;
+    opacity: 0.7;
+  }
+}

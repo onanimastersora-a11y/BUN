@@ -56,6 +56,15 @@ export default function CalendarView({ initialDate }) {
   const [drag, setDrag] = useState(null); // { id, start, end, mode }
   const scrollRef = useRef(null);
   const daysRef = useRef(null);
+  // One interaction at a time: right after a drag or after closing a form,
+  // clicks are ignored for a moment so they can't open another task.
+  const quietUntil = useRef(0);
+  const quiet = (ms = 350) => (quietUntil.current = Date.now() + ms);
+  const isQuiet = () => Date.now() < quietUntil.current;
+  const closeEditor = () => {
+    quiet(300);
+    setEditor(null);
+  };
 
   useLayoutEffect(() => {
     const h = Math.max(0, Math.min(new Date().getHours() - 1, 7));
@@ -67,11 +76,14 @@ export default function CalendarView({ initialDate }) {
   const days = mobile ? [anchorDay] : week;
 
   const shown = items.map((it) => (drag && drag.id === it.id ? { ...it, start: drag.start, end: drag.end } : it));
+  const events = shown.filter((it) => it.kind !== 'deadline');
+  // Checklist deadlines: a line at the due time, not a block.
+  const deadlinesFor = (day) => shown.filter((it) => it.kind === 'deadline' && sameDay(it.start, day));
 
   const blocksFor = (day) => {
     const dayStart = startOfDay(day).getTime();
     const dayEnd = dayStart + 24 * 60 * MINUTE;
-    const blocks = shown
+    const blocks = events
       .filter((it) => new Date(it.start).getTime() < dayEnd && new Date(it.end).getTime() > dayStart)
       .map((it) => {
         const s = Math.max(new Date(it.start).getTime(), dayStart);
@@ -92,14 +104,30 @@ export default function CalendarView({ initialDate }) {
 
   // ----- create -----
   const onColumnClick = (e, day) => {
-    if (e.target.closest('.cal-block')) return;
+    if (e.target.closest('.cal-block, .cal-deadline') || drag || isQuiet()) return;
+    if (editor) return closeEditor();
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
     const hour = Math.max(0, Math.min(23, Math.floor(y / HOUR_H)));
     const start = new Date(startOfDay(day));
     start.setHours(hour);
     const end = new Date(start.getTime() + 60 * MINUTE);
-    setEditor({ anchor: { x: e.clientX, y: e.clientY }, draft: { boardId: null, start: start.toISOString(), end: end.toISOString() }, quick: true });
+    setEditor({ anchor: { x: e.clientX, y: e.clientY }, draft: { boardId: null, start: start.toISOString(), end: end.toISOString() } });
+  };
+
+  // Save a moved/resized item. One week of a repeating event moves the whole
+  // series by the same amount; a deadline only has one time.
+  const saveTimes = (item, latest) => {
+    if (item.kind === 'deadline') return api.updateTask(item.seriesId || item.id, { due: latest.start });
+    if (item.occurrence) {
+      const ds = new Date(latest.start) - new Date(item.start);
+      const de = new Date(latest.end) - new Date(item.end);
+      return api.updateTask(item.seriesId, {
+        start: new Date(new Date(item.seriesStart).getTime() + ds).toISOString(),
+        end: new Date(new Date(item.seriesEnd).getTime() + de).toISOString(),
+      });
+    }
+    return api.updateTask(item.id, latest);
   };
 
   // ----- move / resize -----
@@ -107,6 +135,9 @@ export default function CalendarView({ initialDate }) {
     if (e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
+    // A form is open: this click only closes it.
+    if (editor) return closeEditor();
+    if (drag || isQuiet()) return;
     const startX = e.clientX;
     const startY = e.clientY;
     const scroll0 = scrollRef.current.scrollTop;
@@ -151,10 +182,12 @@ export default function CalendarView({ initialDate }) {
         if (mode === 'move') setEditor({ anchor: { x: ev.clientX, y: ev.clientY }, task: item });
         return;
       }
+      quiet();
       try {
-        await run(api.updateTask(item.id, latest));
+        await run(saveTimes(item, latest));
       } finally {
         setDrag(null);
+        quiet();
       }
     };
     window.addEventListener('pointermove', onMove);
@@ -272,7 +305,10 @@ export default function CalendarView({ initialDate }) {
                           <span className="cal-block__time">
                             {fmtTime(item.start)} – {fmtTime(item.end)}
                           </span>
-                          <span className="cal-block__name">{item.name}</span>
+                          <span className="cal-block__name">
+                            {item.repeat && <Icon name="refresh" size={11} className="cal-block__repeat" />}
+                            {item.name}
+                          </span>
                           {item.role && <span className="cal-block__role">{item.role}</span>}
                         </div>
                         {item.assigneeUsers?.length > 0 && height >= 72 && (
@@ -288,6 +324,31 @@ export default function CalendarView({ initialDate }) {
                               {fmtTime(drag.start)} – {fmtTime(drag.end)}
                             </b>
                             <span>{fmtDuration(new Date(drag.end) - new Date(drag.start), t)}</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {deadlinesFor(day).map((item) => {
+                    const active = drag?.id === item.id;
+                    return (
+                      // Checklist deadline: a line at the due time with the task name.
+                      <div
+                        key={item.id}
+                        className={`cal-deadline ${item.done ? 'is-done' : ''} ${active ? 'is-active' : ''} ${new Date(item.start) < now && !item.done ? 'is-late' : ''}`}
+                        style={{ top: (minutesOfDay(item.start, day) / 60) * HOUR_H }}
+                        title={`${t('task.due')}: ${fmtTime(item.start)} · ${item.name}${item.boardName ? ` · ${item.boardName}` : ''}`}
+                        onPointerDown={(e) => startDrag(e, item, 'move')}
+                      >
+                        <span className="cal-deadline__label">
+                          <Icon name="flag" size={11} stroke={2.6} />
+                          <b>{fmtTime(item.start)}</b> {item.name}
+                        </span>
+                        {active && (
+                          <div className="cal-badge cal-badge--top">
+                            <b>
+                              {t('task.due')} {fmtTime(drag.start)}
+                            </b>
                           </div>
                         )}
                       </div>
@@ -311,9 +372,8 @@ export default function CalendarView({ initialDate }) {
           anchor={editor.anchor}
           task={editor.task}
           draft={editor.draft}
-          quick={editor.quick}
           placement={mobile ? 'bottom' : 'right'}
-          onClose={() => setEditor(null)}
+          onClose={closeEditor}
         />
       )}
     </div>

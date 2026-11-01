@@ -1,16 +1,18 @@
-// BUN local backend.
+// BUN backend.
 //
-// One class holds every piece of shared state (accounts, friends, chat, boards,
-// tasks, notes, settings) and is used in two places:
-//   - the Electron main process, persisted to a JSON file in %APPDATA%/BUN
-//   - a plain browser (vite preview), persisted to localStorage
-// Several accounts can live on one machine, so friends, chat, board sharing and
-// assignment all work offline between local accounts. A future online backend
-// only has to implement the same public methods.
+// One class holds every piece of state (accounts, friends, chat, boards, tasks,
+// notes, settings) and runs in three places:
+//   - the cloud (web/worker Durable Object): the shared, authoritative copy;
+//     every request runs as one user (see `asUser`)
+//   - the Electron main process: this device's replica, persisted to a JSON
+//     file in the user-data folder
+//   - the browser / iPhone app: same replica, persisted to localStorage
+// src/core/cloud.js keeps a device replica in sync with the cloud.
 
-import { dayKey } from './time.js';
+import { dayKey, addDays } from './time.js';
 
-const DB_VERSION = 1;
+const DB_VERSION = 2;
+const HOUR = 60 * 60 * 1000;
 
 export const DEFAULT_SETTINGS = {
   leadMinutes: 5,
@@ -32,6 +34,9 @@ export const DEFAULT_SETTINGS = {
   ringtone: { kind: 'builtin', id: 'musicbox', url: '', fileId: null, fileName: '', volume: 0.8 },
 };
 
+// Settings that belong to one device and are never taken from the cloud copy.
+export const DEVICE_SETTINGS = ['lastRecapDay', 'petHidden'];
+
 function emptyDb() {
   return {
     version: DB_VERSION,
@@ -48,17 +53,35 @@ function emptyDb() {
   };
 }
 
-function randomId(len = 12) {
+// v1 -> v2: checklist tasks have a single deadline instead of a time range.
+function migrate(db) {
+  if (db.version === 1) {
+    for (const t of Object.values(db.tasks || {})) {
+      if (t.boardId) {
+        t.due = t.end || t.start || null;
+        delete t.start;
+        delete t.end;
+      } else {
+        t.repeat = t.repeat || null;
+      }
+    }
+    db.version = 2;
+  }
+  return db;
+}
+
+export function randomId(len = 12) {
   const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
   const bytes = new Uint8Array(len);
   globalThis.crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
 }
 
+const validId = (id) => typeof id === 'string' && /^[a-z0-9]{8,32}$/.test(id);
 const toHex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 const fromHex = (hex) => new Uint8Array(hex.match(/../g).map((h) => parseInt(h, 16)));
 
-async function hashCode(code, saltHex) {
+export async function hashCode(code, saltHex) {
   const enc = new TextEncoder();
   const key = await globalThis.crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
   const bits = await globalThis.crypto.subtle.deriveBits(
@@ -80,13 +103,20 @@ const fail = (code) => {
   throw new BunError(code);
 };
 
+const isoOrNull = (v) => {
+  if (!v) return null;
+  const d = new Date(v);
+  if (isNaN(d)) fail('BAD_TIME');
+  return d.toISOString();
+};
+
 export class Backend {
   /** @param {{load: () => any, save: (db: any) => void}} storage */
   constructor(storage) {
     this.storage = storage;
     this.listeners = new Set();
     const loaded = storage.load();
-    this.db = loaded && loaded.version === DB_VERSION ? { ...emptyDb(), ...loaded } : emptyDb();
+    this.db = loaded && (loaded.version === 1 || loaded.version === DB_VERSION) ? { ...emptyDb(), ...migrate(loaded) } : emptyDb();
   }
 
   // ---------- plumbing ----------
@@ -101,8 +131,16 @@ export class Backend {
     for (const cb of this.listeners) cb({ topics });
   }
 
+  // A view of this backend that acts as `userId` (used by the cloud, where
+  // many users share one database). Methods called on it see that user as "me".
+  asUser(userId) {
+    const view = Object.create(this);
+    view._uid = userId;
+    return view;
+  }
+
   me() {
-    const id = this.db.session?.userId;
+    const id = this._uid ?? this.db.session?.userId;
     const user = id && this.db.users[id];
     if (!user) fail('NOT_LOGGED_IN');
     return user;
@@ -120,21 +158,21 @@ export class Backend {
   // ---------- account ----------
 
   async getSession() {
-    const id = this.db.session?.userId;
+    const id = this._uid ?? this.db.session?.userId;
     const user = id && this.db.users[id];
     if (!user) return null;
     return { user: this.publicUser(user), settings: this.settingsFor(user.id) };
   }
 
-  async register({ animal, name, code }) {
+  async register({ animal, name, code, starterBoard = true }) {
     name = String(name || '').trim();
     code = String(code || '');
     if (animal !== 'cat' && animal !== 'dog') fail('BAD_ANIMAL');
     if (name.length < 1 || name.length > 24) fail('BAD_NAME');
     if (code.length < 4) fail('CODE_TOO_SHORT');
-    const sameName = Object.values(this.db.users).filter((u) => u.name.toLowerCase() === name.toLowerCase());
+    const sameName = Object.values(this.db.users).filter((u) => u.codeHash && u.name.toLowerCase() === name.toLowerCase());
     for (const u of sameName) if ((await hashCode(code, u.codeSalt)) === u.codeHash) fail('ACCOUNT_EXISTS');
-    const used = new Set(sameName.map((u) => u.tag));
+    const used = new Set(Object.values(this.db.users).filter((u) => u.name.toLowerCase() === name.toLowerCase()).map((u) => u.tag));
     let tag;
     do tag = String(1000 + Math.floor(Math.random() * 9000));
     while (used.has(tag));
@@ -152,27 +190,28 @@ export class Backend {
     this.db.settings[user.id] = { ...DEFAULT_SETTINGS };
     this.db.session = { userId: user.id };
     // Every new account starts with one checklist board.
-    const board = this.makeBoard(user.id, 'Checklist');
-    this.db.settings[user.id].lastBoardId = board.id;
+    if (starterBoard) {
+      const board = this.makeBoard(user.id, 'Checklist');
+      this.db.settings[user.id].lastBoardId = board.id;
+    }
     this.commit('session', 'boards', 'settings');
-    return this.getSession();
+    return this.asUser(user.id).getSession();
+  }
+
+  // Check a name (or Name#1234) + code; returns the user or null.
+  async verifyLogin(name, code) {
+    const [base, tag] = String(name || '').trim().toLowerCase().split('#');
+    const candidates = Object.values(this.db.users).filter((u) => u.codeHash && u.name.toLowerCase() === base && (!tag || u.tag === tag));
+    for (const u of candidates) if ((await hashCode(String(code || ''), u.codeSalt)) === u.codeHash) return u;
+    return null;
   }
 
   async login({ name, code }) {
-    name = String(name || '').trim().toLowerCase();
-    // Accept either "Name" or the full "Name#1234" handle.
-    const [base, tag] = name.split('#');
-    const candidates = Object.values(this.db.users).filter(
-      (u) => u.name.toLowerCase() === base && (!tag || u.tag === tag),
-    );
-    for (const u of candidates) {
-      if ((await hashCode(String(code || ''), u.codeSalt)) === u.codeHash) {
-        this.db.session = { userId: u.id };
-        this.commit('session', 'settings', 'boards', 'friends', 'chat', 'tasks', 'notes');
-        return this.getSession();
-      }
-    }
-    fail('LOGIN_FAILED');
+    const u = await this.verifyLogin(name, code);
+    if (!u) fail('LOGIN_FAILED');
+    this.db.session = { userId: u.id };
+    this.commit('session', 'settings', 'boards', 'friends', 'chat', 'tasks', 'notes');
+    return this.asUser(u.id).getSession();
   }
 
   // Switch between cat and dog.
@@ -293,12 +332,18 @@ export class Backend {
       .map((m) => ({ ...m, mine: m.from === me.id }));
   }
 
-  async sendMessage(friendId, text) {
+  async sendMessage(friendId, text, id = null) {
     const me = this.me();
+    // A retried send (same id) is not posted twice.
+    const existing = id && this.db.messages.find((m) => m.id === id);
+    if (existing) {
+      if (existing.from !== me.id) fail('ID_TAKEN');
+      return { ...existing, mine: true };
+    }
     text = String(text || '').trim();
     if (!text) fail('EMPTY');
     if (!this.areFriends(me.id, friendId)) fail('NOT_FRIENDS');
-    const msg = { id: randomId(), from: me.id, to: friendId, text: text.slice(0, 4000), at: new Date().toISOString(), read: false };
+    const msg = { id: validId(id) ? id : randomId(), from: me.id, to: friendId, text: text.slice(0, 4000), at: new Date().toISOString(), read: false };
     this.db.messages.push(msg);
     this.commit('chat', 'friends');
     return { ...msg, mine: true };
@@ -318,9 +363,9 @@ export class Backend {
 
   // ---------- boards ----------
 
-  makeBoard(ownerId, name) {
+  makeBoard(ownerId, name, id = null) {
     const now = new Date().toISOString();
-    const board = { id: randomId(), name: name || 'Checklist', ownerId, members: { [ownerId]: 'owner' }, createdAt: now, updatedAt: now };
+    const board = { id: validId(id) ? id : randomId(), name: name || 'Checklist', ownerId, members: { [ownerId]: 'owner' }, roadmapOrder: null, createdAt: now, updatedAt: now };
     this.db.boards[board.id] = board;
     return board;
   }
@@ -363,9 +408,14 @@ export class Backend {
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async createBoard(name) {
+  async createBoard(name, { id = null } = {}) {
     const me = this.me();
-    const board = this.makeBoard(me.id, String(name || '').trim().slice(0, 60) || 'Checklist');
+    const existing = id && this.db.boards[id];
+    if (existing) {
+      if (existing.ownerId !== me.id) fail('ID_TAKEN');
+      return this.boardSummary(existing, me.id);
+    }
+    const board = this.makeBoard(me.id, String(name || '').trim().slice(0, 60) || 'Checklist', id);
     this.db.settings[me.id] = { ...this.settingsFor(me.id), lastBoardId: board.id };
     this.commit('boards', 'settings');
     return this.boardSummary(board, me.id);
@@ -382,6 +432,7 @@ export class Backend {
       ...this.boardSummary(board, me.id),
       canManage: this.canManage(board, me.id),
       members,
+      roadmapOrder: board.roadmapOrder || null,
       tasks: tasks.map((t) => this.taskOut(t)),
     };
   }
@@ -439,14 +490,25 @@ export class Backend {
     this.commit('boards', 'tasks');
   }
 
+  // Roadmap order: null = sorted by deadline; a list of task ids once the
+  // user has dragged steps around ("Sort by deadline" sets it back to null).
+  async setRoadmapOrder(boardId, ids) {
+    const me = this.me();
+    const board = this.memberBoard(boardId, me.id);
+    board.roadmapOrder = Array.isArray(ids) ? ids.filter((id) => this.db.tasks[id]?.boardId === boardId) : null;
+    board.updatedAt = new Date().toISOString();
+    this.commit('boards', 'tasks');
+  }
+
   // ---------- tasks ----------
-  // A task belongs to a board, or to nobody (boardId null) when it was created
-  // straight on the personal calendar. parentId builds the mindmap tree.
+  // A task belongs to a board (a checklist item, with an optional deadline
+  // `due`), or to nobody (boardId null): an event made on the personal calendar,
+  // with `start`/`end` and an optional weekly repeat. parentId builds the tree.
 
   taskOut(t) {
     return {
       ...t,
-      assigneeUsers: t.assignees.map((id) => this.userById(id)).filter(Boolean),
+      assigneeUsers: (t.assignees || []).map((id) => this.userById(id)).filter(Boolean),
       boardName: t.boardId ? this.db.boards[t.boardId]?.name || '' : null,
     };
   }
@@ -466,13 +528,19 @@ export class Backend {
     if (!start) return { start: null, end: null };
     const s = new Date(start);
     if (isNaN(s)) fail('BAD_TIME');
-    let e = end ? new Date(end) : new Date(s.getTime() + 60 * 60 * 1000);
-    if (isNaN(e) || e <= s) e = new Date(s.getTime() + 60 * 60 * 1000);
+    let e = end ? new Date(end) : new Date(s.getTime() + HOUR);
+    if (isNaN(e) || e <= s) e = new Date(s.getTime() + HOUR);
     return { start: s.toISOString(), end: e.toISOString() };
   }
 
-  async createTask({ boardId = null, parentId = null, name = '', role = '', start = null, end = null, assignees = [], afterId = null }) {
+  async createTask({ id = null, boardId = null, parentId = null, name = '', role = '', start = null, end = null, due = null, repeat = null, assignees = [], afterId = null }) {
     const me = this.me();
+    // A retried create (same id) does not make a second task.
+    const existing = id && this.db.tasks[id];
+    if (existing) {
+      if (existing.createdBy !== me.id) fail('ID_TAKEN');
+      return this.taskOut(existing);
+    }
     let board = null;
     if (boardId) {
       board = this.memberBoard(boardId, me.id);
@@ -488,13 +556,13 @@ export class Backend {
     }
     const now = new Date().toISOString();
     const task = {
-      id: randomId(),
+      id: validId(id) ? id : randomId(),
       boardId,
       parentId,
       order,
       name: String(name).trim().slice(0, 200),
       role: String(role).trim().slice(0, 40),
-      ...this.cleanTimes(start, end),
+      ...(boardId ? { due: isoOrNull(due || end || start) } : { ...this.cleanTimes(start, end), repeat: repeat === 'weekly' ? 'weekly' : null, skip: [] }),
       assignees: [],
       done: false,
       createdBy: me.id,
@@ -514,16 +582,36 @@ export class Backend {
     if ('name' in patch) task.name = String(patch.name).trim().slice(0, 200);
     if ('role' in patch) task.role = String(patch.role || '').trim().slice(0, 40);
     if ('done' in patch) task.done = !!patch.done;
-    if ('start' in patch || 'end' in patch) {
-      const t = this.cleanTimes('start' in patch ? patch.start : task.start, 'end' in patch ? patch.end : task.end);
-      if (t.start !== task.start) delete this.db.notified[me.id]?.[task.id];
-      Object.assign(task, t);
+    if (task.boardId) {
+      // Checklist items only have a deadline.
+      if ('due' in patch || 'start' in patch) {
+        const due = isoOrNull('due' in patch ? patch.due : patch.end || patch.start);
+        if (due !== task.due) delete this.db.notified[me.id]?.[task.id];
+        task.due = due;
+      }
+    } else {
+      if ('start' in patch || 'end' in patch) {
+        const t = this.cleanTimes('start' in patch ? patch.start : task.start, 'end' in patch ? patch.end : task.end);
+        if (t.start !== task.start) delete this.db.notified[me.id]?.[task.id];
+        Object.assign(task, t);
+      }
+      if ('repeat' in patch) task.repeat = patch.repeat === 'weekly' ? 'weekly' : null;
     }
     if ('assignees' in patch) this.applyAssignees(task, board, me, patch.assignees);
     task.updatedAt = new Date().toISOString();
     if (board) board.updatedAt = task.updatedAt;
     this.commit('tasks', 'boards');
     return this.taskOut(task);
+  }
+
+  // Delete just one week of a repeating event.
+  async skipOccurrence(taskId, day) {
+    const me = this.me();
+    const { task } = this.taskAccess(taskId, me.id);
+    if (!task.repeat || !/^\d{4}-\d{2}-\d{2}$/.test(day)) fail('BAD_TIME');
+    task.skip = [...new Set([...(task.skip || []), day])];
+    task.updatedAt = new Date().toISOString();
+    this.commit('tasks');
   }
 
   // Owners may assign themselves, their friends and board members.
@@ -568,11 +656,12 @@ export class Backend {
     this.commit('tasks', 'boards');
   }
 
-  // Move a task to another position: before/after a sibling or into a new parent.
+  // Move a task to another position: before a sibling, or last, under `parentId`.
   async moveTask(taskId, { parentId = null, beforeId = null }) {
     const me = this.me();
     const { task, board } = this.taskAccess(taskId, me.id);
     if (!board) return this.taskOut(task);
+    if (parentId && this.db.tasks[parentId]?.boardId !== task.boardId) fail('BAD_PARENT');
     for (let p = parentId; p; p = this.db.tasks[p]?.parentId) if (p === taskId) fail('BAD_PARENT');
     const siblings = Object.values(this.db.tasks)
       .filter((t) => t.boardId === task.boardId && t.parentId === parentId && t.id !== taskId)
@@ -586,14 +675,44 @@ export class Backend {
     return this.taskOut(task);
   }
 
-  // Everything that belongs on my calendar between two instants: my personal
-  // events, plus timed board tasks I created or am assigned to.
+  // ---------- calendar ----------
+
+  // On my calendar: my personal events, and deadlines of checklist items I
+  // created or am assigned to.
   visibleOnCalendar(t, userId) {
-    if (!t.start || !t.name) return false;
-    if (t.boardId === null) return t.createdBy === userId;
+    if (!t.name) return false;
+    if (t.boardId === null) return !!t.start && t.createdBy === userId;
+    if (!t.due) return false;
     const board = this.db.boards[t.boardId];
     if (!board || !board.members[userId]) return false;
     return t.createdBy === userId || t.assignees.includes(userId);
+  }
+
+  // Concrete calendar items of a task between two instants. A weekly event
+  // gives one item per week (ids "taskId@YYYY-MM-DD"); a deadline gives a
+  // zero-length item at its due time.
+  occurrences(t, from, to) {
+    if (t.boardId) {
+      const d = new Date(t.due).getTime();
+      return d >= from && d < to ? [{ ...this.taskOut(t), kind: 'deadline', start: t.due, end: t.due, seriesId: t.id }] : [];
+    }
+    const s0 = new Date(t.start);
+    const len = new Date(t.end).getTime() - s0.getTime();
+    if (!t.repeat) return s0.getTime() < to && s0.getTime() + len > from ? [{ ...this.taskOut(t), kind: 'event', seriesId: t.id }] : [];
+    const out = [];
+    // Jump close to `from`, then walk week by week (local dates, so DST is fine).
+    const weeks = Math.max(0, Math.floor((from - s0.getTime() - len) / (7 * 24 * HOUR)));
+    for (let k = weeks; ; k++) {
+      const s = addDays(s0, k * 7);
+      if (s.getTime() >= to) break;
+      const e = new Date(s.getTime() + len);
+      const day = dayKey(s);
+      if (e.getTime() > from && !(t.skip || []).includes(day)) {
+        out.push({ ...this.taskOut(t), kind: 'event', id: `${t.id}@${day}`, seriesId: t.id, occurrence: day, seriesStart: t.start, seriesEnd: t.end, start: s.toISOString(), end: e.toISOString() });
+      }
+      if (out.length > 60) break;
+    }
+    return out;
   }
 
   async listCalendar(fromIso, toIso) {
@@ -601,9 +720,9 @@ export class Backend {
     const from = new Date(fromIso).getTime();
     const to = new Date(toIso).getTime();
     return Object.values(this.db.tasks)
-      .filter((t) => this.visibleOnCalendar(t, me.id) && new Date(t.start).getTime() < to && new Date(t.end).getTime() > from)
-      .sort((a, b) => a.start.localeCompare(b.start))
-      .map((t) => this.taskOut(t));
+      .filter((t) => this.visibleOnCalendar(t, me.id))
+      .flatMap((t) => this.occurrences(t, from, to))
+      .sort((a, b) => a.start.localeCompare(b.start));
   }
 
   async listRoles() {
@@ -619,25 +738,24 @@ export class Backend {
 
   // ---------- reminders (used by the pet) ----------
 
-  // Calendar items starting within `leadMinutes` from now that have not been
-  // announced yet. Each one is marked as announced so it fires once.
+  // Events starting / deadlines falling within `leadMinutes` from now that
+  // have not been announced yet. Each is marked so it fires once.
   async takeDueReminders(nowIso = new Date().toISOString()) {
     const me = this.me();
     const settings = this.settingsFor(me.id);
     const now = new Date(nowIso).getTime();
     const horizon = now + settings.leadMinutes * 60 * 1000;
     const seen = (this.db.notified[me.id] ||= {});
-    const due = Object.values(this.db.tasks).filter((t) => {
-      if (!this.visibleOnCalendar(t, me.id) || t.done) return false;
-      const s = new Date(t.start).getTime();
-      return s > now && s <= horizon && seen[t.id] !== t.start;
+    const due = (await this.listCalendar(new Date(now).toISOString(), new Date(horizon + 1).toISOString())).filter((it) => {
+      const s = new Date(it.start).getTime();
+      return !it.done && s > now && s <= horizon && seen[it.id] !== it.start;
     });
     if (!due.length) return [];
-    for (const t of due) seen[t.id] = t.start;
-    // Forget reminders for things already over so the map stays small.
-    for (const id of Object.keys(seen)) if (!this.db.tasks[id] || new Date(this.db.tasks[id].end).getTime() < now) delete seen[id];
+    for (const it of due) seen[it.id] = it.start;
+    // Forget reminders for things long past so the map stays small.
+    for (const [id, at] of Object.entries(seen)) if (new Date(at).getTime() < now - 24 * HOUR) delete seen[id];
     this.commit('reminders');
-    return due.map((t) => ({ ...this.taskOut(t), minutes: Math.max(1, Math.round((new Date(t.start).getTime() - now) / 60000)) }));
+    return due.map((it) => ({ ...it, minutes: Math.max(1, Math.round((new Date(it.start).getTime() - now) / 60000)) }));
   }
 
   // ---------- notes ----------
@@ -678,16 +796,111 @@ export class Backend {
       .pop();
     return day ? { day, text: notes[day].text } : null;
   }
+
+  // ---------- cloud sync ----------
+
+  // Everything one user may see, for a device replica (no other user's code hash).
+  async snapshot() {
+    const me = this.me();
+    const db = this.db;
+    const boards = Object.fromEntries(Object.entries(db.boards).filter(([, b]) => b.members[me.id]));
+    const tasks = Object.fromEntries(
+      Object.entries(db.tasks).filter(([, t]) => (t.boardId ? !!boards[t.boardId] : t.createdBy === me.id)),
+    );
+    const friendships = db.friendships.filter((f) => f.a === me.id || f.b === me.id);
+    const friendRequests = db.friendRequests.filter((r) => r.from === me.id || r.to === me.id);
+    const messages = db.messages.filter((m) => m.from === me.id || m.to === me.id);
+    const people = new Set([me.id]);
+    for (const f of friendships) people.add(f.a).add(f.b);
+    for (const r of friendRequests) people.add(r.from).add(r.to);
+    for (const m of messages) people.add(m.from).add(m.to);
+    for (const b of Object.values(boards)) Object.keys(b.members).forEach((id) => people.add(id));
+    for (const t of Object.values(tasks)) (t.assignees || []).forEach((id) => people.add(id));
+    const users = {};
+    for (const id of people) {
+      const u = db.users[id];
+      if (!u) continue;
+      users[id] = id === me.id ? u : { id: u.id, name: u.name, tag: u.tag, animal: u.animal, createdAt: u.createdAt };
+    }
+    return {
+      version: DB_VERSION,
+      userId: me.id,
+      users,
+      settings: { [me.id]: this.settingsFor(me.id) },
+      friendships,
+      friendRequests,
+      messages,
+      boards,
+      tasks,
+      notes: { [me.id]: db.notes[me.id] || {} },
+    };
+  }
+
+  // Replace this replica's data with a cloud snapshot, keeping device-only bits.
+  loadSnapshot(snap) {
+    const userId = snap.userId;
+    const keepSettings = Object.fromEntries(DEVICE_SETTINGS.map((k) => [k, this.db.settings[userId]?.[k] ?? DEFAULT_SETTINGS[k]]));
+    const notified = this.db.notified[userId] || {};
+    this.db = {
+      ...emptyDb(),
+      ...snap,
+      version: DB_VERSION,
+      session: { userId },
+      settings: { [userId]: { ...(snap.settings?.[userId] || DEFAULT_SETTINGS), ...keepSettings } },
+      notified: { [userId]: notified },
+    };
+    delete this.db.userId;
+    this.commit('session', 'settings', 'boards', 'tasks', 'friends', 'chat', 'notes');
+  }
+
+  // Bring a device's offline data into this (cloud) account: its boards,
+  // tasks and notes, re-owned by me. Used once when an old local account is
+  // linked to the cloud.
+  async importData({ localUserId, boards = {}, tasks = {}, notes = {}, settings = null }) {
+    const me = this.me();
+    const mapUser = (id) => (id === localUserId ? me.id : null);
+    let count = 0;
+    for (const b of Object.values(boards)) {
+      if (!validId(b.id) || this.db.boards[b.id] || b.ownerId !== localUserId) continue;
+      this.db.boards[b.id] = { ...b, ownerId: me.id, members: { [me.id]: 'owner' }, roadmapOrder: b.roadmapOrder || null };
+      count++;
+    }
+    for (const t of Object.values(tasks)) {
+      if (!validId(t.id) || this.db.tasks[t.id]) continue;
+      if (t.boardId ? this.db.boards[t.boardId]?.ownerId !== me.id : t.createdBy !== localUserId) continue;
+      this.db.tasks[t.id] = { ...t, createdBy: me.id, assignees: (t.assignees || []).map(mapUser).filter(Boolean) };
+      count++;
+    }
+    const mine = (this.db.notes[me.id] ||= {});
+    for (const [day, n] of Object.entries(notes)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !n?.text?.trim()) continue;
+      if (!mine[day]) mine[day] = n;
+      else if (!mine[day].text.includes(n.text)) mine[day] = { text: `${mine[day].text}\n${n.text}`, updatedAt: new Date().toISOString() };
+    }
+    if (settings) this.db.settings[me.id] = { ...this.settingsFor(me.id), ...settings, lastBoardId: settings.lastBoardId || this.settingsFor(me.id).lastBoardId };
+    this.commit('boards', 'tasks', 'notes', 'settings');
+    return { imported: count };
+  }
 }
 
-// Every method the UI may call through IPC / the browser shim.
+// Methods the UI may call through IPC / the browser shim.
 export const API_METHODS = [
   'getSession', 'register', 'login', 'logout', 'updateProfile',
   'getSettings', 'updateSettings',
   'listFriends', 'listFriendRequests', 'sendFriendRequest', 'respondFriendRequest', 'removeFriend',
   'listMessages', 'sendMessage', 'markRead',
-  'listBoards', 'createBoard', 'getBoard', 'renameBoard', 'deleteBoard', 'joinBoard', 'leaveBoard', 'setMemberRole',
-  'createTask', 'updateTask', 'toggleClaim', 'deleteTask', 'moveTask', 'listCalendar', 'listRoles',
+  'listBoards', 'createBoard', 'getBoard', 'renameBoard', 'deleteBoard', 'joinBoard', 'leaveBoard', 'setMemberRole', 'setRoadmapOrder',
+  'createTask', 'updateTask', 'skipOccurrence', 'toggleClaim', 'deleteTask', 'moveTask', 'listCalendar', 'listRoles',
   'takeDueReminders',
   'getNotes', 'getNote', 'saveNote', 'takeDailyRecap',
+];
+
+// Methods that change shared data: on a cloud account they also run on the server.
+export const WRITE_METHODS = [
+  'updateProfile', 'updateSettings',
+  'sendFriendRequest', 'respondFriendRequest', 'removeFriend',
+  'sendMessage', 'markRead',
+  'createBoard', 'renameBoard', 'deleteBoard', 'joinBoard', 'leaveBoard', 'setMemberRole', 'setRoadmapOrder',
+  'createTask', 'updateTask', 'skipOccurrence', 'toggleClaim', 'deleteTask', 'moveTask',
+  'saveNote',
 ];

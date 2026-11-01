@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, bridge } from './api.js';
-import { useBun, useIsMobile } from './store.jsx';
+import { useBun, useCloud, useIsMobile } from './store.jsx';
+import { errorText } from './i18n.js';
+import { Modal } from './components/Popover.jsx';
 import { Icon } from './icons.jsx';
 import Onboarding from './views/Onboarding.jsx';
 import Home from './views/Home.jsx';
@@ -126,6 +128,7 @@ export default function App() {
         </nav>
         {webPet}
         {settings}
+        <LinkPrompt />
       </div>
     );
   }
@@ -151,7 +154,54 @@ export default function App() {
       </main>
       {webPet}
       {settings}
+      <LinkPrompt />
     </div>
+  );
+}
+
+// Accounts made on one device only (before the cloud, or offline): enter the
+// code once to put the account and its boards/tasks/notes on the server, so
+// it works on every device.
+function LinkPrompt() {
+  const { t, user, toast } = useBun();
+  const cloud = useCloud();
+  const [later, setLater] = useState(false);
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  if (!cloud?.needsLink || cloud.autoLinking || later) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      await api.linkAccount(code);
+      toast(t('cloud.linked'));
+    } catch (err) {
+      setError(errorText(t, err));
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal onClose={() => setLater(true)} className="link-modal">
+      <form className="link-modal__body" onSubmit={submit}>
+        <h2>{t('cloud.linkTitle')}</h2>
+        <p className="muted">{t('cloud.linkText', { name: user.handle })}</p>
+        <label className="label" htmlFor="link-code">
+          {t('ob.code')}
+        </label>
+        <input id="link-code" className="input" type="password" autoFocus value={code} onChange={(e) => setCode(e.target.value)} />
+        {error && <p className="onboard__error">{error}</p>}
+        <div className="link-modal__foot">
+          <button type="button" className="btn btn--ghost" onClick={() => setLater(true)}>
+            {t('cloud.later')}
+          </button>
+          <button className="btn btn--primary" disabled={code.length < 4 || busy}>
+            {t('cloud.linkBtn')}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 

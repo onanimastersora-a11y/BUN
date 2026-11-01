@@ -79,3 +79,8 @@ export function toInputDate(date) {
 export function toInputTime(date) {
   return fmtTime(date);
 }
+
+// A checklist deadline: "05/11 · 17:00".
+export function fmtDue(due, lang = 'vi') {
+  return due ? fmtRange(due, null, lang) : '';
+}

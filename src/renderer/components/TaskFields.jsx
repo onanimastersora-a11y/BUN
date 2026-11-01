@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api.js';
-import { useBun, useLive } from '../store.jsx';
+import { useBun, useLive, useIsMobile } from '../store.jsx';
 import { Icon } from '../icons.jsx';
 import { PetAvatar } from '../sprite.jsx';
 import { Popover } from './Popover.jsx';
-import { atTime, dayKey, fmtRange, fmtTime, parseDayKey } from '../../core/time.js';
+import { atTime, dayKey, fmtTime, parseDayKey } from '../../core/time.js';
 
 export function RoleInput({ value, onChange, onEnter, autoFocus, small }) {
   const { t } = useBun();
@@ -42,8 +42,88 @@ function nextHour() {
   return d;
 }
 
-export function TimeFields({ start, end, onChange }) {
+const pad = (n) => String(n).padStart(2, '0');
+
+// "930" -> "09:30", "1745" -> "17:45", "8" -> "08:00"; null when not a time.
+function parseHHMM(raw) {
+  const digits = String(raw).replace(/\D/g, '');
+  if (!digits) return null;
+  let h;
+  let m;
+  if (digits.length <= 2) [h, m] = [Number(digits), 0];
+  else if (digits.length === 3) [h, m] = [Number(digits.slice(0, 1)), Number(digits.slice(1))];
+  else [h, m] = [Number(digits.slice(0, 2)), Number(digits.slice(2, 4))];
+  if (h > 23 || m > 59) return null;
+  return `${pad(h)}:${pad(m)}`;
+}
+
+/**
+ * Time box typed as digits: "1430" becomes 14:30 and, once four digits are in,
+ * focus jumps to `nextRef` (the end time). Up/Down change it by 15 minutes.
+ * Phones get the native time wheel instead.
+ */
+export function TimeInput({ value, onChange, nextRef, inputRef, label }) {
+  const mobile = useIsMobile();
+  const [text, setText] = useState(value);
+  const own = useRef(null);
+  const ref = inputRef || own;
+
+  useEffect(() => setText(value), [value]);
+
+  if (mobile) {
+    return <input ref={ref} type="time" className="input input--sm time-input" value={value} aria-label={label} onChange={(e) => e.target.value && onChange(e.target.value)} />;
+  }
+
+  const commit = (raw) => {
+    const v = parseHHMM(raw);
+    if (v) onChange(v);
+    else setText(value);
+  };
+  const step = (minutes) => {
+    const [h, m] = value.split(':').map(Number);
+    const total = (((h * 60 + m + minutes) % 1440) + 1440) % 1440;
+    const q = Math.round(total / 15) * 15;
+    onChange(`${pad(Math.floor(q / 60) % 24)}:${pad(q % 60)}`);
+  };
+
+  return (
+    <input
+      ref={ref}
+      className="input input--sm time-input"
+      inputMode="numeric"
+      aria-label={label}
+      value={text}
+      maxLength={5}
+      onFocus={(e) => e.target.select()}
+      onChange={(e) => {
+        let v = e.target.value.replace(/[^\d:]/g, '');
+        const digits = v.replace(/\D/g, '');
+        // Auto colon after the hour; jump to the next box when complete.
+        if (digits.length >= 3 && !v.includes(':')) v = `${digits.slice(0, 2)}:${digits.slice(2, 4)}`;
+        setText(v);
+        if (digits.length === 4 && parseHHMM(digits)) {
+          onChange(parseHHMM(digits));
+          nextRef?.current?.focus();
+        }
+      }}
+      onBlur={(e) => commit(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          step(15);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          step(-15);
+        } else if (e.key === 'Enter') commit(e.currentTarget.value);
+      }}
+    />
+  );
+}
+
+/** Date + start → end of a calendar event. Tab from the start goes straight to the end. */
+export function TimeFields({ start, end, onChange, allowClear = true }) {
   const { t } = useBun();
+  const endRef = useRef(null);
   if (!start) {
     return (
       <button
@@ -67,27 +147,58 @@ export function TimeFields({ start, end, onChange }) {
     onChange({ start: ns.toISOString(), end: new Date(ns.getTime() + dur).toISOString() });
   };
   const setStart = (hhmm) => {
-    if (!hhmm) return;
     const ns = atTime(s, hhmm);
     onChange({ start: ns.toISOString(), end: new Date(ns.getTime() + dur).toISOString() });
   };
   const setEnd = (hhmm) => {
-    if (!hhmm) return;
     let ne = atTime(s, hhmm);
     if (ne <= s) ne = new Date(ne.getTime() + 24 * 3600e3);
     onChange({ start, end: ne.toISOString() });
   };
   return (
     <div className="time-fields">
-      <input type="date" className="input input--sm" value={dayKey(s)} onChange={(ev) => setDate(ev.target.value)} />
+      <input type="date" className="input input--sm" value={dayKey(s)} tabIndex={-1} onChange={(ev) => setDate(ev.target.value)} />
       <div className="time-fields__row">
-        <input type="time" className="input input--sm" value={fmtTime(s)} onChange={(ev) => setStart(ev.target.value)} />
+        <TimeInput value={fmtTime(s)} onChange={setStart} nextRef={endRef} label={t('task.start')} />
         <span className="faint">→</span>
-        <input type="time" className="input input--sm" value={fmtTime(e)} onChange={(ev) => setEnd(ev.target.value)} />
-        <button type="button" className="icon-btn icon-btn--sm" title={t('task.clearTime')} onClick={() => onChange({ start: null, end: null })}>
-          <Icon name="x" size={15} />
-        </button>
+        <TimeInput value={fmtTime(e)} onChange={setEnd} inputRef={endRef} label={t('task.end')} />
+        {allowClear && (
+          <button type="button" className="icon-btn icon-btn--sm" tabIndex={-1} title={t('task.clearTime')} onClick={() => onChange({ start: null, end: null })}>
+            <Icon name="x" size={15} />
+          </button>
+        )}
       </div>
+    </div>
+  );
+}
+
+/** Deadline of a checklist item: one date + time (or none). */
+export function DeadlineField({ value, onChange }) {
+  const { t } = useBun();
+  if (!value) {
+    return (
+      <button
+        type="button"
+        className="btn btn--sm"
+        onClick={() => {
+          const d = new Date();
+          d.setDate(d.getDate() + 1);
+          d.setHours(17, 0, 0, 0);
+          onChange(d.toISOString());
+        }}
+      >
+        <Icon name="flag" size={15} /> {t('task.setDue')}
+      </button>
+    );
+  }
+  const d = new Date(value);
+  return (
+    <div className="time-fields__row deadline-field">
+      <input type="date" className="input input--sm" value={dayKey(d)} onChange={(ev) => ev.target.value && onChange(atTime(parseDayKey(ev.target.value), fmtTime(d)).toISOString())} />
+      <TimeInput value={fmtTime(d)} onChange={(hhmm) => onChange(atTime(d, hhmm).toISOString())} label={t('task.dueTime')} />
+      <button type="button" className="icon-btn icon-btn--sm" title={t('task.clearDue')} onClick={() => onChange(null)}>
+        <Icon name="x" size={15} />
+      </button>
     </div>
   );
 }
@@ -165,19 +276,24 @@ export function Assignees({ users, size = 22, max = 3 }) {
 
 /**
  * The one task form used everywhere (calendar, table, roadmap, mindmap).
- * task: existing task, or null to create one from `draft` ({boardId, parentId, start, end}).
- * quick: calendar quick-add (name + role only, time shown read-only).
+ * task: existing task or calendar item (may be one week of a repeating event),
+ *       or null to create one from `draft` ({boardId, parentId, start, end}).
+ * Calendar events: name, time, role, weekly repeat.
+ * Checklist items: name, deadline, role, assignees, done.
  */
-export function TaskEditor({ anchor, task, draft, board: boardProp, quick = false, onClose, onSaved, placement }) {
-  const { t, lang, run, user, navigate } = useBun();
-  const base = task || { name: '', role: '', start: null, end: null, assignees: [], done: false, ...draft };
+export function TaskEditor({ anchor, task, draft, board: boardProp, onClose, onSaved, placement }) {
+  const { t, run, user, navigate } = useBun();
+  const base = task || { name: '', role: '', start: null, end: null, due: null, repeat: null, assignees: [], done: false, ...draft };
+  const boardId = base.boardId || null;
+  const id = task ? task.seriesId || task.id : null;
   const [name, setName] = useState(base.name);
   const [role, setRole] = useState(base.role || '');
   const [time, setTime] = useState({ start: base.start, end: base.end });
+  const [due, setDue] = useState(base.due ?? (boardId ? base.start : null) ?? null);
+  const [repeat, setRepeat] = useState(!!base.repeat);
   const [assignees, setAssignees] = useState(base.assignees || []);
   const [done, setDone] = useState(!!base.done);
   const [board, setBoard] = useState(boardProp || null);
-  const boardId = base.boardId || null;
   const saving = useRef(false);
 
   useEffect(() => {
@@ -187,13 +303,23 @@ export function TaskEditor({ anchor, task, draft, board: boardProp, quick = fals
   const canDelete = task && (!boardId || board?.canManage || task.createdBy === user.id);
 
   const save = async () => {
-    if (saving.current) return;
-    if (!name.trim()) return;
+    if (saving.current || !name.trim()) return;
     saving.current = true;
     try {
-      const fields = { name, role, start: time.start, end: time.end };
-      if (boardId) Object.assign(fields, { assignees, done });
-      const saved = task ? await run(api.updateTask(task.id, fields)) : await run(api.createTask({ boardId, parentId: base.parentId || null, ...fields }));
+      let fields;
+      if (boardId) fields = { name, role, due, assignees, done };
+      else {
+        fields = { name, role, repeat: repeat ? 'weekly' : null, start: time.start, end: time.end };
+        // Editing one week of a repeating event moves the whole series by the same amount.
+        if (task?.occurrence && time.start) {
+          const delta = new Date(time.start) - new Date(task.start);
+          const len = new Date(time.end) - new Date(time.start);
+          const s = new Date(new Date(task.seriesStart).getTime() + delta);
+          fields.start = s.toISOString();
+          fields.end = new Date(s.getTime() + len).toISOString();
+        }
+      }
+      const saved = task ? await run(api.updateTask(id, fields)) : await run(api.createTask({ boardId, parentId: base.parentId || null, ...fields }));
       onSaved?.(saved);
       onClose();
     } catch {
@@ -201,8 +327,9 @@ export function TaskEditor({ anchor, task, draft, board: boardProp, quick = fals
     }
   };
 
-  const remove = async () => {
-    await run(api.deleteTask(task.id));
+  const remove = async (onlyThisWeek = false) => {
+    if (onlyThisWeek) await run(api.skipOccurrence(id, task.occurrence));
+    else await run(api.deleteTask(id));
     onClose();
   };
 
@@ -225,9 +352,20 @@ export function TaskEditor({ anchor, task, draft, board: boardProp, quick = fals
         />
       </div>
 
-      {quick && time.start && (
-        <div className="task-editor__when">
-          <Icon name="clock" size={14} /> {fmtRange(time.start, time.end, lang)}
+      {/* Time first, right under the name. */}
+      {boardId ? (
+        <div className="task-editor__field">
+          <span className="label">{t('task.due')}</span>
+          <DeadlineField value={due} onChange={setDue} />
+        </div>
+      ) : (
+        <div className="task-editor__field">
+          <span className="label">{t('task.time')}</span>
+          <TimeFields start={time.start} end={time.end} onChange={setTime} allowClear={false} />
+          <label className="repeat-toggle">
+            <button type="button" className={`switch switch--sm ${repeat ? 'is-on' : ''}`} onClick={() => setRepeat(!repeat)} />
+            <span>{t('task.repeatWeekly')}</span>
+          </label>
         </div>
       )}
 
@@ -236,14 +374,7 @@ export function TaskEditor({ anchor, task, draft, board: boardProp, quick = fals
         <RoleInput value={role} onChange={setRole} onEnter={save} small />
       </div>
 
-      {!quick && (
-        <div className="task-editor__field">
-          <span className="label">{t('task.time')}</span>
-          <TimeFields start={time.start} end={time.end} onChange={setTime} />
-        </div>
-      )}
-
-      {!quick && boardId && board && (
+      {boardId && board && (
         <div className="task-editor__field">
           <span className="label">{t('task.assignees')}</span>
           <AssigneeList board={board} value={assignees} onChange={setAssignees} />
@@ -265,9 +396,14 @@ export function TaskEditor({ anchor, task, draft, board: boardProp, quick = fals
       )}
 
       <div className="task-editor__foot">
+        {canDelete && task?.occurrence && (
+          <button type="button" className="btn btn--sm btn--danger" onClick={() => remove(true)}>
+            <Icon name="trash" size={14} /> {t('task.deleteThisWeek')}
+          </button>
+        )}
         {canDelete && (
-          <button type="button" className="btn btn--sm btn--danger" onClick={remove}>
-            <Icon name="trash" size={14} /> {t('task.delete')}
+          <button type="button" className="btn btn--sm btn--danger" onClick={() => remove(false)}>
+            <Icon name="trash" size={14} /> {task?.occurrence ? t('task.deleteSeries') : t('task.delete')}
           </button>
         )}
         <span style={{ flex: 1 }} />

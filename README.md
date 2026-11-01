@@ -8,7 +8,7 @@ Lịch trình tuần, checklist (3 dạng: bảng, lộ trình, mindmap) và m�
 | **macOS** | App `BUN-mac.dmg` (tải từ web, không qua App Store) | Như Windows, hiện trên mọi màn hình (Space) | Như Windows |
 | **iPhone** | Web app: mở `/app/` bằng Safari → Thêm vào MH chính | Ở góc màn hình app | Thông báo đẩy có âm thanh + rung kể cả khi đóng app; khi đang mở app: hoạt ảnh + nhạc chuông |
 
-Tất cả đều chạy **offline**. Chỉ cần mạng cho: thời tiết, chỉ số thị trường, nhạc chuông SoundCloud và thông báo trên iPhone.
+Tài khoản dùng chung trên mọi thiết bị và mọi thứ vẫn chạy khi **mất mạng**. Chỉ cần mạng để đăng nhập lần đầu trên thiết bị mới, đồng bộ, chat, thời tiết, chỉ số thị trường, nhạc chuông SoundCloud và thông báo trên iPhone.
 
 ## Đưa BUN lên mạng — 3 bước
 
@@ -72,20 +72,26 @@ npm run sprites -- cat   # xuất ảnh xem trước sprite
 | Đường dẫn | Nội dung |
 |---|---|
 | `electron/main.js` | Tiến trình chính (Windows + macOS): cửa sổ app, cửa sổ thú cưng trong suốt, khay hệ thống / menu bar, mở cùng máy, link `bun://`, vòng nhắc việc, lấy dữ liệu thị trường, file nhạc chuông |
-| `src/core/backend.js` | Toàn bộ dữ liệu: tài khoản, bạn bè, chat, bảng, công việc, quyền owner, note, cài đặt |
+| `src/core/backend.js` | Toàn bộ dữ liệu: tài khoản, bạn bè, chat, bảng, công việc (deadline, lặp tuần), quyền owner, note, cài đặt |
+| `src/core/cloud.js`, `src/core/config.js` | Đồng bộ với máy chủ (địa chỉ máy chủ nằm trong `config.js`) |
 | `src/renderer/` | Giao diện React dùng chung cho desktop và iPhone (tự chuyển sang bố cục dọc trên điện thoại) |
 | `src/renderer/pet/` | Thú cưng: ngủ → vươn vai → đi nhún nhảy → chơi đồ chơi → ngồi, note, hoạt ảnh thông báo |
 | `src/renderer/markets.js` | Thời tiết (Open-Meteo), chỉ số/cổ phiếu/tiền ảo/ngoại tệ (Yahoo Finance), vàng SJC (PNJ) |
 | `src/renderer/ringtone.js` | Nhạc chuông: có sẵn, file của bạn, link SoundCloud |
 | `src/renderer/push.js`, `tools/sw-template.js` | Thông báo đẩy và chạy offline cho bản iPhone |
 | `src/sprites/` | Pixel art chó/mèo (lưới ký tự 48×40) |
-| `web/` | Cloudflare Worker: trang giới thiệu, app iPhone, trung gian Yahoo, gửi thông báo đẩy |
+| `web/` | Cloudflare Worker: trang giới thiệu, app iPhone, tài khoản + đồng bộ, trung gian Yahoo, gửi thông báo đẩy |
 | `.github/workflows/release.yml` | Build tự động file cài Windows + macOS |
 
 ### Về nhạc chuông
 
 Chọn được 3 nguồn: chuông có sẵn, **file nhạc của bạn** (MP3/M4A…, chạy cả offline) và **link SoundCloud**. Không dùng Spotify vì Spotify chỉ cho nghe thử 30 giây nếu không có Premium + SDK riêng; không dùng YouTube vì điều khoản YouTube yêu cầu trình phát phải hiển thị. Trên iPhone, nhạc chuông riêng chỉ phát khi app đang mở; khi app đóng, iPhone dùng âm thanh thông báo của máy (Apple không cho web app đổi âm thanh này).
 
-### Bạn bè & chat
+### Tài khoản & đồng bộ
 
-Hiện chạy offline: các tài khoản trên **cùng một máy** kết bạn, chat, chia sẻ bảng và giao việc được cho nhau. Để dùng giữa nhiều thiết bị cần thêm máy chủ đồng bộ (giai đoạn online). Mọi thao tác dữ liệu đều qua các hàm của `Backend` (danh sách `API_METHODS`), nên khi có máy chủ chỉ cần viết backend mới cùng các hàm đó.
+Từ bản 1.1, tài khoản nằm trên máy chủ (`web/worker/cloud.js`, một Durable Object của Cloudflare chạy cùng lớp `Backend` với app), nên một tài khoản dùng được trên Windows, Mac và iPhone.
+
+- Mỗi thiết bị giữ một bản sao dữ liệu (`src/core/cloud.js`), nên app vẫn chạy khi mất mạng.
+- Thay đổi được ghi ngay trên máy, xếp hàng, rồi gửi lên máy chủ khi có mạng. Máy chủ trả về dữ liệu mới nhất, gồm cả thay đổi từ thiết bị khác và tin nhắn của bạn bè (khoảng 20 giây/lần).
+- Đăng nhập lần đầu trên một thiết bị mới cần có mạng. Tạo tài khoản khi mất mạng vẫn được: tài khoản tự đưa lên máy chủ khi có mạng trở lại.
+- Tài khoản cũ chỉ có trên một máy: lần đầu mở bản 1.1, app hỏi lại code một lần để đưa tài khoản và dữ liệu lên máy chủ. Cùng tên và cùng code trên nhiều máy sẽ được gộp thành một tài khoản.

@@ -92,7 +92,10 @@ export default function DailyBoard({ items, now }) {
             <ul className="daily__tasks">
               {today.slice(0, 4).map((it) => (
                 <li key={it.id} className={it.done ? 'is-done' : ''}>
-                  <span className="daily__time">{fmtTime(it.start)}</span>
+                  <span className={`daily__time ${it.kind === 'deadline' ? 'is-deadline' : ''}`}>
+                    {it.kind === 'deadline' && '⚑ '}
+                    {fmtTime(it.start)}
+                  </span>
                   <span className="daily__name">{it.name}</span>
                   {it.role && <span className="chip">{it.role}</span>}
                 </li>

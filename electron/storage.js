@@ -45,8 +45,21 @@ export function jsonFile(file, defaults) {
   try {
     data = { ...defaults, ...JSON.parse(fs.readFileSync(file, 'utf8')) };
   } catch {}
+  const write = () => {
+    try {
+      fs.writeFileSync(file, JSON.stringify(data));
+    } catch {}
+  };
   return {
     get: (k) => data[k],
+    // The whole file as one value (used by the cloud sync state).
+    asStore: () => ({
+      load: () => data,
+      save(v) {
+        data = v;
+        write();
+      },
+    }),
     set(k, v) {
       data[k] = v;
       try {

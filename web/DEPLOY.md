@@ -1,10 +1,13 @@
 # Đưa BUN web lên mạng (Cloudflare, miễn phí)
 
-Thư mục `web/` là một Cloudflare Worker. Nó làm 3 việc:
+Thư mục `web/` là một Cloudflare Worker. Nó làm 4 việc:
 
 - Phát trang giới thiệu (`/`) và app iPhone (`/app/`).
+- Lưu tài khoản và đồng bộ dữ liệu giữa các thiết bị (Durable Object `BunCloud`, có trong gói miễn phí).
 - Lấy giá chứng khoán từ Yahoo Finance cho app.
 - Gửi thông báo nhắc việc tới iPhone mỗi phút.
+
+> **Đã deploy bản 1.0 rồi?** Bạn chỉ cần làm phần [Cập nhật lên bản 1.1](#cập-nhật-lên-bản-11) ở cuối trang.
 
 **Cần có:** Node.js 20 trở lên và một tài khoản Cloudflare miễn phí (đăng ký tại https://dash.cloudflare.com/sign-up).
 
@@ -121,3 +124,50 @@ Lưu ý: app đã "Thêm vào MH chính" từ địa chỉ cũ sẽ không tự 
 | Gửi thử thông báo báo `status: 403` hoặc `401` | Khóa bí mật không khớp khóa công khai. Chạy lại `npx wrangler secret put VAPID_PRIVATE_KEY` với đúng khóa. |
 | Deploy báo lỗi `database_id` | Kiểm tra lại bước 3. |
 | `npm run deploy` báo thiếu thư mục `public` | Làm bước 6 trước. |
+
+## Cập nhật lên bản 1.1
+
+Bản 1.1 thêm tài khoản dùng chung trên mọi thiết bị. Làm lần lượt, trong thư mục dự án `APP BUN`:
+
+1. Build lại app iPhone và trang web:
+
+   ```powershell
+   npm run build:web
+   ```
+
+2. Đưa lên Cloudflare. Lần đầu, Cloudflare tự tạo nơi lưu tài khoản (Durable Object `BunCloud`):
+
+   ```powershell
+   cd web
+   npm run deploy
+   cd ..
+   ```
+
+3. Kiểm tra khóa thông báo: mở `https://bun-web.sorandbun.workers.dev/api/push/health`.
+   - Nếu thấy `"keys":"ok"` thì xong bước này.
+   - Nếu thấy `does not match`, `missing` hoặc `cannot build`, nghĩa là khóa bí mật trên Cloudflare không khớp khóa công khai. Làm lại cả cặp khóa:
+     1. `cd web` rồi `npm run vapid`.
+     2. Dán khóa công khai mới vào `VAPID_PUBLIC_KEY` trong `web/wrangler.toml`.
+     3. Chạy `npx wrangler secret put VAPID_PRIVATE_KEY`, rồi dán **chỉ phần khóa**, không kèm chữ `VAPID_PRIVATE_KEY=`.
+     4. `npm run deploy`, rồi mở lại địa chỉ `/api/push/health` để kiểm tra.
+     5. Trên iPhone: vào Cài đặt của BUN, tắt rồi bật lại **Thông báo trên điện thoại**.
+
+4. Cài lại app trên iPhone:
+   1. Xóa biểu tượng BUN cũ trên màn hình chính.
+   2. Mở bằng **Safari**: `https://bun-web.sorandbun.workers.dev/app/`.
+   3. Bấm **Chia sẻ**, rồi **Thêm vào MH chính**.
+   4. Mở BUN từ màn hình chính.
+
+5. Build lại app Windows và Mac. Lưu code lên GitHub rồi tạo phiên bản mới; GitHub Actions sẽ tự build `BUN-Setup.exe` và `BUN-mac.dmg`:
+
+   ```powershell
+   git add -A
+   git commit -m "BUN 1.1.0"
+   git push
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+
+   Sau khoảng 10 phút, tải bản mới từ trang web và cài đè lên bản cũ.
+
+**Lần đầu mở bản 1.1:** nếu trên máy đã có tài khoản cũ (tạo trước khi có máy chủ), BUN sẽ hỏi lại **code một lần** để đưa tài khoản và các bảng, việc, note lên máy chủ. Tài khoản cùng tên và cùng code trên các máy khác nhau sẽ được gộp thành một.

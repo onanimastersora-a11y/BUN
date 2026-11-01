@@ -9,6 +9,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { Backend, API_METHODS } from '../src/core/backend.js';
+import { CloudSync } from '../src/core/cloud.js';
+import { CLOUD_URL } from '../src/core/config.js';
 import { dayKey } from '../src/core/time.js';
 import { fileStorage, jsonFile } from './storage.js';
 
@@ -36,6 +38,7 @@ if (!app.requestSingleInstanceLock()) {
 
 function start() {
   let backend;
+  let cloud;
   let storage;
   let machine;
   let mainWin = null;
@@ -137,28 +140,47 @@ function start() {
 
   // ---------- pet window ----------
 
-  function defaultPetPosition() {
-    const { workArea } = screen.getPrimaryDisplay();
-    return { x: workArea.x + workArea.width - PET_SIZE.width - 24, y: workArea.y + workArea.height - PET_SIZE.height + 8 };
+  // The pet window is a fixed-size transparent box that always stays fully
+  // inside one screen's work area (macOS won't let windows go above the menu
+  // bar). The pet itself is placed anywhere inside it: `petAnchor` is the
+  // screen point under the pet's feet, kept so the whole pet stays visible.
+  let petAnchor = null;
+  let petBox = { w: 144, h: 120 }; // sprite size at the current scale, reported by the page
+
+  function defaultAnchor() {
+    const { workArea: wa } = screen.getPrimaryDisplay();
+    return { x: wa.x + wa.width - 130, y: wa.y + wa.height - 12 };
   }
 
-  function clampPetPosition({ x, y }) {
-    // Keep at least the pet itself (bottom-center of the window) on some screen.
-    const display = screen.getDisplayNearestPoint({ x: x + PET_SIZE.width / 2, y: y + PET_SIZE.height - 60 });
-    const wa = display.workArea;
-    return {
-      x: Math.round(Math.min(Math.max(x, wa.x - PET_SIZE.width / 2 + 60), wa.x + wa.width - PET_SIZE.width / 2 - 60)),
-      y: Math.round(Math.min(Math.max(y, wa.y - PET_SIZE.height + 160), wa.y + wa.height - PET_SIZE.height + 30)),
+  function placePet() {
+    if (!petWin || petWin.isDestroyed()) return;
+    const a = petAnchor || defaultAnchor();
+    const wa = screen.getDisplayNearestPoint({ x: Math.round(a.x), y: Math.round(a.y) }).workArea;
+    const halfW = petBox.w / 2 + 6;
+    // Room above the feet for the pet growing 1.35x during a reminder.
+    const needUp = petBox.h * 1.4 + 6;
+    petAnchor = {
+      x: Math.min(Math.max(a.x, wa.x + halfW), wa.x + wa.width - halfW),
+      y: Math.min(Math.max(a.y, wa.y + needUp), wa.y + wa.height - 4),
     };
+    const W = Math.min(PET_SIZE.width, wa.width);
+    const H = Math.min(PET_SIZE.height, wa.height);
+    const x = Math.round(Math.min(Math.max(petAnchor.x - W / 2, wa.x), wa.x + wa.width - W));
+    const y = Math.round(Math.min(Math.max(petAnchor.y + 8 - H, wa.y), wa.y + wa.height - H));
+    petWin.setBounds({ x, y, width: W, height: H });
+    petWin.webContents.send('pet:place', { x: Math.round(petAnchor.x - x), y: Math.round(petAnchor.y - y), width: W, height: H });
   }
 
   function createPet({ show = true } = {}) {
     if (petWin && !petWin.isDestroyed()) return;
-    const pos = clampPetPosition(machine.get('petPos') || defaultPetPosition());
+    const saved = machine.get('petAnchor');
+    petAnchor = saved && Number.isFinite(saved.x) && Number.isFinite(saved.y) ? saved : null;
+    const a = petAnchor || defaultAnchor();
     petReady = false;
     petWin = new BrowserWindow({
       ...PET_SIZE,
-      ...pos,
+      x: Math.round(a.x - PET_SIZE.width / 2),
+      y: Math.round(a.y - PET_SIZE.height + 8),
       show: false,
       frame: false,
       transparent: true,
@@ -344,10 +366,11 @@ function start() {
 
   // ---------- IPC ----------
 
+  const CLOUD_METHODS = ['cloudStatus', 'linkAccount', 'syncNow'];
   ipcMain.handle('bun:api', async (_e, method, args) => {
-    if (!API_METHODS.includes(method)) return { ok: false, code: 'UNKNOWN_METHOD', message: method };
+    if (!API_METHODS.includes(method) && !CLOUD_METHODS.includes(method)) return { ok: false, code: 'UNKNOWN_METHOD', message: method };
     try {
-      return { ok: true, data: await backend[method](...(args || [])) };
+      return { ok: true, data: await cloud.call(method, args || []) };
     } catch (err) {
       return { ok: false, code: err.code || 'ERROR', message: err.message };
     }
@@ -390,22 +413,27 @@ function start() {
 
   ipcMain.on('pet:ready', () => {
     petReady = true;
+    placePet();
     flushAlerts();
+  });
+  ipcMain.on('pet:size', (_e, box) => {
+    if (!box || !Number.isFinite(box.w) || !Number.isFinite(box.h)) return;
+    petBox = { w: box.w, h: box.h };
+    placePet();
   });
   ipcMain.on('pet:ignoreMouse', (_e, ignore) => {
     if (petWin && !petWin.isDestroyed()) petWin.setIgnoreMouseEvents(!!ignore, { forward: true });
   });
-  ipcMain.on('pet:moveBy', (_e, { dx, dy }) => {
-    if (!petWin || petWin.isDestroyed()) return;
-    const [x, y] = petWin.getPosition();
-    petWin.setPosition(Math.round(x + dx), Math.round(y + dy));
+  ipcMain.on('pet:moveBy', (_e, delta) => {
+    const dx = Number(delta?.dx);
+    const dy = Number(delta?.dy);
+    if (!petWin || petWin.isDestroyed() || !Number.isFinite(dx) || !Number.isFinite(dy)) return;
+    const a = petAnchor || defaultAnchor();
+    petAnchor = { x: a.x + dx, y: a.y + dy };
+    placePet();
   });
   ipcMain.on('pet:dragEnd', () => {
-    if (!petWin || petWin.isDestroyed()) return;
-    const [x, y] = petWin.getPosition();
-    const pos = clampPetPosition({ x, y });
-    petWin.setPosition(pos.x, pos.y);
-    machine.set('petPos', pos);
+    if (petAnchor) machine.set('petAnchor', petAnchor);
   });
   ipcMain.on('pet:hide', () => {
     if (petWin && !petWin.isDestroyed()) petWin.hide();
@@ -445,6 +473,16 @@ function start() {
     machine = jsonFile(path.join(userData, 'machine.json'), {});
     backend = new Backend(storage);
     backend.onChange(onDataChanged);
+    // Accounts and data are shared with the cloud (same account on every device).
+    cloud = new CloudSync(backend, {
+      baseUrl: process.env.BUN_CLOUD_URL || CLOUD_URL,
+      kv: jsonFile(path.join(userData, 'cloud.json'), {}).asStore(),
+      fetch: (url, init) => net.fetch(url, init),
+    });
+    cloud.onStatus((status) => {
+      for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('bun:cloud', status);
+    });
+    cloud.start();
     buildAppMenu();
 
     protocol.handle('bunmedia', (req) => {
@@ -452,6 +490,9 @@ function start() {
       if (!fs.existsSync(file)) return new Response('not found', { status: 404 });
       return net.fetch(pathToFileURL(file).toString());
     });
+
+    // Monitors plugged in / out or resolution changed: keep the pet visible.
+    for (const evt of ['display-added', 'display-removed', 'display-metrics-changed']) screen.on(evt, () => placePet());
 
     const autostarted = launchedAtLogin();
     const link = findLink(process.argv) || pendingLink;

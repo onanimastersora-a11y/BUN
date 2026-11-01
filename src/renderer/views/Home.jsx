@@ -80,8 +80,11 @@ export default function Home() {
                   </div>
                   <div className="week-mini__items">
                     {dayItems.slice(0, 4).map((it) => (
-                      <div key={it.id} className="week-mini__item" title={it.name}>
-                        <span>{fmtTime(it.start)}</span>
+                      <div key={it.id} className={`week-mini__item ${it.kind === 'deadline' ? 'is-deadline' : ''}`} title={it.name}>
+                        <span>
+                          {it.kind === 'deadline' && '⚑ '}
+                          {fmtTime(it.start)}
+                        </span>
                         {it.name}
                       </div>
                     ))}

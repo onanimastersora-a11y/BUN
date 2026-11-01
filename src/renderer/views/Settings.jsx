@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api, bridge } from '../api.js';
-import { useBun } from '../store.jsx';
+import { useBun, useCloud } from '../store.jsx';
+import { fmtTime } from '../../core/time.js';
 import { Icon } from '../icons.jsx';
 import { PetAvatar } from '../sprite.jsx';
 import { Modal } from '../components/Popover.jsx';
@@ -154,6 +155,7 @@ export default function Settings({ onClose, onShowPet }) {
         <div className="settings__who">
           <b>{user.name}</b>
           <span className="faint">{user.handle}</span>
+          <SyncStatus />
         </div>
         <button
           className="btn btn--sm btn--danger"
@@ -278,6 +280,39 @@ function RingtoneSettings() {
   );
 }
 
+function SyncStatus() {
+  const { t } = useBun();
+  const cloud = useCloud();
+  const [busy, setBusy] = useState(false);
+  if (!cloud) return null;
+  const label = !cloud.linked
+    ? t('cloud.notLinked')
+    : cloud.online === false
+      ? t('cloud.offline', { n: cloud.pending })
+      : cloud.pending
+        ? t('cloud.pending', { n: cloud.pending })
+        : t('cloud.synced', { time: cloud.lastSync ? fmtTime(cloud.lastSync) : '—' });
+  return (
+    <span className={`sync-status ${cloud.linked && cloud.online !== false && !cloud.pending ? 'is-ok' : ''}`}>
+      <i />
+      {label}
+      {cloud.linked && (
+        <button
+          className="sync-status__btn"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            await api.syncNow().catch(() => {});
+            setBusy(false);
+          }}
+        >
+          {t('cloud.syncNow')}
+        </button>
+      )}
+    </span>
+  );
+}
+
 function PhoneNotifications() {
   const { t, toast } = useBun();
   const [on, setOn] = useState(pushEnabled());
@@ -314,7 +349,7 @@ function PhoneNotifications() {
         <button className={`switch ${on ? 'is-on' : ''}`} disabled={busy || (!pushSupported() && !needsInstall)} onClick={toggle} />
       </div>
       {on && (
-        <button className="btn btn--sm" onClick={() => testPush().then(() => toast(t('push.testSent')), () => toast(t('push.err.PUSH_SERVER'), 'error'))}>
+        <button className="btn btn--sm" onClick={() => testPush().then(() => toast(t('push.testSent')), (err) => toast(`${t('push.err.PUSH_SERVER')} ${err.detail ? `(${err.detail})` : ''}`, 'error'))}>
           <Icon name="bell" size={14} /> {t('push.test')}
         </button>
       )}

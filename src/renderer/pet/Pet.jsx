@@ -8,7 +8,7 @@
 // Alerts (task reminders, yesterday's note) grow the pet, play its alert
 // animation (the cat scratches the screen, the dog wags its tail) and ring.
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { api, bridge } from '../api.js';
 import { makeT } from '../i18n.js';
 import { SPRITES, frameAt, animationLength, drawFrame } from '../sprite.jsx';
@@ -67,6 +67,9 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const [history, setHistory] = useState([]);
   const [focusDay, setFocusDay] = useState(null);
   const [pos, setPos] = useState(readEmbedPos);
+  // Desktop: where the pet's feet are inside the (screen-clamped) window.
+  const [place, setPlace] = useState(() => ({ x: window.innerWidth / 2, y: window.innerHeight - 10, width: window.innerWidth, height: window.innerHeight }));
+  const [sent, setSent] = useState(null);
 
   const canvasRef = useRef(null);
   const actorRef = useRef(null);
@@ -84,7 +87,10 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const animal = user?.animal || 'cat';
   // A phone screen gets the small pet.
   const scale = embedded ? Math.min(2, settings?.petScale || 2) : settings?.petScale || 3;
-  const walkRange = embedded ? 36 : 70;
+  const W = SPRITES[animal].width * scale;
+  const H = SPRITES[animal].height * scale;
+  // Walk only as far as the window allows on each side.
+  const walkRange = embedded ? 36 : Math.max(0, Math.min(70, place.x - W / 2 - 4, place.width - place.x - W / 2 - 4));
   const t = useMemo(() => makeT(settings?.language || 'vi'), [settings?.language]);
   const sprite = SPRITES[animal];
   const phases = useMemo(() => PHASES.filter((p) => p !== 'play' || sprite.animations.play), [sprite]);
@@ -105,15 +111,30 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
     loadSession().then(() => bridge.send('pet:ready'));
     const offChanged = bridge.on('bun:changed', (topics) => {
       if (topics.includes('session') || topics.includes('settings')) loadSession();
-      else if (topics.includes('notes')) api.getNotes().then(setHistory).catch(() => {});
+      else if (topics.includes('notes')) {
+        api.getNotes().then(setHistory).catch(() => {});
+        // Today's note changed elsewhere (main window, another device): show it, unless it's being typed here.
+        const typing = saveTimer.current || document.activeElement?.matches?.('.pet-note, .pet-notes textarea');
+        if (!typing) api.getNote(dayKey()).then(setNote).catch(() => {});
+      }
     });
     const offAlert = bridge.on('pet:alert', (a) => setAlerts((list) => [...list, a]));
+    const offPlace = bridge.on('pet:place', (p) => {
+      setPlace(p);
+      loop.current.x = 0;
+    });
     window.__petAlert = (a) => setAlerts((list) => [...list, a]); // preview / test helper
     return () => {
       offChanged();
       offAlert();
+      offPlace();
     };
   }, [loadSession]);
+
+  // Tell the main process how big the pet is, so it keeps all of it on screen.
+  useEffect(() => {
+    if (!embedded) bridge.send('pet:size', { w: W, h: H });
+  }, [W, H, embedded]);
 
   useEffect(() => {
     if (!embedded) document.documentElement.dataset.theme = settings?.theme || 'light';
@@ -140,7 +161,56 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const saveNote = (text) => {
     setNote(text);
     clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => api.saveNote(text, dayKey()), 450);
+    // A lone "- " is still an empty note.
+    saveTimer.current = setTimeout(() => {
+      saveTimer.current = null;
+      api.saveNote(text.trim() === '-' ? '' : text, dayKey());
+    }, 450);
+  };
+
+  // Notes are bullet lists: start with "- ", and Enter starts the next bullet
+  // (Enter on an empty bullet ends the list).
+  const onNoteFocus = (e) => {
+    if (!note) {
+      saveNote('- ');
+      requestAnimationFrame(() => e.target.setSelectionRange(2, 2));
+    }
+  };
+  // Reopening today's note: continue typing at the end, not before the first line.
+  const caretToEnd = useCallback((el) => {
+    if (el) el.setSelectionRange(el.value.length, el.value.length);
+  }, []);
+  const onNoteKey = (e) => {
+    if (e.key !== 'Enter' || e.shiftKey || e.nativeEvent.isComposing) return;
+    const el = e.currentTarget;
+    const { selectionStart: a, selectionEnd: b, value } = el;
+    const lineStart = value.lastIndexOf('\n', a - 1) + 1;
+    const line = value.slice(lineStart, a);
+    e.preventDefault();
+    if (line.trim() === '-') {
+      const next = value.slice(0, lineStart) + value.slice(a);
+      saveNote(next);
+      requestAnimationFrame(() => el.setSelectionRange(lineStart, lineStart));
+      return;
+    }
+    const next = `${value.slice(0, a)}\n- ${value.slice(b)}`;
+    saveNote(next);
+    requestAnimationFrame(() => el.setSelectionRange(a + 3, a + 3));
+  };
+
+  // Each bullet becomes a task on the checklist board last opened.
+  const sendToChecklist = async () => {
+    const names = note
+      .split('\n')
+      .map((l) => l.replace(/^\s*[-•*]\s*/, '').trim())
+      .filter(Boolean);
+    if (!names.length) return;
+    const boards = await api.listBoards();
+    const board = boards.find((b) => b.id === settings?.lastBoardId) || boards[0];
+    if (!board) return;
+    for (const name of names) await api.createTask({ boardId: board.id, name });
+    setSent({ n: names.length, board: board.name });
+    setTimeout(() => setSent(null), 3500);
   };
 
   // ---------- animation loop ----------
@@ -210,6 +280,19 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [user, animal, scale, sprite, phases, walkRange]);
+
+  // Keep an open bubble inside the window: slide it sideways, its tail still points at the pet.
+  useLayoutEffect(() => {
+    const actor = actorRef.current;
+    const bubble = actor?.querySelector('.pet-bubble');
+    if (!bubble) return;
+    const r = actor.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const w = bubble.offsetWidth;
+    const left = Math.min(Math.max(8, cx - w / 2), window.innerWidth - 8 - w);
+    const shift = Math.max(-(w / 2 - 22), Math.min(w / 2 - 22, left - (cx - w / 2)));
+    bubble.style.setProperty('--shift', `${Math.round(shift)}px`);
+  }, [mode, place, alerts.length, sent, pos]);
 
   // ---------- click-through (desktop window only) ----------
 
@@ -320,13 +403,29 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   // Embedded pets stay hidden after X until a reminder arrives.
   if (embedded && hidden && !alert) return null;
 
-  const W = sprite.width * scale;
-  const H = sprite.height * scale;
   const meta = sprite.meta || {};
   const metaPos = (pt) => (pt ? { left: pt[0] * scale, top: pt[1] * scale } : null);
   const bounds = frameBounds(sprite, sprite.animations.sit.seq[0][0]);
   const headTop = H - bounds.minY * scale; // distance from the feet to the top of the head
-  const bubbleBottom = mode === 'alert' ? headTop * ALERT_SCALE + 16 : headTop + 14;
+  const grownTop = mode === 'alert' ? headTop * ALERT_SCALE : headTop;
+  // Desktop: bubbles go above the pet when there's room, else below it.
+  const roomAbove = embedded ? Infinity : place.y - grownTop;
+  const roomBelow = embedded ? 0 : place.height - place.y;
+  const below = !embedded && roomAbove < 200 && roomBelow > roomAbove;
+  const bubbleStyle = below ? { top: H + 14 } : { bottom: grownTop + 14 };
+  const notesStyle = embedded
+    ? undefined
+    : below
+      ? { top: place.y + 12, bottom: 'auto', maxHeight: place.height - place.y - 20 }
+      : { top: 10, maxHeight: place.y - grownTop - 26 };
+  const noteProps = {
+    value: note,
+    placeholder: t('pet.notePh'),
+    onFocus: onNoteFocus,
+    onKeyDown: onNoteKey,
+    onChange: (e) => saveNote(e.target.value),
+    spellCheck: false,
+  };
   const yesterday = dayKey(addDays(new Date(), -1));
   const lang = settings?.language || 'vi';
   const pastNotes = history.filter((n) => n.day !== dayKey());
@@ -339,11 +438,15 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
       // Take keyboard focus only for typing notes; dragging the pet leaves the user's app focused.
       onPointerDown={(e) => !embedded && e.target.closest('.pet-bubble--note, .pet-notes') && bridge.send('pet:focus')}
     >
-      <div className="pet-actor" ref={actorRef} style={{ width: W, '--pet-h': `${headTop}px` }}>
+      <div className="pet-anchor" style={embedded ? undefined : { left: place.x - W / 2, top: place.y - H }}>
+      <div className={`pet-actor ${below ? 'is-below' : ''}`} ref={actorRef} style={{ width: W, '--pet-h': `${headTop}px` }}>
         {/* bubbles sit above the pet and follow it */}
         {mode === 'note' && (
-          <div className="pet-bubble pet-bubble--note" data-hit style={{ bottom: bubbleBottom }}>
+          <div className="pet-bubble pet-bubble--note" data-hit style={bubbleStyle}>
             <div className="pet-bubble__tools">
+              <button title={t('pet.toChecklist')} onClick={sendToChecklist} disabled={!note.replace(/[-\s]/g, '')}>
+                <Icon name="send" size={13} />
+              </button>
               <button title={t('pet.expand')} onClick={() => setMode('notes')}>
                 <Icon name="list" size={14} />
               </button>
@@ -351,21 +454,15 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
                 <Icon name="x" size={14} />
               </button>
             </div>
-            <textarea
-              className="pet-note"
-              value={note}
-              autoFocus
-              placeholder={t('pet.notePh')}
-              onChange={(e) => saveNote(e.target.value)}
-              spellCheck={false}
-            />
+            <textarea className="pet-note" autoFocus ref={caretToEnd} {...noteProps} />
+            {sent && <div className="pet-sent">{t('pet.sentToChecklist', { n: sent.n, board: sent.board })}</div>}
           </div>
         )}
 
         {mode === 'alert' && alert && (
-          <div className="pet-bubble pet-bubble--alert" data-hit key={alerts.length} style={{ bottom: bubbleBottom }}>
+          <div className="pet-bubble pet-bubble--alert" data-hit key={alerts.length} style={bubbleStyle}>
             {alert.kind === 'task' ? (
-              <p className="pet-alert__text">{t('pet.taskAlert', { name: alert.task.name, n: alert.task.minutes })}</p>
+              <p className="pet-alert__text">{t(alert.task.kind === 'deadline' ? 'pet.deadlineAlert' : 'pet.taskAlert', { name: alert.task.name, n: alert.task.minutes })}</p>
             ) : (
               <>
                 <p className="pet-alert__text">{alert.day === yesterday ? t('pet.recapYesterday') : t('pet.recapDay', { date: fmtDate(parseDayKey(alert.day), lang) })}</p>
@@ -439,11 +536,15 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
           <div className="pet-shadow" style={{ width: W * 0.62 }} />
         </div>
       </div>
+      </div>
 
       {mode === 'notes' && (
-        <div className="pet-notes" data-hit>
+        <div className="pet-notes" data-hit style={notesStyle}>
           <div className="pet-notes__head">
             <b>{t('pet.notesTitle', { name: user.name })}</b>
+            <button title={t('pet.toChecklist')} onClick={sendToChecklist}>
+              <Icon name="send" size={14} />
+            </button>
             <button title={t('pet.collapse')} onClick={() => setMode('note')}>
               <Icon name="chevronDown" size={15} />
             </button>
@@ -456,7 +557,8 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
               <div className="pet-notes__label">
                 {t('pet.today')} · {fmtDate(new Date(), lang)}
               </div>
-              <textarea value={note} placeholder={t('pet.notePh')} onChange={(e) => saveNote(e.target.value)} spellCheck={false} />
+              <textarea {...noteProps} />
+              {sent && <div className="pet-sent">{t('pet.sentToChecklist', { n: sent.n, board: sent.board })}</div>}
             </div>
             {pastNotes.length === 0 && <div className="pet-notes__empty">{t('pet.noHistory')}</div>}
             {pastNotes.map((n) => (
