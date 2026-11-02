@@ -1,9 +1,9 @@
 // Bridge between the sandboxed pages and the main process.
 const { contextBridge, ipcRenderer } = require('electron');
 
-const EVENTS = ['bun:changed', 'bun:cloud', 'bun:link', 'bun:navigate', 'pet:alert', 'pet:place'];
-const SENDS = ['app:openMain', 'app:showPet', 'app:linkHandled', 'app:openExternal', 'pet:ready', 'pet:size', 'pet:ignoreMouse', 'pet:moveBy', 'pet:dragEnd', 'pet:hide', 'pet:focus', 'pet:openBoard'];
-const INVOKES = ['app:takeLink', 'app:info', 'net:json', 'ringtone:import'];
+const EVENTS = ['bun:changed', 'bun:cloud', 'bun:link', 'bun:navigate', 'bun:update', 'pet:alert', 'pet:place'];
+const SENDS = ['app:openMain', 'app:showPet', 'app:linkHandled', 'app:openExternal', 'app:installUpdate', 'pet:ready', 'pet:size', 'pet:ignoreMouse', 'pet:moveBy', 'pet:dragEnd', 'pet:hide', 'pet:focus', 'pet:openBoard'];
+const INVOKES = ['app:takeLink', 'app:info', 'app:updateStatus', 'app:checkUpdate', 'net:json', 'ringtone:import'];
 
 contextBridge.exposeInMainWorld('bun', {
   isElectron: true,

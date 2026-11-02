@@ -3391,3 +3391,26 @@
 a.btn {
   text-decoration: none;
 }
+
+/* New desktop version downloaded */
+.update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(720px, calc(100vw - 40px));
+  padding: 10px 12px 10px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 28px rgba(30, 20, 10, 0.2), 0 0 0 1px rgba(60, 40, 20, 0.06);
+  transform: translateX(-50%);
+}
+.update-banner > .btn {
+  flex: none;
+}

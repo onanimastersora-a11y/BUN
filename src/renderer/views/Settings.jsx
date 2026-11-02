@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api, bridge } from '../api.js';
-import { useBun, useCloud, useLive } from '../store.jsx';
+import { useBun, useCloud, useLive, useUpdate } from '../store.jsx';
 import { fmtTime } from '../../core/time.js';
 import { Icon } from '../icons.jsx';
 import { PetAvatar } from '../sprite.jsx';
@@ -8,7 +8,7 @@ import { Modal } from '../components/Popover.jsx';
 import { BUILTIN_TONES, importToneFile, isSoundCloudUrl, playRingtone } from '../ringtone.js';
 import { disablePush, enablePush, isIOS, isStandalone, pushEnabled, pushSupported, testPush } from '../push.js';
 import { SHORTCUT_NAME, loadAlarmState, saveAlarmState, shortcutUrl, weeklyAlarms } from '../alarm.js';
-import { ALARM_SHORTCUT_URL } from '../../core/config.js';
+import { ALARM_SHORTCUT_URL, CLOUD_URL } from '../../core/config.js';
 
 const LEADS = [1, 5, 10, 15, 30];
 
@@ -152,6 +152,12 @@ export default function Settings({ onClose, onShowPet }) {
           </button>
         </div>
       </section>
+
+      {bridge.isElectron && (
+        <section className="settings__section">
+          <AppUpdate />
+        </section>
+      )}
 
       <section className="settings__section settings__account">
         <PetAvatar animal={user.animal} size={44} />
@@ -313,6 +319,47 @@ function SyncStatus() {
         </button>
       )}
     </span>
+  );
+}
+
+function AppUpdate() {
+  const { t } = useBun();
+  const u = useUpdate();
+  if (!u) return null;
+  const check = () => bridge.invoke('app:checkUpdate').catch(() => {});
+  const text = {
+    idle: t('update.auto'),
+    checking: t('update.checking'),
+    latest: t('update.latest'),
+    downloading: t('update.downloading', { v: u.version, p: u.percent ?? 0 }),
+    ready: t('update.ready', { v: u.version }),
+    manual: t(u.platform === 'darwin' ? 'update.manualMac' : 'update.manual', { v: u.version }),
+    error: t('update.error'),
+  }[u.state];
+  return (
+    <div className="settings__row">
+      <div>
+        <div className="settings__name">
+          <Icon name="refresh" size={16} /> {t('update.version', { v: u.current })}
+        </div>
+        <div className="faint small">{text}</div>
+      </div>
+      {u.state === 'ready' && (
+        <button className="btn btn--sm btn--primary" onClick={() => bridge.send('app:installUpdate')}>
+          {t('update.install')}
+        </button>
+      )}
+      {u.state === 'manual' && (
+        <button className="btn btn--sm" onClick={() => bridge.send('app:openExternal', CLOUD_URL)}>
+          {t('update.download')}
+        </button>
+      )}
+      {['idle', 'latest', 'error'].includes(u.state) && (
+        <button className="btn btn--sm" onClick={check}>
+          {t('update.check')}
+        </button>
+      )}
+    </div>
   );
 }
 

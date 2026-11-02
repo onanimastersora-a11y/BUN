@@ -81,9 +81,20 @@ npm run sprites -- cat   # xuất ảnh xem trước sprite
 | `src/renderer/push.js`, `tools/sw-template.js` | Thông báo đẩy và chạy offline cho bản iPhone |
 | `src/core/reminders.js`, `web/worker/reminders.js` | Danh sách nhắc việc của mỗi điện thoại, do máy chủ giữ và tự cập nhật khi lịch đổi trên bất kỳ thiết bị nào |
 | `src/renderer/alarm.js`, `web/SHORTCUT.md` | Đưa lịch tuần vào báo thức iPhone qua Phím tắt |
+| `electron/updater.js`, `electron/mac-update.js` | App Windows + macOS tự cập nhật từ GitHub Releases |
 | `src/sprites/` | Pixel art chó/mèo (lưới ký tự 48×40) |
 | `web/` | Cloudflare Worker: trang giới thiệu, app iPhone, tài khoản + đồng bộ, trung gian Yahoo, gửi thông báo đẩy |
 | `.github/workflows/release.yml` | Build tự động file cài Windows + macOS |
+
+### Tự cập nhật
+
+Từ bản 1.2, người dùng không phải tải bản mới nữa:
+
+- **Windows:** app tự kiểm tra GitHub Releases, tự tải phần thay đổi (`electron-updater`).
+- **macOS:** app chưa có chữ ký Apple nên không dùng được bộ cập nhật chuẩn. `electron/mac-update.js` tự tải `BUN-mac.zip`, kiểm tra mã băm rồi thay `BUN.app` sau khi app thoát.
+- **iPhone:** chỉ cần deploy web; app nhận bản mới khi được mở lại.
+
+Bản mới được cài khi người dùng bấm **Cập nhật ngay**, khi thoát app, hoặc khi máy không được dùng trong 10 phút. Cách phát hành bản mới: xem [web/DEPLOY.md](web/DEPLOY.md).
 
 ### Về nhạc chuông
 

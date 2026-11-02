@@ -13,6 +13,7 @@ import { CloudSync } from '../src/core/cloud.js';
 import { CLOUD_URL } from '../src/core/config.js';
 import { dayKey } from '../src/core/time.js';
 import { fileStorage, jsonFile } from './storage.js';
+import { startUpdater } from './updater.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEV = !!process.env.BUN_DEV;
@@ -39,6 +40,7 @@ if (!app.requestSingleInstanceLock()) {
 function start() {
   let backend;
   let cloud;
+  let updater;
   let storage;
   let machine;
   let mainWin = null;
@@ -267,6 +269,7 @@ function start() {
       Menu.buildFromTemplate([
         { label: vi() ? 'Mở BUN' : 'Open BUN', click: showMain },
         { label: vi() ? 'Hiện thú cưng' : 'Show pet', click: showPet, enabled: !!session() },
+        ...(updater?.status().state === 'ready' ? [{ label: vi() ? `Cập nhật lên bản ${updater.status().version}` : `Update to ${updater.status().version}`, click: () => updater.install() }] : []),
         { type: 'separator' },
         {
           label: vi() ? 'Thoát' : 'Quit',
@@ -379,6 +382,9 @@ function start() {
   });
 
   ipcMain.handle('app:info', () => ({ platform: process.platform, version: app.getVersion() }));
+  ipcMain.handle('app:updateStatus', () => updater.status());
+  ipcMain.handle('app:checkUpdate', () => updater.check());
+  ipcMain.on('app:installUpdate', () => updater.install());
 
   // Market data / weather: fetched here because the pages are bound by CORS.
   ipcMain.handle('net:json', async (_e, url) => {
@@ -486,6 +492,18 @@ function start() {
     });
     cloud.start();
     powerMonitor.on('resume', () => cloud.sync().catch(() => {}));
+    updater = startUpdater({
+      machine,
+      isMainVisible: () => !!mainWin && !mainWin.isDestroyed() && mainWin.isVisible(),
+      beforeQuit: () => {
+        quitting = true;
+        storage.flush();
+      },
+      onStatus: (status) => {
+        if (mainWin && !mainWin.isDestroyed()) mainWin.webContents.send('bun:update', status);
+        refreshTrayMenu();
+      },
+    });
     buildAppMenu();
 
     protocol.handle('bunmedia', (req) => {
@@ -497,7 +515,10 @@ function start() {
     // Monitors plugged in / out or resolution changed: keep the pet visible.
     for (const evt of ['display-added', 'display-removed', 'display-metrics-changed']) screen.on(evt, () => placePet());
 
-    const autostarted = launchedAtLogin();
+    // Restarted by an update while nobody was looking: stay out of the way, as at login.
+    const quietRestart = !!machine.get('restartHidden');
+    if (quietRestart) machine.set('restartHidden', false);
+    const autostarted = launchedAtLogin() || quietRestart;
     const link = findLink(process.argv) || pendingLink;
     if (link) pendingLink = link;
 

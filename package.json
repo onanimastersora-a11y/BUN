@@ -1,7 +1,7 @@
 {
   "name": "bun-app",
   "productName": "BUN",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "BUN - lịch trình, checklist và thú cưng pixel trên desktop",
   "author": "BUN",
   "private": true,
@@ -16,9 +16,9 @@
     "sprites": "node tools/render-sprites.mjs",
     "icons": "node tools/make-icons.mjs",
     "sounds": "node tools/make-sounds.mjs",
-    "dist": "vite build && electron-builder --win",
-    "dist:win": "vite build && electron-builder --win",
-    "dist:mac": "vite build && electron-builder --mac"
+    "dist": "vite build && electron-builder --win --publish never",
+    "dist:win": "vite build && electron-builder --win --publish never",
+    "dist:mac": "vite build && electron-builder --mac --publish never"
   },
   "build": {
     "appId": "app.bun.desktop",
@@ -62,6 +62,12 @@
           "arch": [
             "universal"
           ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
         }
       ],
       "icon": "build/icon.png",
@@ -78,11 +84,18 @@
       "artifactName": "BUN-mac.${ext}",
       "title": "BUN"
     },
-    "publish": null
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "onanimastersora-a11y",
+        "repo": "BUN"
+      }
+    ]
   },
   "dependencies": {
     "@fontsource/nunito": "^5.1.0",
     "@fontsource/pixelify-sans": "^5.1.0",
+    "electron-updater": "^6.8.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

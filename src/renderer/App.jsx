@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, bridge } from './api.js';
-import { useBun, useCloud, useIsMobile } from './store.jsx';
+import { useBun, useCloud, useIsMobile, useUpdate } from './store.jsx';
 import { errorText } from './i18n.js';
 import { Modal } from './components/Popover.jsx';
 import { Icon } from './icons.jsx';
@@ -155,6 +155,7 @@ export default function App() {
       {webPet}
       {settings}
       <LinkPrompt />
+      <UpdateBanner />
     </div>
   );
 }
@@ -239,6 +240,26 @@ function WebRuntime() {
     };
   }, []);
   return null;
+}
+
+// Desktop: a new version has downloaded.
+function UpdateBanner() {
+  const { t } = useBun();
+  const update = useUpdate();
+  const [closed, setClosed] = useState(false);
+  if (update?.state !== 'ready' || closed) return null;
+  return (
+    <div className="update-banner">
+      <Icon name="refresh" size={16} />
+      <span>{t('update.banner', { v: update.version })}</span>
+      <button className="btn btn--sm btn--primary" onClick={() => bridge.send('app:installUpdate')}>
+        {t('update.install')}
+      </button>
+      <button className="icon-btn icon-btn--sm" onClick={() => setClosed(true)}>
+        <Icon name="x" size={14} />
+      </button>
+    </div>
+  );
 }
 
 // iPhone Safari (not yet on the Home Screen): how to install BUN.

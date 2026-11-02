@@ -9,7 +9,20 @@ if (window.bun?.isElectron) {
   if (/Mac/.test(navigator.platform)) document.body.classList.add('is-mac');
 } else if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   // Web / iPhone build: cache the app so it opens offline, and receive push.
-  navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, { scope: import.meta.env.BASE_URL }).catch(() => {});
+  navigator.serviceWorker
+    .register(`${import.meta.env.BASE_URL}sw.js`, { scope: import.meta.env.BASE_URL })
+    .then((reg) => {
+      // Back on screen: look for a new version (iOS may have kept the app suspended for days).
+      document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && reg.update().catch(() => {}));
+    })
+    .catch(() => {});
+  // A new version took over: switch to it, but never in the middle of typing.
+  const firstInstall = !navigator.serviceWorker.controller;
+  const reloadWhenFree = () => {
+    if (document.activeElement?.matches('input, textarea')) document.addEventListener('focusout', () => setTimeout(reloadWhenFree, 800), { once: true });
+    else window.location.reload();
+  };
+  navigator.serviceWorker.addEventListener('controllerchange', () => !firstInstall && reloadWhenFree());
 }
 
 createRoot(document.getElementById('root')).render(

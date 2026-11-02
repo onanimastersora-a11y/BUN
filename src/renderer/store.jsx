@@ -136,3 +136,19 @@ export function useCloud() {
   }, []);
   return status;
 }
+
+// Desktop app: where the self-update stands (null on the web, which updates by itself).
+export function useUpdate() {
+  const [status, setStatus] = useState(null);
+  useEffect(() => {
+    if (!bridge.isElectron) return undefined;
+    let alive = true;
+    bridge.invoke('app:updateStatus').then((s) => alive && setStatus(s)).catch(() => {});
+    const off = bridge.on('bun:update', (s) => alive && setStatus(s));
+    return () => {
+      alive = false;
+      off();
+    };
+  }, []);
+  return status;
+}

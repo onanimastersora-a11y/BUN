@@ -2,7 +2,9 @@
 # attaches them to a GitHub Release. The landing page links straight to
 #   https://github.com/<you>/<repo>/releases/latest/download/BUN-Setup.exe
 #   https://github.com/<you>/<repo>/releases/latest/download/BUN-mac.dmg
-# Run it by pushing a tag:  git tag v1.0.1 && git push origin v1.0.1
+# The apps update themselves from the same release (latest.yml, latest-mac.yml).
+# Run it by pushing a tag that matches the version in package.json:
+#   git tag v1.0.1 && git push origin v1.0.1
 # (or from the Actions tab with "Run workflow").
 name: Release
 
@@ -22,10 +24,16 @@ jobs:
         include:
           - os: windows-latest
             script: dist:win
-            file: release/BUN-Setup.exe
+            files: |
+              release/BUN-Setup.exe
+              release/BUN-Setup.exe.blockmap
+              release/latest.yml
           - os: macos-latest
             script: dist:mac
-            file: release/BUN-mac.dmg
+            files: |
+              release/BUN-mac.dmg
+              release/BUN-mac.zip
+              release/latest-mac.yml
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +48,8 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - uses: softprops/action-gh-release@v2
         with:
-          files: ${{ matrix.file }}
+          files: ${{ matrix.files }}
+          fail_on_unmatched_files: true
           tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
           name: BUN ${{ github.ref_type == 'tag' && github.ref_name || format('build {0}', github.run_number) }}
           make_latest: true

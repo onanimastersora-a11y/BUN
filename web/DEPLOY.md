@@ -7,7 +7,7 @@ Thư mục `web/` là một Cloudflare Worker. Nó làm 4 việc:
 - Lấy giá chứng khoán từ Yahoo Finance cho app.
 - Gửi thông báo nhắc việc tới iPhone mỗi phút.
 
-> **Đã deploy bản 1.0 rồi?** Làm phần [Cập nhật lên bản 1.1](#cập-nhật-lên-bản-11) ở cuối trang. **Đã có bản 1.1.0?** Chỉ cần làm phần [Cập nhật lên bản 1.1.1](#cập-nhật-lên-bản-111).
+> **Đã có BUN trên mạng rồi?** Xem [Phát hành bản mới](#phát-hành-bản-mới) ở cuối trang.
 
 **Cần có:** Node.js 20 trở lên và một tài khoản Cloudflare miễn phí (đăng ký tại https://dash.cloudflare.com/sign-up).
 
@@ -200,3 +200,31 @@ Bản 1.1.0 không đồng bộ được tài khoản: nút **Đồng bộ** bá
    Sau khoảng 10 phút, tải bản mới từ trang web và cài đè lên bản cũ.
 
 4. Bấm **Đồng bộ** và nhập code. Nên cài bản 1.1.1 trước khi bấm: bản 1.1.1 giữ nguyên ID của bạn (ví dụ `Mì#4127`). Bản 1.1.0 vẫn đồng bộ được, nhưng ID sẽ đổi sang số khác.
+
+## Phát hành bản mới
+
+Từ bản 1.2, app Windows và Mac tự cập nhật từ GitHub Releases, còn app iPhone cập nhật theo web. Mỗi lần phát hành, chỉ cần:
+
+1. Đổi `version` trong `package.json` (ví dụ `1.2.1`).
+2. Đưa code lên GitHub và tạo tag **đúng số phiên bản đó**. GitHub Actions sẽ build và đăng các file; các app đang chạy sẽ tự nhận:
+
+   ```powershell
+   git add -A
+   git commit -m "BUN 1.2.1"
+   git push
+   git tag v1.2.1
+   git push origin v1.2.1
+   ```
+
+3. Khi GitHub build xong, đưa web lên để app iPhone và số phiên bản trên trang giới thiệu được cập nhật:
+
+   ```powershell
+   npm run build:web
+   cd web
+   npm run deploy
+   cd ..
+   ```
+
+Nếu chỉ sửa máy chủ hoặc app iPhone, làm bước 3 là đủ, không cần tag.
+
+Không xóa các file `latest.yml`, `latest-mac.yml`, `*.blockmap`, `BUN-mac.zip` khỏi bản phát hành: app cần chúng để tự cập nhật.
