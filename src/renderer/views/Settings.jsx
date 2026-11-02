@@ -382,12 +382,33 @@ function IphoneAlarms() {
         <Icon name="clock" size={16} /> {t('alarm.title')}
       </div>
       <div className="faint small">{t('alarm.hint', { n: settings.leadMinutes })}</div>
-      {ALARM_SHORTCUT_URL ? (
-        <a className="btn btn--sm" href={ALARM_SHORTCUT_URL}>
-          {t('alarm.install')}
-        </a>
-      ) : (
-        <div className="faint small">{t('alarm.needShortcut', { name: SHORTCUT_NAME })}</div>
+      {!state.ready && (
+        <div className="alarm-stale">
+          <div className="small">{t('alarm.needShortcut', { name: SHORTCUT_NAME })}</div>
+          {ALARM_SHORTCUT_URL ? (
+            <a className="btn btn--sm btn--primary" href={ALARM_SHORTCUT_URL}>
+              {t('alarm.install')}
+            </a>
+          ) : (
+            <details className="alarm-guide">
+              <summary className="small">{t('alarm.guideTitle')}</summary>
+              <div className="faint small">{t('alarm.guideNote')}</div>
+              <ol className="small">
+                {t('alarm.guide', { name: SHORTCUT_NAME })
+                  .split('\n')
+                  .map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+              </ol>
+              <a className="btn btn--sm" href="shortcuts://create-shortcut">
+                {t('alarm.openShortcuts')}
+              </a>
+            </details>
+          )}
+          <button className="btn btn--sm" onClick={() => update({ ...state, ready: true })}>
+            {t('alarm.haveShortcut')}
+          </button>
+        </div>
       )}
       {alarms.length === 0 && <div className="faint small">{t('alarm.empty')}</div>}
       {alarms.length > 0 && (
@@ -423,16 +444,26 @@ function IphoneAlarms() {
           </button>
         </div>
       )}
-      {toAdd.length > 0 && (
-        <a
-          className="btn btn--sm btn--primary"
-          href={shortcutUrl(toAdd)}
-          onClick={() => update({ ...state, added: { ...state.added, ...Object.fromEntries(toAdd.map((a) => [a.key, { day: a.day, time: a.time, name: a.name }])) } })}
-        >
+      {state.pending.length > 0 && (
+        <div className="alarm-stale">
+          <div className="small">{t('alarm.confirm', { n: state.pending.length })}</div>
+          <button
+            className="btn btn--sm btn--primary"
+            onClick={() => update({ ...state, pending: [], added: { ...state.added, ...Object.fromEntries(state.pending.map((a) => [a.key, { day: a.day, time: a.time, name: a.name }])) } })}
+          >
+            {t('alarm.confirmYes')}
+          </button>
+          <button className="btn btn--sm" onClick={() => update({ ...state, pending: [], ready: Object.keys(state.added).length > 0 })}>
+            {t('alarm.confirmNo')}
+          </button>
+        </div>
+      )}
+      {state.ready && state.pending.length === 0 && toAdd.length > 0 && (
+        <a className="btn btn--sm btn--primary" href={shortcutUrl(toAdd)} onClick={() => update({ ...state, pending: toAdd })}>
           <Icon name="bell" size={14} /> {t('alarm.add', { n: toAdd.length })}
         </a>
       )}
-      {toAdd.length === 0 && alarms.some((a) => state.added[a.key]) && (
+      {state.ready && state.pending.length === 0 && toAdd.length === 0 && alarms.some((a) => state.added[a.key]) && (
         <button className="btn btn--sm btn--ghost" onClick={() => update({ ...state, added: {} })}>
           {t('alarm.reset')}
         </button>

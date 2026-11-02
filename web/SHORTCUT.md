@@ -13,6 +13,8 @@ BUN gửi mỗi báo thức thành một dòng, theo dạng `thứ|giờ|tên` (
 
 ## Tạo phím tắt
 
+BUN **không có** trong danh sách ứng dụng của app Phím tắt, và điều đó không sao. Apple chỉ liệt kê app cài từ App Store, còn phím tắt này chỉ dùng tác vụ có sẵn của iPhone (**Tạo báo thức** thuộc app **Đồng hồ**).
+
 Mở app **Phím tắt** → bấm **+** → đặt tên đúng là `BUN Bao thuc`. Thêm lần lượt các tác vụ sau (tìm theo tên trong ô tìm kiếm):
 
 1. **Tách văn bản** (Split Text): tách **Đầu vào phím tắt** theo **Dòng mới**.
@@ -52,18 +54,19 @@ Mẹo: trước khi nhân bản, thử giữ vào ô **Lặp lại** xem có ch�
 
 ## Thử
 
-1. Mở BUN từ màn hình chính → **Cài đặt** → **Báo thức iPhone**.
+1. Mở BUN từ màn hình chính → **Cài đặt** → **Báo thức iPhone** → bấm **Tôi đã có phím tắt này**.
 2. Tắt hết, chỉ để lại một việc, rồi bấm **Thêm 1 báo thức vào iPhone**.
 3. Lần đầu, iPhone hỏi quyền cho Đồng hồ: chọn **Luôn cho phép**.
 4. Mở app **Đồng hồ** → **Báo thức**: phải có `BUN: tên việc`, đúng giờ, đúng ngày lặp.
+5. Quay lại BUN và bấm **Đã có**. BUN chỉ ghi nhận báo thức sau bước này.
 
-Nếu không có gì xảy ra hoặc báo sai tên phím tắt, kiểm tra lại tên là đúng `BUN Bao thuc`. Sau đó bấm **Thêm lại từ đầu** trong BUN.
+Nếu iPhone báo không tìm thấy phím tắt, kiểm tra lại tên là đúng `BUN Bao thuc`, rồi bấm **Chưa có** trong BUN và thử lại.
 
 ## Cho mọi người cài bằng một lần bấm
 
 1. Trong app **Phím tắt**, giữ vào `BUN Bao thuc` → **Chia sẻ** → **Sao chép liên kết iCloud**.
 2. Dán link vào `ALARM_SHORTCUT_URL` trong [src/core/config.js](../src/core/config.js).
-3. Build và deploy web. Mục **Báo thức iPhone** sẽ có nút **Bước 1: Cài phím tắt**.
+3. Build và deploy web. Mục **Báo thức iPhone** sẽ có nút **Cài phím tắt** thay cho phần hướng dẫn tạo tay.
 
 ## Điều cần biết
 

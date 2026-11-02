@@ -5,6 +5,10 @@
 // The Shortcut can only add alarms, so this phone remembers which ones it already
 // added: pressing the button again never makes duplicates, and alarms whose event
 // changed are listed for the user to delete in Clock.
+//
+// iOS tells a web app nothing about what the Shortcut did. So the button stays hidden
+// until the user says the Shortcut exists (`ready`), and sent alarms wait in `pending`
+// until the user says they showed up in Clock.
 
 import { api } from './api.js';
 
@@ -15,9 +19,11 @@ const pad = (n) => String(n).padStart(2, '0');
 
 export function loadAlarmState() {
   try {
-    return { off: [], added: {}, ...JSON.parse(localStorage.getItem(KEY)) };
+    const saved = JSON.parse(localStorage.getItem(KEY)) || {};
+    // Saved before `ready` existed: pressing the button counted as added even if the Shortcut was missing.
+    return { off: [], pending: [], ...saved, ready: !!saved.ready, added: saved.ready ? saved.added || {} : {} };
   } catch {
-    return { off: [], added: {} };
+    return { off: [], added: {}, pending: [], ready: false };
   }
 }
 
