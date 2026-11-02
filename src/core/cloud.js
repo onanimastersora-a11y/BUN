@@ -137,10 +137,17 @@ export class CloudSync {
   }
 
   async logout() {
-    if (this.state.token) this.http('logout', {}).catch(() => {});
+    if (this.state.token) this.http('logout', { pushDevice: this.state.pushDevice }).catch(() => {});
     this.state = { token: null, userId: null, pending: [], pendingLink: null, lastSync: null };
     this.save();
     return this.b.logout();
+  }
+
+  /** From now on the cloud keeps this phone's reminders current, even while BUN is closed. */
+  async registerPushDevice({ deviceId, timeZone }) {
+    this.state.pushDevice = deviceId;
+    this.save();
+    return this.http('push-device', { deviceId, timeZone });
   }
 
   /**
@@ -201,6 +208,8 @@ export class CloudSync {
       case 'syncNow':
         await this.sync();
         return this.status();
+      case 'registerPushDevice':
+        return this.registerPushDevice(args[0]);
     }
     if (!this.linked || !WRITE_METHODS.includes(method)) return this.b[method](...args);
     // Joining someone's board from a link: the board isn't on this device yet.

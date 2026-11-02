@@ -3339,3 +3339,55 @@
   background: var(--accent-soft);
   color: var(--accent);
 }
+
+/* iPhone alarms (Settings) */
+.alarm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+}
+.alarm-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  font-size: 13px;
+}
+.alarm-row.is-off .alarm-row__when,
+.alarm-row.is-off .alarm-row__name {
+  opacity: 0.45;
+}
+.alarm-row__when {
+  flex: none;
+  width: 72px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.alarm-row__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.alarm-row__added {
+  flex: none;
+  color: var(--success);
+  font-size: 11px;
+  font-weight: 800;
+}
+.alarm-stale {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+}
+a.btn {
+  text-decoration: none;
+}

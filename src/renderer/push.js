@@ -1,15 +1,17 @@
 // Web Push for the iPhone / web app (iOS 16.4+ once BUN is on the Home Screen).
-// Web pages can't schedule notifications locally, so the device hands its
-// upcoming reminders to the site's worker (web/worker), which sends each one
-// at the right minute. The phone then shows it like any notification, with
-// the iPhone's own sound and vibration, even when BUN is closed.
+// Web pages can't schedule notifications locally, so the site's worker
+// (web/worker) sends each reminder at the right minute. The phone then shows it
+// like any notification, with the iPhone's own sound and vibration, even when
+// BUN is closed. For an account on the cloud, the cloud builds this phone's list
+// from the schedule, so changes made on other devices count too. Otherwise the
+// phone uploads its own list.
 
 import { api, bridge } from './api.js';
 import { makeT } from './i18n.js';
+import { REMINDER_DAYS, remindersFor } from '../core/reminders.js';
 
 const DEVICE_KEY = 'bun-device-id';
 const ENABLED_KEY = 'bun-push';
-const HORIZON_DAYS = 14;
 
 const store = {
   get: (k) => {
@@ -64,18 +66,31 @@ function b64urlToBytes(s) {
   return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
 
+// Subscribe this phone and tell the worker. A subscription made with older
+// server keys can't receive anything, so it is replaced.
+async function subscribeDevice() {
+  const reg = await navigator.serviceWorker.ready;
+  const { publicKey } = await fetch('/api/push/key').then((r) => r.json());
+  if (!publicKey) throw Object.assign(new Error('no key'), { code: 'PUSH_SERVER' });
+  const key = b64urlToBytes(publicKey);
+  let sub = await reg.pushManager.getSubscription();
+  const oldKey = sub?.options?.applicationServerKey;
+  if (oldKey && new Uint8Array(oldKey).join() !== key.join()) {
+    await sub.unsubscribe();
+    sub = null;
+  }
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+  await post('subscribe', { deviceId: deviceId(), subscription: sub.toJSON() });
+}
+
 /** Ask permission (must run from a tap), subscribe and upload reminders. */
 export async function enablePush() {
   if (!pushSupported()) throw Object.assign(new Error('unsupported'), { code: isIOS() && !isStandalone() ? 'PUSH_NEEDS_INSTALL' : 'PUSH_UNSUPPORTED' });
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') throw Object.assign(new Error('denied'), { code: 'PUSH_DENIED' });
-  const reg = await navigator.serviceWorker.ready;
-  const { publicKey } = await fetch('/api/push/key').then((r) => r.json());
-  if (!publicKey) throw Object.assign(new Error('no key'), { code: 'PUSH_SERVER' });
-  let sub = await reg.pushManager.getSubscription();
-  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64urlToBytes(publicKey) });
-  await post('subscribe', { deviceId: deviceId(), subscription: sub.toJSON() });
+  await subscribeDevice();
   store.set(ENABLED_KEY, '1');
+  registeredAs = null;
   await syncReminders();
 }
 
@@ -90,29 +105,29 @@ export async function disablePush() {
 
 export const testPush = () => post('test', { deviceId: deviceId() });
 
-/** Send the next two weeks of reminders to the worker (replaces the old list). */
+let registeredAs = null; // who the cloud already builds this phone's reminders for
+
+/** Make sure the worker has this phone's reminders (the next two weeks; replaces the old list). */
 export async function syncReminders() {
   if (!pushEnabled() || navigator.onLine === false) return;
   const session = await api.getSession();
-  if (!session) return;
+  if (!session) {
+    registeredAs = null;
+    return;
+  }
+  const status = await api.cloudStatus();
+  if (status.linked) {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const who = `${session.user.id}|${timeZone}`;
+    if (registeredAs === who) return;
+    await api.registerPushDevice({ deviceId: deviceId(), timeZone });
+    registeredAs = who;
+    return;
+  }
   const { leadMinutes, language } = session.settings;
-  const t = makeT(language);
   const now = Date.now();
-  const items = await api.listCalendar(new Date(now).toISOString(), new Date(now + HORIZON_DAYS * 864e5).toISOString());
-  const reminders = items
-    .filter((it) => !it.done)
-    .map((it) => {
-      const at = new Date(it.start).getTime() - leadMinutes * 60000;
-      return {
-        id: `${it.id}@${it.start}`,
-        at: new Date(at).toISOString(),
-        title: `${session.user.name} 🐾`,
-        body: t(it.kind === 'deadline' ? 'pet.deadlineAlert' : 'pet.taskAlert', { name: it.name, n: leadMinutes }),
-        url: '/app/',
-        tag: it.id,
-      };
-    })
-    .filter((r) => new Date(r.at).getTime() > now);
+  const items = await api.listCalendar(new Date(now).toISOString(), new Date(now + REMINDER_DAYS * 864e5).toISOString());
+  const reminders = remindersFor(items, { userName: session.user.name, leadMinutes, t: makeT(language), now });
   await post('sync', { deviceId: deviceId(), reminders }).catch(() => {});
 }
 
@@ -122,9 +137,17 @@ export function startPushSync() {
   if (!pushSupported()) return;
   const soon = () => {
     clearTimeout(timer);
-    timer = setTimeout(syncReminders, 2500);
+    timer = setTimeout(() => syncReminders().catch(() => {}), 2500);
   };
-  soon();
+  // Opening BUN repairs anything lost while it was closed (dropped subscription, new server keys).
+  const refresh = () => {
+    registeredAs = null;
+    if (pushEnabled() && navigator.onLine !== false) subscribeDevice().catch(() => {});
+    soon();
+  };
+  refresh();
   bridge.on('bun:changed', (topics) => topics.some((x) => ['tasks', 'boards', 'settings', 'session'].includes(x)) && soon());
-  window.addEventListener('online', soon);
+  bridge.on('bun:cloud', soon); // just linked to the cloud
+  window.addEventListener('online', refresh);
+  document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && refresh());
 }

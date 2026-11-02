@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { api, bridge } from '../api.js';
-import { useBun, useCloud } from '../store.jsx';
+import { useBun, useCloud, useLive } from '../store.jsx';
 import { fmtTime } from '../../core/time.js';
 import { Icon } from '../icons.jsx';
 import { PetAvatar } from '../sprite.jsx';
 import { Modal } from '../components/Popover.jsx';
 import { BUILTIN_TONES, importToneFile, isSoundCloudUrl, playRingtone } from '../ringtone.js';
 import { disablePush, enablePush, isIOS, isStandalone, pushEnabled, pushSupported, testPush } from '../push.js';
+import { SHORTCUT_NAME, loadAlarmState, saveAlarmState, shortcutUrl, weeklyAlarms } from '../alarm.js';
+import { ALARM_SHORTCUT_URL } from '../../core/config.js';
 
 const LEADS = [1, 5, 10, 15, 30];
 
@@ -67,6 +69,7 @@ export default function Settings({ onClose, onShowPet }) {
         </div>
         <RingtoneSettings />
         {!bridge.isElectron && <PhoneNotifications />}
+        {!bridge.isElectron && isIOS() && <IphoneAlarms />}
       </section>
 
       <section className="settings__section">
@@ -310,6 +313,84 @@ function SyncStatus() {
         </button>
       )}
     </span>
+  );
+}
+
+function IphoneAlarms() {
+  const { t, settings } = useBun();
+  const alarms = useLive(() => weeklyAlarms(settings.leadMinutes), [settings.leadMinutes], ['tasks']) || [];
+  const [state, setState] = useState(loadAlarmState);
+  const update = (next) => {
+    setState(next);
+    saveAlarmState(next);
+  };
+  const isOff = (a) => state.off.includes(a.seriesId);
+  const toAdd = alarms.filter((a) => !isOff(a) && !state.added[a.key]);
+  // Added earlier, but the event changed, ended or was switched off: still ringing in Clock.
+  const stale = Object.entries(state.added).filter(([key]) => !alarms.some((a) => a.key === key && !isOff(a)));
+
+  return (
+    <div className="settings__row settings__row--stack">
+      <div className="settings__name">
+        <Icon name="clock" size={16} /> {t('alarm.title')}
+      </div>
+      <div className="faint small">{t('alarm.hint', { n: settings.leadMinutes })}</div>
+      {ALARM_SHORTCUT_URL ? (
+        <a className="btn btn--sm" href={ALARM_SHORTCUT_URL}>
+          {t('alarm.install')}
+        </a>
+      ) : (
+        <div className="faint small">{t('alarm.needShortcut', { name: SHORTCUT_NAME })}</div>
+      )}
+      {alarms.length === 0 && <div className="faint small">{t('alarm.empty')}</div>}
+      {alarms.length > 0 && (
+        <div className="alarm-list">
+          {alarms.map((a) => (
+            <div key={a.seriesId} className={`alarm-row ${isOff(a) ? 'is-off' : ''}`}>
+              <span className="alarm-row__when">
+                {t(`day.${a.day}`)} {a.time}
+              </span>
+              <span className="alarm-row__name">{a.name}</span>
+              {state.added[a.key] && !isOff(a) && <span className="alarm-row__added">{t('alarm.added')}</span>}
+              <button
+                className={`switch switch--sm ${isOff(a) ? '' : 'is-on'}`}
+                onClick={() => update({ ...state, off: isOff(a) ? state.off.filter((id) => id !== a.seriesId) : [...state.off, a.seriesId] })}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      {stale.length > 0 && (
+        <div className="alarm-stale">
+          <div className="small">{t('alarm.stale')}</div>
+          {stale.map(([key, a]) => (
+            <div key={key} className="small">
+              • {t(`day.${a.day}`)} {a.time} · {a.name}
+            </div>
+          ))}
+          <button
+            className="btn btn--sm"
+            onClick={() => update({ ...state, added: Object.fromEntries(Object.entries(state.added).filter(([key]) => !stale.some(([k]) => k === key))) })}
+          >
+            {t('alarm.staleDone')}
+          </button>
+        </div>
+      )}
+      {toAdd.length > 0 && (
+        <a
+          className="btn btn--sm btn--primary"
+          href={shortcutUrl(toAdd)}
+          onClick={() => update({ ...state, added: { ...state.added, ...Object.fromEntries(toAdd.map((a) => [a.key, { day: a.day, time: a.time, name: a.name }])) } })}
+        >
+          <Icon name="bell" size={14} /> {t('alarm.add', { n: toAdd.length })}
+        </a>
+      )}
+      {toAdd.length === 0 && alarms.some((a) => state.added[a.key]) && (
+        <button className="btn btn--sm btn--ghost" onClick={() => update({ ...state, added: {} })}>
+          {t('alarm.reset')}
+        </button>
+      )}
+    </div>
   );
 }
 

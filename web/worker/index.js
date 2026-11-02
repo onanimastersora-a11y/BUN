@@ -7,6 +7,7 @@
 
 import { b64urlDecode, b64urlEncode, getVapidSigningKey, PushError, sendWebPush } from './push.js';
 import { BunCloud, handleCloud } from './cloud.js';
+import { replaceReminders } from './reminders.js';
 
 // The accounts/sync Durable Object class must be exported from the main module.
 export { BunCloud };
@@ -18,7 +19,6 @@ const CHART_TTL = 60; // seconds
 const SEARCH_TTL = 86400; // seconds
 
 const MAX_BODY_CHARS = 2_000_000;
-const MAX_REMINDERS = 500;
 const MAX_INPUT_REMINDERS = 5000;
 const TITLE_MAX = 200;
 const BODY_MAX = 500;
@@ -92,6 +92,11 @@ export default {
 
   async scheduled(controller, env, ctx) {
     await runReminderCron(env, controller.scheduledTime);
+    // Once a day (00:05 in Vietnam): roll every phone's two-week reminder list forward.
+    const t = new Date(controller.scheduledTime);
+    if (env.CLOUD && t.getUTCHours() === 17 && t.getUTCMinutes() === 5) {
+      ctx.waitUntil(env.CLOUD.get(env.CLOUD.idFromName('main')).fetch('https://cloud/internal/refresh-reminders', { method: 'POST' }));
+    }
   },
 };
 
@@ -369,29 +374,7 @@ async function syncReminders(env, deviceId, reminders) {
     });
   });
 
-  // Keep the 500 soonest.
-  const list = [...byId.values()].sort((a, b) => a.at - b.at).slice(0, MAX_REMINDERS);
-  const listJson = JSON.stringify(list);
-
-  // Two statements, one transaction (a batch also counts as one D1 query on the free plan).
-  // Unchanged rows are not rewritten, which keeps "rows written" low when the client re-syncs often.
-  await env.DB.batch([
-    env.DB.prepare(
-      `DELETE FROM reminders WHERE device_id = ?1 AND sent = 0
-         AND id NOT IN (SELECT json_extract(value, '$.id') FROM json_each(?2))`,
-    ).bind(deviceId, listJson),
-    env.DB.prepare(
-      `INSERT INTO reminders (device_id, id, at, title, body, url, tag, sent)
-         SELECT ?1, json_extract(value, '$.id'), json_extract(value, '$.at'), json_extract(value, '$.title'),
-                json_extract(value, '$.body'), json_extract(value, '$.url'), json_extract(value, '$.tag'), 0
-         FROM json_each(?2) WHERE true
-       ON CONFLICT(device_id, id) DO UPDATE SET
-         at = excluded.at, title = excluded.title, body = excluded.body, url = excluded.url, tag = excluded.tag, sent = 0
-       WHERE reminders.sent <> 0 OR reminders.at <> excluded.at OR reminders.title <> excluded.title
-          OR reminders.body <> excluded.body OR reminders.url IS NOT excluded.url OR reminders.tag IS NOT excluded.tag`,
-    ).bind(deviceId, listJson),
-  ]);
-  return json({ ok: true, count: list.length });
+  return json({ ok: true, count: await replaceReminders(env, deviceId, [...byId.values()]) });
 }
 
 async function removeDevices(env, deviceIds) {

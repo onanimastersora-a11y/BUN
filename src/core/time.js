@@ -36,6 +36,32 @@ export function addDays(date, n) {
   return d;
 }
 
+const zones = new Map();
+// dayKey / addDays for a named time zone: the cloud runs in UTC, its users don't.
+export function zoneOf(timeZone) {
+  if (zones.has(timeZone)) return zones.get(timeZone);
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const parts = (d) => Object.fromEntries(fmt.formatToParts(d).map((p) => [p.type, p.value]));
+  const offset = (d) => {
+    const p = parts(d);
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - Math.floor(d.getTime() / 1000) * 1000;
+  };
+  const zone = {
+    dayKey(date) {
+      const p = parts(new Date(date));
+      return `${p.year}-${p.month}-${p.day}`;
+    },
+    // The same wall-clock time `n` days later.
+    addDays(date, n) {
+      const from = new Date(date);
+      const to = new Date(from.getTime() + n * 24 * HOUR);
+      return new Date(to.getTime() + offset(from) - offset(to));
+    },
+  };
+  zones.set(timeZone, zone);
+  return zone;
+}
+
 export function sameDay(a, b) {
   return dayKey(a) === dayKey(b);
 }

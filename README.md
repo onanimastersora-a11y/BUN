@@ -6,7 +6,7 @@ Lịch trình tuần, checklist (3 dạng: bảng, lộ trình, mindmap) và m�
 |---|---|---|---|
 | **Windows** | App cài đặt `BUN-Setup.exe` | Nổi trên desktop 24/24, tự hiện khi bật máy | Hoạt ảnh + nhạc chuông, kể cả khi đóng cửa sổ |
 | **macOS** | App `BUN-mac.dmg` (tải từ web, không qua App Store) | Như Windows, hiện trên mọi màn hình (Space) | Như Windows |
-| **iPhone** | Web app: mở `/app/` bằng Safari → Thêm vào MH chính | Ở góc màn hình app | Thông báo đẩy có âm thanh + rung kể cả khi đóng app; khi đang mở app: hoạt ảnh + nhạc chuông |
+| **iPhone** | Web app: mở `/app/` bằng Safari → Thêm vào MH chính | Ở góc màn hình app | Thông báo đẩy kể cả khi đóng app; khi đang mở app: hoạt ảnh + nhạc chuông; có thể thêm lịch tuần vào **báo thức Đồng hồ** qua Phím tắt ([web/SHORTCUT.md](web/SHORTCUT.md)) |
 
 Tài khoản dùng chung trên mọi thiết bị và mọi thứ vẫn chạy khi **mất mạng**. Chỉ cần mạng để đăng nhập lần đầu trên thiết bị mới, đồng bộ, chat, thời tiết, chỉ số thị trường, nhạc chuông SoundCloud và thông báo trên iPhone.
 
@@ -79,6 +79,8 @@ npm run sprites -- cat   # xuất ảnh xem trước sprite
 | `src/renderer/markets.js` | Thời tiết (Open-Meteo), chỉ số/cổ phiếu/tiền ảo/ngoại tệ (Yahoo Finance), vàng SJC (PNJ) |
 | `src/renderer/ringtone.js` | Nhạc chuông: có sẵn, file của bạn, link SoundCloud |
 | `src/renderer/push.js`, `tools/sw-template.js` | Thông báo đẩy và chạy offline cho bản iPhone |
+| `src/core/reminders.js`, `web/worker/reminders.js` | Danh sách nhắc việc của mỗi điện thoại, do máy chủ giữ và tự cập nhật khi lịch đổi trên bất kỳ thiết bị nào |
+| `src/renderer/alarm.js`, `web/SHORTCUT.md` | Đưa lịch tuần vào báo thức iPhone qua Phím tắt |
 | `src/sprites/` | Pixel art chó/mèo (lưới ký tự 48×40) |
 | `web/` | Cloudflare Worker: trang giới thiệu, app iPhone, tài khoản + đồng bộ, trung gian Yahoo, gửi thông báo đẩy |
 | `.github/workflows/release.yml` | Build tự động file cài Windows + macOS |

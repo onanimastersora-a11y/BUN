@@ -141,9 +141,10 @@ export class Backend {
 
   // A view of this backend that acts as `userId` (used by the cloud, where
   // many users share one database). Methods called on it see that user as "me".
-  asUser(userId) {
+  asUser(userId, zone = null) {
     const view = Object.create(this);
     view._uid = userId;
+    if (zone) view._zone = zone; // that user's days, when they differ from this machine's (see zoneOf)
     return view;
   }
 
@@ -709,13 +710,14 @@ export class Backend {
     const len = new Date(t.end).getTime() - s0.getTime();
     if (!t.repeat) return s0.getTime() < to && s0.getTime() + len > from ? [{ ...this.taskOut(t), kind: 'event', seriesId: t.id }] : [];
     const out = [];
+    const zone = this._zone || { dayKey, addDays };
     // Jump close to `from`, then walk week by week (local dates, so DST is fine).
     const weeks = Math.max(0, Math.floor((from - s0.getTime() - len) / (7 * 24 * HOUR)));
     for (let k = weeks; ; k++) {
-      const s = addDays(s0, k * 7);
+      const s = zone.addDays(s0, k * 7);
       if (s.getTime() >= to) break;
       const e = new Date(s.getTime() + len);
-      const day = dayKey(s);
+      const day = zone.dayKey(s);
       if (e.getTime() > from && !(t.skip || []).includes(day)) {
         out.push({ ...this.taskOut(t), kind: 'event', id: `${t.id}@${day}`, seriesId: t.id, occurrence: day, seriesStart: t.start, seriesEnd: t.end, start: s.toISOString(), end: e.toISOString() });
       }
