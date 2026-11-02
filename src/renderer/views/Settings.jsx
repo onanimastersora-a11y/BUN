@@ -367,6 +367,7 @@ function IphoneAlarms() {
   const { t, settings } = useBun();
   const alarms = useLive(() => weeklyAlarms(settings.leadMinutes), [settings.leadMinutes], ['tasks']) || [];
   const [state, setState] = useState(loadAlarmState);
+  const [resetting, setResetting] = useState(false);
   const update = (next) => {
     setState(next);
     saveAlarmState(next);
@@ -463,10 +464,32 @@ function IphoneAlarms() {
           <Icon name="bell" size={14} /> {t('alarm.add', { n: toAdd.length })}
         </a>
       )}
-      {state.ready && state.pending.length === 0 && toAdd.length === 0 && alarms.some((a) => state.added[a.key]) && (
-        <button className="btn btn--sm btn--ghost" onClick={() => update({ ...state, added: {} })}>
+      {state.ready && state.pending.length === 0 && toAdd.length === 0 && alarms.some((a) => state.added[a.key]) && !resetting && (
+        <button className="btn btn--sm btn--ghost" onClick={() => setResetting(true)}>
           {t('alarm.reset')}
         </button>
+      )}
+      {resetting && (
+        <div className="alarm-stale">
+          <div className="small">{t('alarm.resetWarn')}</div>
+          {Object.entries(state.added).map(([key, a]) => (
+            <div key={key} className="small">
+              • {t(`day.${a.day}`)} {a.time} · {a.name}
+            </div>
+          ))}
+          <button
+            className="btn btn--sm btn--primary"
+            onClick={() => {
+              update({ ...state, added: {} });
+              setResetting(false);
+            }}
+          >
+            {t('alarm.resetDone')}
+          </button>
+          <button className="btn btn--sm" onClick={() => setResetting(false)}>
+            {t('alarm.resetCancel')}
+          </button>
+        </div>
       )}
     </div>
   );

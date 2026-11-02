@@ -72,4 +72,5 @@ Nếu iPhone báo không tìm thấy phím tắt, kiểm tra lại tên là đú
 
 - Phím tắt chỉ **thêm** được báo thức, không sửa được. Khi lịch đổi, BUN liệt kê các báo thức cũ để bạn tự xóa trong app Đồng hồ, rồi bấm thêm báo thức mới.
 - BUN nhớ những báo thức đã thêm ngay trên iPhone đó, nên bấm lại không bị trùng. Xóa BUN khỏi màn hình chính thì BUN quên danh sách này.
+- **Thêm lại từ đầu** sẽ tạo lại mọi báo thức, nên BUN yêu cầu xóa các báo thức cũ trong app Đồng hồ trước. Nếu không xóa, mỗi việc sẽ có 2 báo thức.
 - Chỉ những việc bật **Lặp lại hằng tuần** mới có báo thức. Giờ reo là giờ bắt đầu trừ đi số phút nhắc trước trong Cài đặt.

@@ -272,6 +272,9 @@ const vi = {
   'alarm.added': 'Đã thêm',
   'alarm.add': 'Thêm {n} báo thức vào iPhone',
   'alarm.reset': 'Thêm lại từ đầu',
+  'alarm.resetWarn': 'Phím tắt chỉ thêm được báo thức, không xóa được. Hãy xóa các báo thức này trong app Đồng hồ trước, nếu không mỗi việc sẽ có 2 báo thức:',
+  'alarm.resetDone': 'Đã xóa xong, thêm lại',
+  'alarm.resetCancel': 'Không thêm lại',
   'alarm.stale': 'Các báo thức này không còn đúng lịch, hãy xóa chúng trong app Đồng hồ:',
   'alarm.staleDone': 'Đã xóa xong',
 
@@ -582,6 +585,9 @@ const en = {
   'alarm.added': 'Added',
   'alarm.add': 'Add {n} alarms to iPhone',
   'alarm.reset': 'Add them again',
+  'alarm.resetWarn': 'The Shortcut can only add alarms, not delete them. Delete these in the Clock app first, or each task will have 2 alarms:',
+  'alarm.resetDone': 'Deleted, add them again',
+  'alarm.resetCancel': 'Keep them',
   'alarm.stale': 'These alarms no longer match your schedule. Delete them in the Clock app:',
   'alarm.staleDone': 'Done deleting',
 
