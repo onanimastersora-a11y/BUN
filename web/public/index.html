@@ -1,22 +1,22 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BUN</title>
-<meta name="description" content="BUN: lịch trình tuần, checklist 3 chế độ và một bé mèo hoặc cún pixel sống trên màn hình, nhắc việc và giữ note mỗi ngày. Cho Windows, macOS và iPhone.">
+<meta name="description" content="BUN: a weekly schedule, checklists in 3 views and a little pixel kat or dog that lives on your screen, reminds you of tasks and keeps a note every day. For Windows, macOS and iPhone.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f6f2ec" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15171c" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BUN">
-<meta property="og:title" content="BUN: lịch trình, checklist và thú cưng pixel">
-<meta property="og:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn. Cho Windows, macOS và iPhone.">
-<meta property="og:locale" content="vi_VN">
-<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="BUN: schedule, checklists and a pixel pet">
+<meta property="og:description" content="Your schedule, checklists and a little pixel pet that stays by your side. For Windows, macOS and iPhone.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="vi_VN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BUN">
-<meta name="twitter:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn.">
+<meta name="twitter:description" content="Your schedule, checklists and a little pixel pet that stays by your side.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%2354a0ea%22%20d%3D%22M4%200h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%23539fe9%22%20d%3D%22M3%201h26v1h-26z%22%2F%3E%3Cpath%20fill%3D%22%23529ee8%22%20d%3D%22M2%202h28v1h-28z%22%2F%3E%3Cpath%20fill%3D%22%23519de8%22%20d%3D%22M1%203h5v1h-5zM7%203h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%232e2622%22%20d%3D%22M6%203h1v1h-1zM5%204h1v1h-1zM7%204h1v1h-1zM5%205h1v1h-1zM8%205h1v1h-1zM5%206h1v1h-1zM7%206h1v1h-1zM9%206h1v1h-1zM5%207h2v1h-2zM8%207h1v1h-1zM10%207h2v1h-2zM5%208h2v1h-2zM9%208h1v1h-1zM12%208h1v1h-1zM6%209h1v1h-1zM10%209h10v1h-10zM6%2010h1v1h-1zM10%2010h1v1h-1zM20%2010h4v1h-4zM6%2011h1v1h-1zM8%2011h2v1h-2zM20%2011h1v1h-1zM24%2011h1v1h-1zM6%2012h2v1h-2zM20%2012h1v1h-1zM25%2012h1v1h-1zM7%2013h1v1h-1zM20%2013h1v1h-1zM26%2013h1v1h-1zM6%2014h1v1h-1zM20%2014h1v1h-1zM26%2014h1v1h-1zM5%2015h1v1h-1zM20%2015h1v1h-1zM27%2015h1v1h-1zM5%2016h1v1h-1zM20%2016h1v1h-1zM27%2016h1v1h-1zM5%2017h1v1h-1zM11%2017h2v1h-2zM18%2017h2v1h-2zM21%2017h1v1h-1zM27%2017h1v1h-1zM5%2018h1v1h-1zM11%2018h2v1h-2zM18%2018h2v1h-2zM21%2018h1v1h-1zM28%2018h1v1h-1zM5%2019h1v1h-1zM22%2019h1v1h-1zM28%2019h1v1h-1zM5%2020h1v1h-1zM13%2020h1v1h-1zM15%2020h1v1h-1zM17%2020h1v1h-1zM23%2020h1v1h-1zM28%2020h1v1h-1zM5%2021h1v1h-1zM14%2021h1v1h-1zM16%2021h1v1h-1zM24%2021h1v1h-1zM27%2021h1v1h-1zM6%2022h1v1h-1zM24%2022h3v1h-3zM7%2023h1v1h-1zM23%2023h1v1h-1zM7%2024h1v1h-1zM23%2024h1v1h-1zM8%2025h2v1h-2zM21%2025h2v1h-2zM10%2026h1v1h-1zM20%2026h1v1h-1zM11%2027h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%23519ce7%22%20d%3D%22M0%204h5v1h-5zM8%204h24v1h-24z%22%2F%3E%3Cpath%20fill%3D%22%23fff7ea%22%20d%3D%22M6%204h1v1h-1zM6%205h2v1h-2zM6%206h1v1h-1zM8%206h1v1h-1zM9%207h1v1h-1zM10%208h2v1h-2zM11%2010h9v1h-9zM10%2011h10v1h-10zM8%2012h12v1h-12zM8%2013h12v1h-12zM7%2014h13v1h-13zM6%2015h14v1h-14zM6%2016h14v1h-14zM6%2017h5v1h-5zM13%2017h5v1h-5zM20%2017h1v1h-1zM6%2018h5v1h-5zM13%2018h5v1h-5zM20%2018h1v1h-1zM6%2019h16v1h-16zM6%2020h3v1h-3zM11%2020h2v1h-2zM14%2020h1v1h-1zM16%2020h1v1h-1zM18%2020h2v1h-2zM22%2020h1v1h-1zM6%2021h8v1h-8zM15%2021h1v1h-1zM17%2021h7v1h-7zM7%2022h17v1h-17zM8%2023h15v1h-15z%22%2F%3E%3Cpath%20fill%3D%22%23509be6%22%20d%3D%22M0%205h5v1h-5zM9%205h23v1h-23z%22%2F%3E%3Cpath%20fill%3D%22%234f9ae5%22%20d%3D%22M0%206h5v1h-5zM10%206h22v1h-22z%22%2F%3E%3Cpath%20fill%3D%22%234e99e5%22%20d%3D%22M0%207h5v1h-5zM12%207h20v1h-20z%22%2F%3E%3Cpath%20fill%3D%22%23f3a5b5%22%20d%3D%22M7%207h1v1h-1zM7%208h2v1h-2zM7%209h3v1h-3zM7%2010h3v1h-3zM7%2011h1v1h-1zM9%2020h2v1h-2zM20%2020h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%234d98e4%22%20d%3D%22M0%208h5v1h-5zM13%208h19v1h-19z%22%2F%3E%3Cpath%20fill%3D%22%234c97e3%22%20d%3D%22M0%209h6v1h-6zM20%209h12v1h-12z%22%2F%3E%3Cpath%20fill%3D%22%234c96e2%22%20d%3D%22M0%2010h6v1h-6zM24%2010h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%234b95e1%22%20d%3D%22M0%2011h6v1h-6zM25%2011h7v1h-7z%22%2F%3E%3Cpath%20fill%3D%22%23e0a062%22%20d%3D%22M21%2011h3v1h-3zM21%2012h4v1h-4zM21%2013h5v1h-5zM21%2014h5v1h-5zM21%2015h6v1h-6zM21%2016h6v1h-6zM22%2017h5v1h-5zM22%2018h6v1h-6zM23%2019h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234a94e1%22%20d%3D%22M0%2012h6v1h-6zM26%2012h6v1h-6z%22%2F%3E%3Cpath%20fill%3D%22%234993e0%22%20d%3D%22M0%2013h7v1h-7zM27%2013h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234892df%22%20d%3D%22M0%2014h6v1h-6zM27%2014h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%234791de%22%20d%3D%22M0%2015h5v1h-5zM28%2015h4v1h-4zM0%2016h5v1h-5zM28%2016h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%234690dd%22%20d%3D%22M0%2017h5v1h-5zM28%2017h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%23458fdc%22%20d%3D%22M0%2018h5v1h-5zM29%2018h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23448edb%22%20d%3D%22M0%2019h5v1h-5zM29%2019h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23438ddb%22%20d%3D%22M0%2020h5v1h-5zM29%2020h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23c48046%22%20d%3D%22M24%2020h4v1h-4zM25%2021h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23428cda%22%20d%3D%22M0%2021h5v1h-5zM28%2021h4v1h-4z%22%2F%3E%3Cpath%20fill%3D%22%23428bd9%22%20d%3D%22M0%2022h6v1h-6zM27%2022h5v1h-5z%22%2F%3E%3Cpath%20fill%3D%22%23418ad8%22%20d%3D%22M0%2023h7v1h-7zM24%2023h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%234089d7%22%20d%3D%22M0%2024h7v1h-7zM24%2024h8v1h-8z%22%2F%3E%3Cpath%20fill%3D%22%23f2e4d0%22%20d%3D%22M8%2024h15v1h-15zM10%2025h11v1h-11zM11%2026h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%233f88d7%22%20d%3D%22M0%2025h8v1h-8zM23%2025h9v1h-9z%22%2F%3E%3Cpath%20fill%3D%22%233e87d6%22%20d%3D%22M0%2026h10v1h-10zM21%2026h11v1h-11z%22%2F%3E%3Cpath%20fill%3D%22%233d86d5%22%20d%3D%22M0%2027h11v1h-11zM20%2027h12v1h-12z%22%2F%3E%3Cpath%20fill%3D%22%233d85d4%22%20d%3D%22M1%2028h30v1h-30z%22%2F%3E%3Cpath%20fill%3D%22%233c84d4%22%20d%3D%22M2%2029h28v1h-28z%22%2F%3E%3Cpath%20fill%3D%22%233b83d3%22%20d%3D%22M3%2030h26v1h-26z%22%2F%3E%3Cpath%20fill%3D%22%233a82d2%22%20d%3D%22M4%2031h24v1h-24z%22%2F%3E%3C%2Fsvg%3E">
 <!-- Added to the iPhone Home Screen from this page? Then it opens the app (/app/), with the app's icon. -->
 <link rel="apple-touch-icon" href="/app/icons/apple-touch-icon.png">
@@ -26,7 +26,11 @@
 <meta name="apple-mobile-web-app-title" content="BUN">
 <script>
   if (navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) location.replace('/app/');
+  // The markup is in Vietnamese and the page opens in English: hide it until the text is swapped.
+  document.documentElement.classList.add('lang-wait');
+  setTimeout(function () { document.documentElement.classList.remove('lang-wait'); }, 1500);
 </script>
+<style>.lang-wait body { visibility: hidden; }</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap">
@@ -557,7 +561,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 </style>
 </head>
 <body>
-<!-- Generated by web/tools/build-site.mjs on 2026-11-02 from web/site/index.html. Edit the template and rebuild (node web/tools/build-site.mjs). Quick edit: GITHUB_REPO / APP_URL / VERSION are at the top of the main script near the end of this file. -->
+<!-- Generated by web/tools/build-site.mjs on 2026-11-03 from web/site/index.html. Edit the template and rebuild (node web/tools/build-site.mjs). Quick edit: GITHUB_REPO / APP_URL / VERSION are at the top of the main script near the end of this file. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></symbol>
   <symbol id="i-win" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 12h17M12 4.5v15"/></symbol>
@@ -579,10 +583,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       <a href="#features" data-i18n="nav.features">Tính năng</a>
       <a href="#download" data-i18n="nav.download">Tải về</a>
     </nav>
-    <div class="lang" role="group" aria-label="Ngôn ngữ / Language" data-lang="vi">
+    <div class="lang" role="group" aria-label="Ngôn ngữ / Language" data-lang="en">
       <span class="lang__thumb" aria-hidden="true"></span>
-      <button type="button" data-set-lang="vi" aria-pressed="true" lang="vi" title="Tiếng Việt">VI</button>
-      <button type="button" data-set-lang="en" aria-pressed="false" lang="en" title="English">EN</button>
+      <button type="button" data-set-lang="vi" aria-pressed="false" lang="vi" title="Tiếng Việt">VI</button>
+      <button type="button" data-set-lang="en" aria-pressed="true" lang="en" title="English">EN</button>
     </div>
   </div>
 </header>
@@ -836,7 +840,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 // (EN) Replace with your "github-user/repo". Its Releases must contain BUN-Setup.exe and BUN-mac.dmg.
 const GITHUB_REPO = 'onanimastersora-a11y/BUN';
 const APP_URL = '/app/';   // bản web cho iPhone (Add to Home Screen) · iPhone web app
-const VERSION = '1.2.1';   // build-site.mjs điền từ package.json · filled from package.json; shown in the hero and footer
+const VERSION = '1.2.2';   // build-site.mjs điền từ package.json · filled from package.json; shown in the hero and footer
 /* ============================================================= */
 
 const DOWNLOADS = {
@@ -897,7 +901,7 @@ const EN = {
   'f2.b4': 'Share with a link and assign tasks to friends',
   'pet.noteTitle': "Today's note", 'pet.note1': 'Call mom', 'pet.note2': 'Buy treats for Bun',
   'f3.title': 'Pixel pet',
-  'f3.lead': 'A little cat or dog that lives right on your desktop.',
+  'f3.lead': 'A little kat or dog that lives right on your desktop.',
   'f3.b1': 'Reminds you with an animation and a chime',
   'f3.b2': 'Keeps a note every day and recaps it the next',
   'f3.b3': 'Naps, stretches and strolls while you work',
@@ -936,7 +940,7 @@ const TXT = {
     ],
   },
   en: {
-    nav: 'Menu', stage: 'A pixel dog and cat playing',
+    nav: 'Menu', stage: 'A pixel dog and kat playing',
     btn: { win: 'Download for Windows', mac: 'Download for macOS', ios: 'Open BUN on iPhone', other: 'Get BUN' },
     meta: { win: 'Windows 10 / 11 · version {v}', mac: 'macOS · version {v}', ios: 'Then tap Share → Add to Home Screen', other: 'For Windows, macOS and iPhone' },
     desk: [
@@ -946,7 +950,7 @@ const TXT = {
   },
 };
 const LANG_KEY = 'bun.lang';
-let lang = 'vi';
+let lang = 'en';
 try { const saved = localStorage.getItem(LANG_KEY); if (saved === 'vi' || saved === 'en') lang = saved; } catch (err) { /* storage blocked */ }
 const viText = new Map();
 const langListeners = [];
@@ -1576,6 +1580,7 @@ safe(() => {
   const thumb = $('.lang__thumb');
   if (thumb) thumb.style.transition = 'none'; // no slide on first paint
   applyLang(lang, false);
+  document.documentElement.classList.remove('lang-wait');
   if (thumb) requestAnimationFrame(() => requestAnimationFrame(() => { thumb.style.transition = ''; }));
 });
 })();

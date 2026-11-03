@@ -16,7 +16,7 @@ const HOUR = 60 * 60 * 1000;
 
 export const DEFAULT_SETTINGS = {
   leadMinutes: 5,
-  language: 'vi',
+  language: 'en',
   theme: 'light',
   petScale: 3,
   autostart: true,

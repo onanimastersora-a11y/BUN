@@ -91,7 +91,7 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const H = SPRITES[animal].height * scale;
   // Walk only as far as the window allows on each side.
   const walkRange = embedded ? 36 : Math.max(0, Math.min(70, place.x - W / 2 - 4, place.width - place.x - W / 2 - 4));
-  const t = useMemo(() => makeT(settings?.language || 'vi'), [settings?.language]);
+  const t = useMemo(() => makeT(settings?.language || 'en'), [settings?.language]);
   const sprite = SPRITES[animal];
   const phases = useMemo(() => PHASES.filter((p) => p !== 'play' || sprite.animations.play), [sprite]);
   const alert = alerts[0];
@@ -427,7 +427,7 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
     spellCheck: false,
   };
   const yesterday = dayKey(addDays(new Date(), -1));
-  const lang = settings?.language || 'vi';
+  const lang = settings?.language || 'en';
   const pastNotes = history.filter((n) => n.day !== dayKey());
 
   return (

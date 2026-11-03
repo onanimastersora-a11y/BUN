@@ -19,14 +19,16 @@ export function BunProvider({ children }) {
   }, [loadSession]);
 
   const settings = session?.settings;
-  const lang = settings?.language || (typeof localStorage !== 'undefined' && localStorage.getItem('bun-lang')) || 'vi';
+  const lang = settings?.language || (typeof localStorage !== 'undefined' && localStorage.getItem('bun-lang')) || 'en';
   const theme = settings?.theme || 'light';
   const t = useMemo(() => makeT(lang), [lang]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.lang = lang;
-  }, [theme, lang]);
+    // Remembered so the next launch starts in this language, before the session loads.
+    if (settings?.language) localStorage.setItem('bun-lang', settings.language);
+  }, [theme, lang, settings?.language]);
 
   const toast = useCallback((text, kind = 'info') => {
     const id = Math.random();

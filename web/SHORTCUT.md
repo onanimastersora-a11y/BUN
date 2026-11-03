@@ -2,7 +2,7 @@
 
 Web app không tự reo chuông được: Apple chỉ cho app gốc đặt báo thức. Vì vậy BUN gửi lịch tuần sang một **Phím tắt** trên iPhone, và Phím tắt tạo báo thức thật trong app Đồng hồ, lặp lại mỗi tuần.
 
-Bạn chỉ cần làm phím tắt này **một lần** trên iPhone. Sau đó lấy link iCloud của nó để mọi người cài bằng một lần bấm.
+Phím tắt đã được chia sẻ tại https://www.icloud.com/shortcuts/5bd7ee2cde454b04abadc9098ae0bb43, nên người dùng chỉ cần bấm **Cài phím tắt** trong BUN. Các bước tạo tay dưới đây chỉ cần khi muốn làm lại phím tắt.
 
 BUN gửi mỗi báo thức thành một dòng, theo dạng `thứ|giờ|tên` (1 là thứ Hai, 7 là Chủ nhật):
 
@@ -67,6 +67,8 @@ Nếu iPhone báo không tìm thấy phím tắt, kiểm tra lại tên là đú
 1. Trong app **Phím tắt**, giữ vào `BUN Bao thuc` → **Chia sẻ** → **Sao chép liên kết iCloud**.
 2. Dán link vào `ALARM_SHORTCUT_URL` trong [src/core/config.js](../src/core/config.js).
 3. Build và deploy web. Mục **Báo thức iPhone** sẽ có nút **Cài phím tắt** thay cho phần hướng dẫn tạo tay.
+
+Link iCloud giữ nguyên phím tắt tại thời điểm chia sẻ. Nếu sửa phím tắt, hãy chia sẻ lại rồi cập nhật `ALARM_SHORTCUT_URL`.
 
 ## Điều cần biết
 

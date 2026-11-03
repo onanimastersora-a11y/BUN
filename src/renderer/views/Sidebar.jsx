@@ -8,7 +8,7 @@ import logoUrl from '../assets/logo.svg';
 
 // Friends + chat: the left column on desktop, its own tab on phones.
 export default function Sidebar({ mobile = false }) {
-  const { user, t, toast, run } = useBun();
+  const { user, t, toast, run, lang } = useBun();
   const friends = useLive(() => api.listFriends(), [], ['friends', 'chat']) || [];
   const requests = useLive(() => api.listFriendRequests(), [], ['friends']) || { incoming: [], outgoing: [] };
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('bun-sidebar') === 'collapsed');
@@ -143,7 +143,7 @@ export default function Sidebar({ mobile = false }) {
                 <div className="friend__body">
                   <div className="friend__top">
                     <b>{f.name}</b>
-                    {f.lastMessage && <span className="faint small">{sameDay(f.lastMessage.at, new Date()) ? fmtTime(f.lastMessage.at) : fmtDayMonth(f.lastMessage.at)}</span>}
+                    {f.lastMessage && <span className="faint small">{sameDay(f.lastMessage.at, new Date()) ? fmtTime(f.lastMessage.at) : fmtDayMonth(f.lastMessage.at, lang)}</span>}
                   </div>
                   <div className={`friend__last ${f.unread ? 'is-unread' : ''}`}>
                     {f.lastMessage ? `${f.lastMessage.mine ? t('chat.you') : ''}${f.lastMessage.text}` : `#${f.tag}`}
@@ -177,7 +177,7 @@ export default function Sidebar({ mobile = false }) {
 }
 
 function ChatPanel({ friend, onBack }) {
-  const { t, run } = useBun();
+  const { t, run, lang } = useBun();
   const messages = useLive(() => api.listMessages(friend.id), [friend.id], ['chat']) || [];
   const [text, setText] = useState('');
   const listRef = useRef(null);
@@ -219,7 +219,7 @@ function ChatPanel({ friend, onBack }) {
           const grouped = prev && prev.mine === m.mine && !newDay && new Date(m.at) - new Date(prev.at) < 5 * 60e3;
           return (
             <div key={m.id}>
-              {newDay && <div className="chat__day">{fmtDayMonth(m.at)}</div>}
+              {newDay && <div className="chat__day">{fmtDayMonth(m.at, lang)}</div>}
               <div className={`bubble ${m.mine ? 'bubble--mine' : ''} ${grouped ? 'is-grouped' : ''}`} title={fmtTime(m.at)}>
                 {m.text}
               </div>

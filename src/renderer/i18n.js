@@ -2,11 +2,11 @@
 
 const vi = {
   // onboarding
-  'ob.question': 'Are you a cat person or a dog person?',
+  'ob.question': 'Are you a kat person or a dog person?',
   'ob.questionSub': 'Bạn là người yêu mèo hay yêu chó?',
-  'ob.cat': 'Cat person',
+  'ob.cat': 'Kat person',
   'ob.dog': 'Dog person',
-  'ob.nameCat': 'Name your Cat',
+  'ob.nameCat': 'Name your Kat',
   'ob.nameDog': 'Name your Dog',
   'ob.nameSub': 'Tên này cũng là tên tài khoản của bạn.',
   'ob.nameLabel': 'Tên',
@@ -325,11 +325,11 @@ const vi = {
 };
 
 const en = {
-  'ob.question': 'Are you a cat person or a dog person?',
+  'ob.question': 'Are you a kat person or a dog person?',
   'ob.questionSub': 'Pick your desktop buddy.',
-  'ob.cat': 'Cat person',
+  'ob.cat': 'Kat person',
   'ob.dog': 'Dog person',
-  'ob.nameCat': 'Name your Cat',
+  'ob.nameCat': 'Name your Kat',
   'ob.nameDog': 'Name your Dog',
   'ob.nameSub': 'This is also your account name.',
   'ob.nameLabel': 'Name',
@@ -526,7 +526,7 @@ const en = {
   'board.roadmapDone': 'All done!',
 
   'set.myPet': 'My pet',
-  'set.cat': 'Cat',
+  'set.cat': 'Kat',
   'set.dog': 'Dog',
   'set.petChanged': 'Pet switched!',
 

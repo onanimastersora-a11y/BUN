@@ -6,7 +6,7 @@ import { Icon } from '../icons.jsx';
 import logoUrl from '../assets/logo.svg';
 
 export default function Onboarding() {
-  const [lang, setLang] = useState(() => localStorage.getItem('bun-lang') || 'vi');
+  const [lang, setLang] = useState(() => localStorage.getItem('bun-lang') || 'en');
   const t = useMemo(() => makeT(lang), [lang]);
   const [step, setStep] = useState('pick'); // pick | name | login
   const [animal, setAnimal] = useState(null);
@@ -41,9 +41,12 @@ export default function Onboarding() {
     setBusy(true);
     setError('');
     try {
+      // Signing in keeps the language the account already uses.
       if (step === 'login') await api.login({ name, code });
-      else await api.register({ animal, name, code });
-      await api.updateSettings({ language: lang });
+      else {
+        await api.register({ animal, name, code });
+        await api.updateSettings({ language: lang });
+      }
     } catch (err) {
       setError(errorText(t, err));
       setBusy(false);

@@ -20,7 +20,7 @@ const HEAD = `
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="BUN" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-    <meta name="description" content="BUN — lịch trình, checklist và thú cưng pixel nhắc việc." />`;
+    <meta name="description" content="BUN: your schedule, checklists and a pixel pet that reminds you." />`;
 
 export default function webApp({ publicDir = 'public' } = {}) {
   return {
@@ -39,8 +39,8 @@ export default function webApp({ publicDir = 'public' } = {}) {
           {
             name: 'BUN',
             short_name: 'BUN',
-            description: 'Lịch trình, checklist và thú cưng pixel nhắc việc',
-            lang: 'vi',
+            description: 'Your schedule, checklists and a pixel pet that reminds you',
+            lang: 'en',
             start_url: './',
             scope: './',
             display: 'standalone',

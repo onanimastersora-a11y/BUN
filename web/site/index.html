@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <!--
@@ -17,19 +17,19 @@
 -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BUN</title>
-<meta name="description" content="BUN: lịch trình tuần, checklist 3 chế độ và một bé mèo hoặc cún pixel sống trên màn hình, nhắc việc và giữ note mỗi ngày. Cho Windows, macOS và iPhone.">
+<meta name="description" content="BUN: a weekly schedule, checklists in 3 views and a little pixel kat or dog that lives on your screen, reminds you of tasks and keeps a note every day. For Windows, macOS and iPhone.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f6f2ec" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15171c" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BUN">
-<meta property="og:title" content="BUN: lịch trình, checklist và thú cưng pixel">
-<meta property="og:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn. Cho Windows, macOS và iPhone.">
-<meta property="og:locale" content="vi_VN">
-<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="BUN: schedule, checklists and a pixel pet">
+<meta property="og:description" content="Your schedule, checklists and a little pixel pet that stays by your side. For Windows, macOS and iPhone.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="vi_VN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BUN">
-<meta name="twitter:description" content="Lịch trình, checklist và một bé thú cưng pixel luôn ở cạnh bạn.">
+<meta name="twitter:description" content="Your schedule, checklists and a little pixel pet that stays by your side.">
 <link rel="icon" type="image/svg+xml" href="@@FAVICON@@">
 <!-- Added to the iPhone Home Screen from this page? Then it opens the app (/app/), with the app's icon. -->
 <link rel="apple-touch-icon" href="/app/icons/apple-touch-icon.png">
@@ -39,7 +39,11 @@
 <meta name="apple-mobile-web-app-title" content="BUN">
 <script>
   if (navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) location.replace('/app/');
+  // The markup is in Vietnamese and the page opens in English: hide it until the text is swapped.
+  document.documentElement.classList.add('lang-wait');
+  setTimeout(function () { document.documentElement.classList.remove('lang-wait'); }, 1500);
 </script>
+<style>.lang-wait body { visibility: hidden; }</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap">
@@ -592,10 +596,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       <a href="#features" data-i18n="nav.features">Tính năng</a>
       <a href="#download" data-i18n="nav.download">Tải về</a>
     </nav>
-    <div class="lang" role="group" aria-label="Ngôn ngữ / Language" data-lang="vi">
+    <div class="lang" role="group" aria-label="Ngôn ngữ / Language" data-lang="en">
       <span class="lang__thumb" aria-hidden="true"></span>
-      <button type="button" data-set-lang="vi" aria-pressed="true" lang="vi" title="Tiếng Việt">VI</button>
-      <button type="button" data-set-lang="en" aria-pressed="false" lang="en" title="English">EN</button>
+      <button type="button" data-set-lang="vi" aria-pressed="false" lang="vi" title="Tiếng Việt">VI</button>
+      <button type="button" data-set-lang="en" aria-pressed="true" lang="en" title="English">EN</button>
     </div>
   </div>
 </header>
@@ -910,7 +914,7 @@ const EN = {
   'f2.b4': 'Share with a link and assign tasks to friends',
   'pet.noteTitle': "Today's note", 'pet.note1': 'Call mom', 'pet.note2': 'Buy treats for Bun',
   'f3.title': 'Pixel pet',
-  'f3.lead': 'A little cat or dog that lives right on your desktop.',
+  'f3.lead': 'A little kat or dog that lives right on your desktop.',
   'f3.b1': 'Reminds you with an animation and a chime',
   'f3.b2': 'Keeps a note every day and recaps it the next',
   'f3.b3': 'Naps, stretches and strolls while you work',
@@ -949,7 +953,7 @@ const TXT = {
     ],
   },
   en: {
-    nav: 'Menu', stage: 'A pixel dog and cat playing',
+    nav: 'Menu', stage: 'A pixel dog and kat playing',
     btn: { win: 'Download for Windows', mac: 'Download for macOS', ios: 'Open BUN on iPhone', other: 'Get BUN' },
     meta: { win: 'Windows 10 / 11 · version {v}', mac: 'macOS · version {v}', ios: 'Then tap Share → Add to Home Screen', other: 'For Windows, macOS and iPhone' },
     desk: [
@@ -959,7 +963,7 @@ const TXT = {
   },
 };
 const LANG_KEY = 'bun.lang';
-let lang = 'vi';
+let lang = 'en';
 try { const saved = localStorage.getItem(LANG_KEY); if (saved === 'vi' || saved === 'en') lang = saved; } catch (err) { /* storage blocked */ }
 const viText = new Map();
 const langListeners = [];
@@ -1589,6 +1593,7 @@ safe(() => {
   const thumb = $('.lang__thumb');
   if (thumb) thumb.style.transition = 'none'; // no slide on first paint
   applyLang(lang, false);
+  document.documentElement.classList.remove('lang-wait');
   if (thumb) requestAnimationFrame(() => requestAnimationFrame(() => { thumb.style.transition = ''; }));
 });
 })();

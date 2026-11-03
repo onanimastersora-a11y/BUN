@@ -63,7 +63,7 @@ function start() {
     return id ? backend.db.users[id] : null;
   };
   const settings = () => (session() ? backend.settingsFor(session().id) : null);
-  const vi = () => settings()?.language !== 'en';
+  const vi = () => settings()?.language === 'vi';
 
   // ---------- links ----------
 
