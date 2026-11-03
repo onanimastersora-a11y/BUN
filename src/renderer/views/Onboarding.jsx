@@ -3,6 +3,7 @@ import { api } from '../api.js';
 import { makeT, errorText } from '../i18n.js';
 import { PixelSprite } from '../sprite.jsx';
 import { Icon } from '../icons.jsx';
+import { TOUR_KEY } from '../components/Tour.jsx';
 import logoUrl from '../assets/logo.svg';
 
 export default function Onboarding() {
@@ -44,10 +45,13 @@ export default function Onboarding() {
       // Signing in keeps the language the account already uses.
       if (step === 'login') await api.login({ name, code });
       else {
+        // Set first: the app opens as soon as the account exists.
+        localStorage.setItem(TOUR_KEY, '1');
         await api.register({ animal, name, code });
         await api.updateSettings({ language: lang });
       }
     } catch (err) {
+      localStorage.removeItem(TOUR_KEY);
       setError(errorText(t, err));
       setBusy(false);
     }

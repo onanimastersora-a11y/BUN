@@ -6,12 +6,6 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "web"],
       "port": 5173
-    },
-    {
-      "name": "bun-built",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["web/node_modules/wrangler/bin/wrangler.js", "dev", "--config", "web/wrangler.toml", "--port", "8799", "--persist-to", "C:/Users/PC/AppData/Local/Temp/claude/C--Users-PC-Desktop-APP-BUN/0d9052c3-1d76-4631-8f09-c2578183aebc/scratchpad/wrangler-state"],
-      "port": 8799
     }
   ]
 }

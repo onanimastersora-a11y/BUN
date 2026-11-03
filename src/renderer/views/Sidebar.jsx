@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { api, bridge } from '../api.js';
+import { api } from '../api.js';
 import { useBun, useLive } from '../store.jsx';
 import { Icon } from '../icons.jsx';
 import { PetAvatar } from '../sprite.jsx';
@@ -98,7 +98,6 @@ export default function Sidebar({ mobile = false }) {
         <ChatPanel friend={friend} onBack={() => setChatWith(null)} />
       ) : (
         <div className="friends">
-          {!bridge.isElectron && <p className="friends__note">{t('fr.offlineNote')}</p>}
           <div className="friends__head">
             <span>{t('fr.title')}</span>
             <button className={`icon-btn icon-btn--sm ${adding ? 'is-on' : ''}`} onClick={() => setAdding(!adding)} title={t('fr.add')}>

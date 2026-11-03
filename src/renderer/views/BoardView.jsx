@@ -122,7 +122,7 @@ export default function BoardView({ boardId }) {
 
       <div className="board__tabs">
         {VIEWS.map((v, i) => (
-          <button key={v} className={`board__tab ${i === index ? 'is-on' : ''}`} onClick={() => setIndex(i)}>
+          <button key={v} className={`board__tab ${i === index ? 'is-on' : ''}`} data-view={v} onClick={() => setIndex(i)}>
             <Icon name={VIEW_ICONS[v]} size={15} />
             {t(`board.views.${v}`)}
           </button>

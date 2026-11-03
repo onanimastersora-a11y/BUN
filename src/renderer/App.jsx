@@ -3,6 +3,7 @@ import { api, bridge } from './api.js';
 import { useBun, useCloud, useIsMobile, useUpdate } from './store.jsx';
 import { errorText } from './i18n.js';
 import { Modal } from './components/Popover.jsx';
+import Tour, { TOUR_KEY } from './components/Tour.jsx';
 import { Icon } from './icons.jsx';
 import Onboarding from './views/Onboarding.jsx';
 import Home from './views/Home.jsx';
@@ -29,6 +30,12 @@ export default function App() {
   const mobile = useIsMobile();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [petHidden, setPetHidden] = useState(false);
+  const [touring, setTouring] = useState(false);
+
+  // A new account starts with the guide.
+  useEffect(() => {
+    if (session && localStorage.getItem(TOUR_KEY)) setTouring(true);
+  }, [!!session]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Share links: join the board right away, or after onboarding if signed out.
   const openLink = useCallback(
@@ -83,7 +90,8 @@ export default function App() {
       {route.view === 'friends' && <Sidebar mobile />}
     </div>
   );
-  const settings = settingsOpen && <Settings onClose={() => setSettingsOpen(false)} onShowPet={() => setPetHidden(false)} user={user} />;
+  const settings = settingsOpen && <Settings onClose={() => setSettingsOpen(false)} onShowPet={() => setPetHidden(false)} onReplayTour={() => setTouring(true)} user={user} />;
+  const tour = touring && <Tour onDone={() => setTouring(false)} />;
   const webPet = !bridge.isElectron && (
     <>
       <WebRuntime />
@@ -129,6 +137,7 @@ export default function App() {
         {webPet}
         {settings}
         <LinkPrompt />
+        {tour}
       </div>
     );
   }
@@ -156,6 +165,7 @@ export default function App() {
       {settings}
       <LinkPrompt />
       <UpdateBanner />
+      {tour}
     </div>
   );
 }

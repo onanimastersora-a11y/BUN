@@ -12,7 +12,7 @@ import { ALARM_SHORTCUT_URL, CLOUD_URL } from '../../core/config.js';
 
 const LEADS = [1, 5, 10, 15, 30];
 
-export default function Settings({ onClose, onShowPet }) {
+export default function Settings({ onClose, onShowPet, onReplayTour }) {
   const { user, settings, t, run, toast } = useBun();
   const [custom, setCustom] = useState(LEADS.includes(settings.leadMinutes) ? '' : String(settings.leadMinutes));
   const set = (patch) => run(api.updateSettings(patch));
@@ -158,6 +158,21 @@ export default function Settings({ onClose, onShowPet }) {
           <AppUpdate />
         </section>
       )}
+
+      <section className="settings__section">
+        <div className="settings__row">
+          <div className="settings__name">{t('tour.replayName')}</div>
+          <button
+            className="btn btn--sm"
+            onClick={() => {
+              onClose();
+              onReplayTour();
+            }}
+          >
+            {t('tour.replay')}
+          </button>
+        </div>
+      </section>
 
       <section className="settings__section settings__account">
         <PetAvatar animal={user.animal} size={44} />

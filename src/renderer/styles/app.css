@@ -2900,15 +2900,6 @@
   background: var(--surface);
   flex: none;
 }
-.friends__note {
-  margin: 0 12px 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--accent-soft);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-2);
-}
 .sidebar--page {
   width: 100%;
   height: 100%;
@@ -3402,6 +3393,129 @@
 }
 a.btn {
   text-decoration: none;
+}
+
+/* First-run guide */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  animation: tour-in 0.25s ease-out;
+  -webkit-app-region: no-drag;
+}
+.tour__shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 14, 20, 0.62);
+}
+.tour__hole {
+  position: absolute;
+  border-radius: 14px;
+  box-shadow: 0 0 0 200vmax rgba(12, 14, 20, 0.62);
+  pointer-events: none;
+  transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+.tour__hole::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: tour-pulse 1.8s ease-out 1.1s infinite;
+}
+.tour__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.tour__ring path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  animation: tour-draw 0.8s ease-in-out 0.3s both;
+}
+.tour__card {
+  position: absolute;
+  width: min(360px, calc(100vw - 24px));
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  transition: left 0.3s ease, top 0.3s ease;
+}
+.tour__card.is-center {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.tour__pet {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  margin: 2px auto 14px;
+}
+.tour__count {
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 800;
+}
+.tour__title {
+  margin: 2px 0 6px;
+  font-size: 17px;
+  font-weight: 800;
+}
+.tour__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.tour__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.tour__spacer {
+  flex: 1;
+}
+@keyframes tour-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tour-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes tour-pulse {
+  from {
+    box-shadow: 0 0 0 0 var(--accent);
+    opacity: 0.8;
+  }
+  to {
+    box-shadow: 0 0 0 12px var(--accent);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour,
+  .tour__hole,
+  .tour__hole::after,
+  .tour__card,
+  .tour__ring path {
+    animation: none;
+    transition: none;
+  }
 }
 
 /* New desktop version downloaded */
