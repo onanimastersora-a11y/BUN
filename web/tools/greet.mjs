@@ -69,5 +69,7 @@ for (let attempt = 1; ; attempt++) {
     continue;
   }
   console.log(JSON.stringify(out, null, 2));
-  process.exit(out.ok ? 0 : 1);
+  // Let Node finish on its own: process.exit() with a fetch still closing trips a libuv assertion on Windows.
+  process.exitCode = out.ok ? 0 : 1;
+  break;
 }
