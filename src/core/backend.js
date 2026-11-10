@@ -50,6 +50,8 @@ function emptyDb() {
     tasks: {},
     notes: {},
     notified: {},
+    greetings: {}, // userId -> [{ id, kind, text, from, until }], sent from the server
+    greetingsSeen: {}, // userId -> [greeting ids] shown on this device (never synced)
   };
 }
 
@@ -844,6 +846,7 @@ export class Backend {
       boards,
       tasks,
       notes: { [me.id]: db.notes[me.id] || {} },
+      greetings: { [me.id]: (db.greetings?.[me.id] || []).filter((g) => g.until > Date.now()) },
     };
   }
 
@@ -852,6 +855,7 @@ export class Backend {
     const userId = snap.userId;
     const keepSettings = Object.fromEntries(DEVICE_SETTINGS.map((k) => [k, this.db.settings[userId]?.[k] ?? DEFAULT_SETTINGS[k]]));
     const notified = this.db.notified[userId] || {};
+    const seen = this.db.greetingsSeen?.[userId] || [];
     this.db = {
       ...emptyDb(),
       ...snap,
@@ -859,9 +863,29 @@ export class Backend {
       session: { userId },
       settings: { [userId]: { ...(snap.settings?.[userId] || DEFAULT_SETTINGS), ...keepSettings } },
       notified: { [userId]: notified },
+      greetingsSeen: { [userId]: seen },
     };
     delete this.db.userId;
-    this.commit('session', 'settings', 'boards', 'tasks', 'friends', 'chat', 'notes');
+    this.commit('session', 'settings', 'boards', 'tasks', 'friends', 'chat', 'notes', 'greetings');
+  }
+
+  // ---------- greetings ----------
+  // A wish the server sends to one account (e.g. on a birthday). Each device
+  // shows it once: dismissing it here does not hide it on the user's other devices.
+
+  async listGreetings(now = Date.now()) {
+    const me = this.me();
+    const seen = new Set(this.db.greetingsSeen?.[me.id] || []);
+    return (this.db.greetings?.[me.id] || []).filter((g) => g.from <= now && g.until > now && !seen.has(g.id));
+  }
+
+  async seeGreeting(id) {
+    const me = this.me();
+    this.db.greetingsSeen ||= {};
+    const seen = (this.db.greetingsSeen[me.id] ||= []);
+    if (!seen.includes(id)) seen.push(String(id).slice(0, 64));
+    this.commit('greetings');
+    return true;
   }
 
   // Bring a device's offline data into this (cloud) account: its boards,
@@ -908,6 +932,7 @@ export const API_METHODS = [
   'createTask', 'updateTask', 'skipOccurrence', 'toggleClaim', 'deleteTask', 'moveTask', 'listCalendar', 'listRoles',
   'takeDueReminders',
   'getNotes', 'getNote', 'saveNote', 'takeDailyRecap',
+  'listGreetings', 'seeGreeting',
 ];
 
 // Methods that change shared data: on a cloud account they also run on the server.

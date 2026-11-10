@@ -228,3 +228,16 @@ Từ bản 1.2, app Windows và Mac tự cập nhật từ GitHub Releases, còn
 Nếu chỉ sửa máy chủ hoặc app iPhone, làm bước 3 là đủ, không cần tag.
 
 Không xóa các file `latest.yml`, `latest-mac.yml`, `*.blockmap`, `BUN-mac.zip` khỏi bản phát hành: app cần chúng để tự cập nhật.
+
+## Gửi lời chúc cho một tài khoản
+
+Ví dụ sinh nhật một người dùng: thú cưng của họ đội mũ sinh nhật, chúc mừng trên mọi thiết bị của họ (máy tính tự mở BUN, iPhone nhận thông báo).
+
+```powershell
+node web/tools/greet.mjs --new-key --to "Ten#1234" --text "Chúc mừng sinh nhật!" --days 3
+```
+
+- `--new-key` tạo một khóa quản trị mới, lưu lên Cloudflare (`BUN_ADMIN_KEY`) mà không in ra hay lưu vào file. Cần đã đăng nhập `wrangler`.
+- Lời chúc hiện trong `--days` ngày (mặc định 3), mỗi thiết bị một lần cho đến khi người đó bấm **Cảm ơn**.
+- Hủy: `--cancel <id>` (id có trong kết quả lúc gửi).
+- Máy tính cần BUN 1.2.4 trở lên. iPhone nhận thông báo nếu đã bật thông báo trong BUN.

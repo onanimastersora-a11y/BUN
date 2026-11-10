@@ -62,6 +62,62 @@ export function animationLength(animal, anim) {
   return SPRITES[animal].animations[anim].seq.reduce((s, [, ms]) => s + ms, 0);
 }
 
+// ---------- party hat (greetings) ----------
+// Drawn on its own canvas that starts HAT_ROWS above the frame, since a hat on
+// the head pokes out of the 48x40 frame.
+
+export const HAT_ROWS = 12;
+const HAT_W = 11;
+const HAT_COLORS = { o: '#3d2b26', w: '#fdf8ee', p: '#f29aa0', y: '#f5c443', b: '#74a6dc' };
+// Pom-pom on top, then a cone with diagonal stripes, widening by one pixel every two rows.
+const HAT = Array.from({ length: HAT_ROWS }, (_, r) =>
+  Array.from({ length: HAT_W }, (_, c) => {
+    const dx = c - 5;
+    if (r === 0 || r === 2) return Math.abs(dx) <= 1 ? 'o' : '.';
+    if (r === 1) return Math.abs(dx) === 2 ? 'o' : Math.abs(dx) < 2 ? 'w' : '.';
+    const half = Math.floor((r - 3) / 2) + 1;
+    if (Math.abs(dx) > half) return '.';
+    if (Math.abs(dx) === half || r === HAT_ROWS - 1) return 'o';
+    return 'pyb'[Math.floor((dx + 5 + r) / 2) % 3];
+  }).join(''),
+);
+
+const hatColumns = new Map();
+// The head's middle column, from the sitting pose: halfway between the outermost
+// pixels of its top row (the dog's crown, the cat's two ear tips).
+function hatColumn(animal) {
+  if (!hatColumns.has(animal)) {
+    const rows = SPRITES[animal].frames[SPRITES[animal].animations.sit.seq[0][0]];
+    const top = rows.find((row) => /[^.]/.test(row));
+    hatColumns.set(animal, Math.round((top.search(/[^.]/) + top.length - 1 - [...top].reverse().join('').search(/[^.]/)) / 2));
+  }
+  return hatColumns.get(animal);
+}
+
+/** Where a hat sits on `frame`: its middle column, and the row its brim covers. */
+export function hatSpot(animal, frame, flip = false) {
+  const sprite = SPRITES[animal];
+  const rows = sprite.frames[frame];
+  const cx = hatColumn(animal);
+  let top = rows.findIndex((row) => /[^.]/.test(row.slice(cx - 3, cx + 4)));
+  if (top < 0) top = 0;
+  return { cx: flip ? sprite.width - 1 - cx : cx, brim: top + 1 };
+}
+
+/** Draw the hat on the overlay canvas (row 0 of the overlay is HAT_ROWS above the frame). */
+export function drawHat(ctx, { cx, brim }, scale) {
+  const left = cx - (HAT_W - 1) / 2;
+  const top = brim + 1; // = brim - (HAT_ROWS - 1) + HAT_ROWS
+  HAT.forEach((row, r) => {
+    for (let c = 0; c < HAT_W; c++) {
+      const ch = row[c];
+      if (ch === '.') continue;
+      ctx.fillStyle = HAT_COLORS[ch];
+      ctx.fillRect((left + c) * scale, (top + r) * scale, scale, scale);
+    }
+  });
+}
+
 export function drawFrame(ctx, animal, frame, x, y, scale, flip = false) {
   const img = frameCanvas(animal, frame);
   ctx.save();
@@ -77,8 +133,9 @@ export function drawFrame(ctx, animal, frame, x, y, scale, flip = false) {
 }
 
 /** Animated sprite on its own canvas (used in the main window). */
-export function PixelSprite({ animal, anim = 'sit', scale = 3, flip = false, className, style, onEnd }) {
+export function PixelSprite({ animal, anim = 'sit', scale = 3, flip = false, hat = false, className, style, onEnd }) {
   const ref = useRef(null);
+  const hatRef = useRef(null);
   const endRef = useRef(onEnd);
   endRef.current = onEnd;
   const sprite = SPRITES[animal];
@@ -96,6 +153,11 @@ export function PixelSprite({ animal, anim = 'sit', scale = 3, flip = false, cla
       if (frame !== last) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawFrame(ctx, animal, frame, 0, 0, scale, flip);
+        const hatCtx = hatRef.current?.getContext('2d');
+        if (hatCtx) {
+          hatCtx.clearRect(0, 0, hatCtx.canvas.width, hatCtx.canvas.height);
+          drawHat(hatCtx, hatSpot(animal, frame, flip), scale);
+        }
         last = frame;
       }
       if (done && !ended) {
@@ -106,16 +168,28 @@ export function PixelSprite({ animal, anim = 'sit', scale = 3, flip = false, cla
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [animal, anim, scale, flip, sprite]);
+  }, [animal, anim, scale, flip, hat, sprite]);
 
-  return (
+  const canvas = (
     <canvas
       ref={ref}
       width={sprite.width * scale}
       height={sprite.height * scale}
-      className={className}
-      style={{ imageRendering: 'pixelated', ...style }}
+      className={hat ? undefined : className}
+      style={{ imageRendering: 'pixelated', ...(hat ? { display: 'block' } : style) }}
     />
+  );
+  if (!hat) return canvas;
+  return (
+    <span className={className} style={{ position: 'relative', display: 'inline-block', ...style }}>
+      {canvas}
+      <canvas
+        ref={hatRef}
+        width={sprite.width * scale}
+        height={(HAT_ROWS + 16) * scale}
+        style={{ position: 'absolute', left: 0, top: -HAT_ROWS * scale, imageRendering: 'pixelated', pointerEvents: 'none' }}
+      />
+    </span>
   );
 }
 

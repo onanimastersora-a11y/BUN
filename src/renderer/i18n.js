@@ -174,6 +174,8 @@ const vi = {
   'pet.recapYesterday': 'Chủ nhân ơi, hôm qua chủ nhân đã note:',
   'pet.recapDay': 'Chủ nhân ơi, ngày {date} chủ nhân đã note:',
   'pet.ok': 'Đã biết!',
+  'greet.birthday': 'Chúc mừng sinh nhật! 🎂',
+  'greet.thanks': 'Cảm ơn!',
   'pet.view': 'Xem note',
   'pet.openApp': 'Mở BUN',
 
@@ -522,6 +524,8 @@ const en = {
   'pet.recapYesterday': 'Hey master, yesterday you noted:',
   'pet.recapDay': 'Hey master, on {date} you noted:',
   'pet.ok': 'Got it!',
+  'greet.birthday': 'Happy birthday! 🎂',
+  'greet.thanks': 'Thank you!',
   'pet.view': 'View notes',
   'pet.openApp': 'Open BUN',
 

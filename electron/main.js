@@ -251,6 +251,29 @@ function start() {
     }
   }
 
+  // ---------- greetings ----------
+
+  // A wish the server sent to this account (e.g. a birthday): the pet shows it in a
+  // party hat and the main window opens with a card, whether BUN was in the tray,
+  // just started at login, or is in use. Each device shows it until it is dismissed.
+  const shownGreetings = new Set();
+  async function checkGreetings() {
+    if (!session()) return;
+    let open = [];
+    try {
+      open = await backend.listGreetings();
+    } catch {
+      return;
+    }
+    const fresh = open.filter((g) => !shownGreetings.has(g.id));
+    if (!fresh.length) return;
+    for (const g of fresh) {
+      shownGreetings.add(g.id);
+      pushAlert({ kind: 'greeting', greeting: g });
+    }
+    showMain();
+  }
+
   // ---------- tray / menu bar ----------
 
   function buildTray() {
@@ -337,6 +360,7 @@ function start() {
   let lastAnimal = null;
   function onDataChanged({ topics }) {
     for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('bun:changed', topics);
+    if (topics.includes('greetings')) checkGreetings();
     if (topics.includes('session')) {
       const user = session();
       if (!user) {
@@ -536,5 +560,7 @@ function start() {
 
     setTimeout(tick, 2500);
     setInterval(tick, 15000);
+    // One received before BUN was closed (or the computer turned off) and not seen yet.
+    setTimeout(checkGreetings, 3000);
   });
 }

@@ -4,6 +4,7 @@ import { useBun, useCloud, useIsMobile, useUpdate } from './store.jsx';
 import { errorText } from './i18n.js';
 import { Modal } from './components/Popover.jsx';
 import Tour, { TOUR_KEY } from './components/Tour.jsx';
+import Greeting from './components/Greeting.jsx';
 import { Icon } from './icons.jsx';
 import Onboarding from './views/Onboarding.jsx';
 import Home from './views/Home.jsx';
@@ -137,6 +138,7 @@ export default function App() {
         {webPet}
         {settings}
         <LinkPrompt />
+        <Greeting />
         {tour}
       </div>
     );
@@ -165,6 +167,7 @@ export default function App() {
       {settings}
       <LinkPrompt />
       <UpdateBanner />
+      <Greeting />
       {tour}
     </div>
   );

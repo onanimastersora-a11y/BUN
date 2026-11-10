@@ -1,7 +1,7 @@
 {
   "name": "bun-app",
   "productName": "BUN",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "BUN - lịch trình, checklist và thú cưng pixel trên desktop",
   "author": "BUN",
   "private": true,

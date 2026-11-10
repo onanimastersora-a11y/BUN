@@ -7,12 +7,14 @@
 // Click: note box. Drag: move it around. X: hide (alerts bring it back).
 // Alerts (task reminders, yesterday's note) grow the pet, play its alert
 // animation (the cat scratches the screen, the dog wags its tail) and ring.
+// A greeting from the server (a birthday) adds a party hat, confetti and a tune,
+// and stays until it is dismissed.
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { api, bridge } from '../api.js';
 import { makeT } from '../i18n.js';
-import { SPRITES, frameAt, animationLength, drawFrame } from '../sprite.jsx';
-import { playDing, playRingtone } from '../ringtone.js';
+import { SPRITES, HAT_ROWS, frameAt, animationLength, drawFrame, drawHat, hatSpot } from '../sprite.jsx';
+import { playBirthday, playDing, playRingtone } from '../ringtone.js';
 import { dayKey, fmtDate, parseDayKey, addDays } from '../../core/time.js';
 import { Icon } from '../icons.jsx';
 
@@ -22,6 +24,7 @@ const WALK_SPEED = 28; // px per second
 const ALERT_SCALE = 1.35;
 const ALERT_TIMEOUT = 3 * 60 * 1000;
 const EMBED_POS_KEY = 'bun-pet-pos';
+const CONFETTI = 14;
 
 // Opaque bounds of a frame, used to place the X button and bubbles near the head.
 function frameBounds(sprite, frame) {
@@ -72,6 +75,7 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const [sent, setSent] = useState(null);
 
   const canvasRef = useRef(null);
+  const hatRef = useRef(null);
   const actorRef = useRef(null);
   const bodyRef = useRef(null);
   const rootRef = useRef(null);
@@ -95,6 +99,9 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const sprite = SPRITES[animal];
   const phases = useMemo(() => PHASES.filter((p) => p !== 'play' || sprite.animations.play), [sprite]);
   const alert = alerts[0];
+  const greeting = alert?.kind === 'greeting' ? alert.greeting : null;
+  const hatOn = useRef(false);
+  hatOn.current = !!greeting;
 
   // ---------- data ----------
 
@@ -110,6 +117,12 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   useEffect(() => {
     loadSession().then(() => bridge.send('pet:ready'));
     const offChanged = bridge.on('bun:changed', (topics) => {
+      // A greeting dismissed in the main window (or on the web, by the card) leaves the pet too.
+      if (topics.includes('greetings'))
+        api
+          .listGreetings()
+          .then((open) => setAlerts((list) => list.filter((a) => a.kind !== 'greeting' || open.some((g) => g.id === a.greeting.id))))
+          .catch(() => {});
       if (topics.includes('session') || topics.includes('settings')) loadSession();
       else if (topics.includes('notes')) {
         api.getNotes().then(setHistory).catch(() => {});
@@ -147,8 +160,10 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
       return;
     }
     setMode('alert');
-    const sound = alert.kind === 'task' ? playRingtone(settings?.ringtone) : playDing(settings?.ringtone?.volume ?? 0.7);
-    const id = setTimeout(() => setAlerts((l) => l.slice(1)), ALERT_TIMEOUT);
+    const volume = settings?.ringtone?.volume ?? 0.7;
+    const sound = alert.kind === 'task' ? playRingtone(settings?.ringtone) : alert.kind === 'greeting' ? playBirthday(volume) : playDing(volume);
+    // A greeting waits for the user, however long they are away.
+    const id = alert.kind === 'greeting' ? null : setTimeout(() => setAlerts((l) => l.slice(1)), ALERT_TIMEOUT);
     return () => {
       clearTimeout(id);
       sound.stop();
@@ -156,7 +171,10 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alert]);
 
-  const dismissAlert = () => setAlerts((l) => l.slice(1));
+  const dismissAlert = () => {
+    if (greeting) api.seeGreeting(greeting.id).catch(() => {});
+    setAlerts((l) => l.slice(1));
+  };
 
   const saveNote = (text) => {
     setNote(text);
@@ -263,10 +281,17 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
         L.animStart = now;
       }
       const { frame } = frameAt(sprite.animations[anim], now - L.animStart);
-      if (frame !== L.frame || flip !== L.flip) {
+      const hat = hatOn.current && anim === 'alert';
+      if (frame !== L.frame || flip !== L.flip || hat !== L.hat) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawFrame(ctx, animal, frame, 0, 0, scale, flip);
+        const hatCtx = hatRef.current?.getContext('2d');
+        if (hatCtx) {
+          hatCtx.clearRect(0, 0, hatCtx.canvas.width, hatCtx.canvas.height);
+          if (hat) drawHat(hatCtx, hatSpot(animal, frame, flip), scale);
+        }
         L.frame = frame;
+        L.hat = hat;
       }
       L.flip = flip;
       L.x = x;
@@ -407,7 +432,8 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
   const metaPos = (pt) => (pt ? { left: pt[0] * scale, top: pt[1] * scale } : null);
   const bounds = frameBounds(sprite, sprite.animations.sit.seq[0][0]);
   const headTop = H - bounds.minY * scale; // distance from the feet to the top of the head
-  const grownTop = mode === 'alert' ? headTop * ALERT_SCALE : headTop;
+  // The party hat adds about ten pixel rows above the head.
+  const grownTop = mode === 'alert' ? (headTop + (greeting ? (HAT_ROWS - 2) * scale : 0)) * ALERT_SCALE : headTop;
   // Desktop: bubbles go above the pet when there's room, else below it.
   const roomAbove = embedded ? Infinity : place.y - grownTop;
   const roomBelow = embedded ? 0 : place.height - place.y;
@@ -461,7 +487,12 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
 
         {mode === 'alert' && alert && (
           <div className="pet-bubble pet-bubble--alert" data-hit key={alerts.length} style={bubbleStyle}>
-            {alert.kind === 'task' ? (
+            {greeting ? (
+              <>
+                <div className="pet-alert__kicker">{t('greet.birthday')}</div>
+                <p className="pet-alert__text pet-alert__text--greeting">{greeting.text}</p>
+              </>
+            ) : alert.kind === 'task' ? (
               <p className="pet-alert__text">{t(alert.task.kind === 'deadline' ? 'pet.deadlineAlert' : 'pet.taskAlert', { name: alert.task.name, n: alert.task.minutes })}</p>
             ) : (
               <>
@@ -495,7 +526,7 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
                 </button>
               )}
               <button className="pet-btn pet-btn--primary" onClick={dismissAlert}>
-                {t('pet.ok')}
+                {t(greeting ? 'greet.thanks' : 'pet.ok')}
               </button>
             </div>
           </div>
@@ -508,6 +539,14 @@ export default function Pet({ embedded = false, hidden = false, onHide }) {
         <div className="pet-scale" style={{ transform: mode === 'alert' ? `scale(${ALERT_SCALE})` : 'scale(1)' }}>
           <div className="pet-body" ref={bodyRef}>
             <canvas ref={canvasRef} width={W} height={H} className="pet-canvas" onPointerDown={onPetDown} />
+            <canvas ref={hatRef} width={W} height={(HAT_ROWS + 16) * scale} className="pet-hat" style={{ top: -HAT_ROWS * scale }} />
+            {greeting && mode === 'alert' && (
+              <div className="pet-confetti">
+                {Array.from({ length: CONFETTI }, (_, i) => (
+                  <i key={i} style={{ '--x': `${((i * 37) % 100) - 50}px`, '--d': `${(i % 7) * 0.22}s` }} />
+                ))}
+              </div>
+            )}
             {/* overlays */}
             <div className="pet-zzz" style={metaPos(meta.zzz)}>
               <span>z</span>

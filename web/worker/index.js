@@ -6,7 +6,7 @@
 //  - /api/push/*   Web Push subscriptions and reminders in D1; a cron every minute sends due reminders.
 
 import { b64urlDecode, b64urlEncode, getVapidSigningKey, PushError, sendWebPush } from './push.js';
-import { BunCloud, handleCloud } from './cloud.js';
+import { BunCloud, handleAdmin, handleCloud } from './cloud.js';
 import { replaceReminders } from './reminders.js';
 
 // The accounts/sync Durable Object class must be exported from the main module.
@@ -80,6 +80,7 @@ export default {
       if (path.startsWith('/api/yahoo/')) return await handleYahoo(request, url, ctx);
       if (path.startsWith('/api/push/')) return await handlePush(request, url, env);
       if (path.startsWith('/api/cloud/')) return await handleCloud(request, env, CORS_HEADERS);
+      if (path.startsWith('/api/admin/')) return await handleAdmin(request, env);
       throw new HttpError(404, 'not found');
     } catch (err) {
       if (err instanceof HttpError) {

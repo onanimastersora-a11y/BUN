@@ -8,6 +8,11 @@
 //   POST /api/cloud/batch     { ops: [{ method, args }] }  (Bearer)  -> { results, snapshot }
 //   POST /api/cloud/logout    { pushDevice? }              (Bearer)  -> {}
 //   POST /api/cloud/push-device { deviceId, timeZone }     (Bearer)  -> { count }
+//   POST /api/admin/greet     { to: 'Name#1234', text, days?, cancel? }  (Bearer BUN_ADMIN_KEY)
+//                                                                     -> { user, greeting, phones, ... }
+//
+// A greeting (e.g. a birthday wish) goes to one account: the pet shows it on
+// each of that user's devices, and phones with notifications on get it pushed.
 //
 // The database is stored as JSON split into chunks in the object's storage.
 //
@@ -27,6 +32,8 @@ const MAX_OPS = 200;
 const LOGIN_WINDOW = 10 * 60 * 1000;
 const LOGIN_MAX_FAILS = 12;
 const DEVICE_ID_RE = /^[A-Za-z0-9._~:+/=-]{32,256}$/;
+const GREETING_MAX_DAYS = 14;
+const GREETING_MAX_CHARS = 300;
 // Changes that can alter what someone gets reminded about.
 const REMINDER_OPS = new Set(['createTask', 'updateTask', 'deleteTask', 'skipOccurrence', 'toggleClaim', 'deleteBoard', 'leaveBoard', 'joinBoard', 'importData']);
 const changesReminders = (op) => REMINDER_OPS.has(op.method) || (op.method === 'updateSettings' && ('leadMinutes' in (op.args[0] || {}) || 'language' in (op.args[0] || {})));
@@ -176,7 +183,44 @@ export class BunCloud {
     const { leadMinutes, language } = me.settingsFor(user.id);
     const now = Date.now();
     const items = await me.listCalendar(new Date(now).toISOString(), new Date(now + REMINDER_DAYS * 864e5).toISOString());
-    return replaceReminders(this.env, deviceId, remindersFor(items, { userName: user.name, leadMinutes, t: makeT(language), now }));
+    // `at` stays the moment the greeting was sent, so a later refresh never pushes it twice.
+    const greetings = (this.backend.db.greetings?.[user.id] || [])
+      .filter((g) => g.until > now)
+      .map((g) => ({ id: `greet:${g.id}`, at: g.from, title: 'BUN 🎂', body: g.text, url: '/app/', tag: `greet:${g.id}` }));
+    return replaceReminders(this.env, deviceId, [...remindersFor(items, { userName: user.name, leadMinutes, t: makeT(language), now }), ...greetings]);
+  }
+
+  // ---------- greetings ----------
+
+  async greet({ to, text, days = 3, cancel = null }) {
+    const db = this.backend.db;
+    const [name, tag] = String(to || '').trim().toLowerCase().split('#');
+    const user = tag && Object.values(db.users).find((u) => u.name.toLowerCase() === name && String(u.tag) === tag);
+    if (!user) throw new BunError('USER_NOT_FOUND');
+    const now = Date.now();
+    db.greetings ||= {};
+    const list = (db.greetings[user.id] || []).filter((g) => g.until > now && g.id !== cancel);
+    let greeting = null;
+    if (!cancel) {
+      const clean = String(text || '').trim().slice(0, GREETING_MAX_CHARS);
+      if (!clean) throw new BunError('BAD_REQUEST');
+      const span = Math.min(GREETING_MAX_DAYS, Math.max(1, Number(days) || 3));
+      greeting = { id: newToken().slice(0, 12), kind: 'birthday', text: clean, from: now, until: now + span * 864e5 };
+      list.push(greeting);
+    }
+    db.greetings[user.id] = list;
+    this.dirty = true;
+    const phones = Object.entries(db.pushDevices).filter(([, d]) => d.userId === user.id);
+    for (const [deviceId] of phones) await this.refreshDevice(deviceId);
+    const seen = Object.values(db.tokens).filter((t) => t.userId === user.id).map((t) => t.lastUsed || t.createdAt).sort((a, b) => b - a);
+    return {
+      user: { name: user.name, tag: user.tag, animal: user.animal },
+      greeting,
+      active: list.length,
+      phones: phones.length,
+      signedInDevices: seen.length,
+      lastActive: seen[0] ? new Date(seen[0]).toISOString() : null,
+    };
   }
 
   // A change on a shared board can reach everyone on it (tasks assigned to them).
@@ -215,7 +259,9 @@ export class BunCloud {
     } catch {}
     try {
       let data;
-      if (route === 'register') data = await this.register(body);
+      // From handleAdmin only, after it checked the admin key.
+      if (path === '/internal/greet') data = await this.greet(body);
+      else if (route === 'register') data = await this.register(body);
       else if (route === 'login') data = await this.login(body);
       else if (route === 'batch') data = await this.batch(this.userFor(request), body.ops || []);
       else if (route === 'push-device') data = await this.pushDevice(this.userFor(request), body);
@@ -231,7 +277,7 @@ export class BunCloud {
     } catch (err) {
       await this.persist();
       if (err instanceof BunError) {
-        const status = err.code === 'NOT_LOGGED_IN' ? 401 : err.code === 'TOO_MANY_TRIES' ? 429 : 400;
+        const status = err.code === 'NOT_LOGGED_IN' ? 401 : err.code === 'TOO_MANY_TRIES' ? 429 : err.code === 'USER_NOT_FOUND' ? 404 : 400;
         return Response.json({ ok: false, code: err.code }, { status });
       }
       console.error(JSON.stringify({ event: 'cloud_error', route, error: String(err?.stack || err) }));
@@ -250,4 +296,25 @@ export async function handleCloud(request, env, corsHeaders) {
   for (const [k, v] of Object.entries(corsHeaders)) headers.set(k, v);
   headers.set('cache-control', 'no-store');
   return new Response(res.body, { status: res.status, headers });
+}
+
+// Compare digests so the time taken says nothing about the key.
+async function sameSecret(a, b) {
+  const digest = async (s) => new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)));
+  const [x, y] = await Promise.all([digest(a), digest(b)]);
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
+
+/** Worker side: /api/admin/* for the owner, with the BUN_ADMIN_KEY secret (web/tools/greet.mjs). */
+export async function handleAdmin(request, env) {
+  if (!env.CLOUD || !env.BUN_ADMIN_KEY) return Response.json({ ok: false, code: 'NOT_FOUND' }, { status: 404 });
+  if (request.method !== 'POST') return Response.json({ ok: false, code: 'METHOD' }, { status: 405 });
+  const key = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!key || !(await sameSecret(key, env.BUN_ADMIN_KEY))) return Response.json({ ok: false, code: 'NOT_ALLOWED' }, { status: 401 });
+  if (new URL(request.url).pathname !== '/api/admin/greet') return Response.json({ ok: false, code: 'NOT_FOUND' }, { status: 404 });
+  const stub = env.CLOUD.get(env.CLOUD.idFromName('main'));
+  const res = await stub.fetch('https://cloud/internal/greet', { method: 'POST', headers: { 'content-type': 'application/json' }, body: await request.text() });
+  return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 }
