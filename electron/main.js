@@ -503,6 +503,10 @@ function start() {
     const userData = app.getPath('userData');
     storage = fileStorage(path.join(userData, 'bun-db.json'));
     machine = jsonFile(path.join(userData, 'machine.json'), {});
+    // Restarted by an update while nobody was looking: stay out of the way, as at login.
+    const quietRestart = !!machine.get('restartHidden');
+    if (quietRestart) machine.set('restartHidden', false);
+    const autostarted = launchedAtLogin() || quietRestart;
     backend = new Backend(storage);
     backend.onChange(onDataChanged);
     // Accounts and data are shared with the cloud (same account on every device).
@@ -518,6 +522,7 @@ function start() {
     powerMonitor.on('resume', () => cloud.sync().catch(() => {}));
     updater = startUpdater({
       machine,
+      startedAtLogin: autostarted,
       isMainVisible: () => !!mainWin && !mainWin.isDestroyed() && mainWin.isVisible(),
       beforeQuit: () => {
         quitting = true;
@@ -539,10 +544,6 @@ function start() {
     // Monitors plugged in / out or resolution changed: keep the pet visible.
     for (const evt of ['display-added', 'display-removed', 'display-metrics-changed']) screen.on(evt, () => placePet());
 
-    // Restarted by an update while nobody was looking: stay out of the way, as at login.
-    const quietRestart = !!machine.get('restartHidden');
-    if (quietRestart) machine.set('restartHidden', false);
-    const autostarted = launchedAtLogin() || quietRestart;
     const link = findLink(process.argv) || pendingLink;
     if (link) pendingLink = link;
 

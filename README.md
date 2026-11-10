@@ -94,7 +94,7 @@ Từ bản 1.2, người dùng không phải tải bản mới nữa:
 - **macOS:** app chưa có chữ ký Apple nên không dùng được bộ cập nhật chuẩn. `electron/mac-update.js` tự tải `BUN-mac.zip`, kiểm tra mã băm rồi thay `BUN.app` sau khi app thoát.
 - **iPhone:** chỉ cần deploy web; app nhận bản mới khi được mở lại.
 
-Bản mới được cài khi người dùng bấm **Cập nhật ngay**, khi thoát app, hoặc khi máy không được dùng trong 10 phút. Cách phát hành bản mới: xem [web/DEPLOY.md](web/DEPLOY.md).
+App kiểm tra bản mới mỗi giờ. Bản mới được cài khi người dùng bấm **Cập nhật ngay**, khi thoát app, khi máy không được dùng trong 10 phút, hoặc ngay lập tức nếu BUN vừa tự mở cùng máy (trong 15 phút đầu) và chưa ai mở cửa sổ BUN. Cách phát hành bản mới: xem [web/DEPLOY.md](web/DEPLOY.md).
 
 ### Về nhạc chuông
 
